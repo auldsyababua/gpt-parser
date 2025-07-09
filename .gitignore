@@ -41,3 +41,6 @@ secrets.*
 tasks.xlsx
 
 # Add more patterns as needed for your project
+
+# Log files
+logs/
