@@ -1,0 +1,30 @@
+Check genset #2’s oil levels tomorrow at 3pm.
+Call Lucky Electric next Monday at 9:30am to confirm the rewire.
+Text Joel at 7 tonight about the new flare readings.
+Pick up the Starlink from Site C on Thursday after lunch (Joel).
+Follow up with LoneStar Permitting next Friday morning (Bryan).
+Send the invoice for the flare skids in 2 hours.
+In 45 minutes, remind Joel to reboot the watchdog script on site A.
+In one week, test the Gen3 throttle config (Bryan).
+Call Upstream Data support on July 10th at 10am (Joel).
+Confirm delivery window with trucking company July 15 at 2:30pm.
+Inspect vent stack heat discoloration this Saturday (Bryan).
+Pay the generator rental invoice tomorrow (Joel).
+Finalize deal terms with power co-op by next Wednesday.
+Price out steel panels for Site D’s shelter sometime this week (Bryan).
+Meet with Joel to review load-sharing logic Thursday afternoon.
+Add “re-anchor solar rig after storm” to my list.
+Replace padlock on Site B container (Joel).
+Schedule flare maintenance walk for next week (Bryan).
+Pull uptime logs from all telemetry boxes every Friday at 5pm.
+In 2 weeks, confirm Joel rescheduled Site A fuel delivery from July 22 to July 25 (Bryan).
+Remind Bryan tomorrow morning to remind me about the tax exemption doc (Joel).
+Check coolant every other day at 8am this month (Joel).
+Renew generator insurance policy by July 30 (Bryan).
+Run SHA-256 tuning scripts every Monday at 9am (Joel).
+Pay the monthly storage unit bill on the 1st (Bryan).
+Draft revised network topology diagram for Site C before Tuesday’s call.
+Submit final invoice for contractor welding work before Thursday EOD (Joel).
+Run blower fans manually before shutdown tonight (Joel).
+Vacuum inside control cabinet at Site D every Saturday morning (Bryan).
+Remind myself to compliment Joel’s generator fix daily at 9am.
