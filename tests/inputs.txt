@@ -4,56 +4,56 @@ Call Lucky Electric next Monday at 9:30am to confirm the rewire.
 
 Text Joel at 7 tonight about the new flare readings.
 
-Pick up the Starlink from Site C on Thursday after lunch (Joel).
+Remind Joel to pick up the Starlink from Site C on Thursday after lunch.
 
-Follow up with LoneStar Permitting next Friday morning (Bryan).
+Assign a task to Bryan to follow up with LoneStar Permitting next Friday morning.
 
 Send the invoice for the flare skids in 2 hours.
 
 In 45 minutes, remind Joel to reboot the watchdog script on site A.
 
-In one week, test the Gen3 throttle config (Bryan).
+Assign a task to Bryan to test the Gen3 throttle config in one week.
 
-Call Upstream Data support on July 10th at 10am (Joel).
+Remind Joel to call Upstream Data support on July 10th at 10am.
 
 Confirm delivery window with trucking company July 15 at 2:30pm.
 
-Inspect vent stack heat discoloration this Saturday (Bryan).
+Assign a task to Bryan to inspect vent stack heat discoloration this Saturday.
 
-Pay the generator rental invoice tomorrow (Joel).
+Remind Joel to pay the generator rental invoice tomorrow.
 
 Finalize deal terms with power co-op by next Wednesday.
 
-Price out steel panels for Site D’s shelter sometime this week (Bryan).
+Have Bryan price out steel panels for Site D’s shelter sometime this week.
 
 Meet with Joel to review load-sharing logic Thursday afternoon.
 
 Add “re-anchor solar rig after storm” to my list.
 
-Replace padlock on Site B container (Joel).
+Joel needs to replace padlock on Site B container.
 
-Schedule flare maintenance walk for next week (Bryan).
+Task for Bryan: schedule flare maintenance walk for sometime next week.
 
 Pull uptime logs from all telemetry boxes every Friday at 5pm.
 
-In 2 weeks, confirm Joel rescheduled Site A fuel delivery from July 22 to July 25 (Bryan).
+Assign a task to Bryan to confirm Joel rescheduled Site A fuel delivery from July 22 to July 25 in 2 weeks.
 
-Remind Bryan tomorrow morning to remind me about the tax exemption doc (Joel).
+Remind Joel to remind Bryan tomorrow morning about the tax exemption doc.
 
-Check coolant every other day at 8am this month (Joel).
+Remind Joel to check coolant every other day at 8am this month.
 
-Renew generator insurance policy by July 30 (Bryan).
+Assign a task to Bryan to renew generator insurance policy by July 30.
 
-Run SHA-256 tuning scripts every Monday at 9am (Joel).
+Remind Joel to run SHA-256 tuning scripts every Monday at 9am.
 
-Pay the monthly storage unit bill on the 1st (Bryan).
+Assign a task to Bryan to pay the monthly storage unit bill on the 1st.
 
 Draft revised network topology diagram for Site C before Tuesday’s call.
 
-Submit final invoice for contractor welding work before Thursday EOD (Joel).
+Remind Joel to submit final invoice for contractor welding work before Thursday EOD.
 
-Run blower fans manually before shutdown tonight (Joel).
+Remind Joel to run blower fans manually before shutdown tonight.
 
-Vacuum inside control cabinet at Site D every Saturday morning (Bryan).
+Assign a task to Bryan to vacuum inside control cabinet at Site D every Saturday morning.
 
 Remind myself to compliment Joel’s generator fix daily at 9am.
