@@ -1,0 +1,74 @@
+### INPUT
+Text: "Remind Joel tomorrow at 8am to check the solar battery charge."
+### OUTPUT
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Check the solar battery charge",
+  "due_date": "2025-07-10",
+  "due_time": "08:00",
+  "reminder_date": "2025-07-10",
+  "reminder_time": "08:00",
+  "status": "pending",
+  "created_at": "2025-07-09T12:00"
+}
+
+### INPUT
+Text: "After lunch Thursday, tell Bryan to rewire the B-panel inverter at Site D."
+### OUTPUT
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Rewire the B-panel inverter",
+  "due_date": "2025-07-11",
+  "due_time": "13:00",
+  "reminder_date": "2025-07-11",
+  "reminder_time": "13:00",
+  "status": "pending",
+  "created_at": "2025-07-09T12:00",
+  "site": "Site D"
+}
+
+### INPUT
+Text: "Make sure to remind Joel 30 minutes before he needs to reset the firewall script at 4pm."
+### OUTPUT
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Reset the firewall script",
+  "due_date": "2025-07-09",
+  "due_time": "16:00",
+  "reminder_date": "2025-07-09",
+  "reminder_time": "15:30",
+  "status": "pending",
+  "created_at": "2025-07-09T12:00"
+}
+
+### INPUT
+Text: "Every weekday at 6:45am, Joel needs to check VPN tunnels before shift change."
+### OUTPUT
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Check VPN tunnels before shift change",
+  "due_date": "2025-07-10",
+  "due_time": "06:45",
+  "reminder_date": "2025-07-10",
+  "reminder_time": "06:45",
+  "repeat_interval": "weekdays",
+  "status": "pending",
+  "created_at": "2025-07-09T12:00"
+}
+
+### INPUT
+Text: "Have Bryan replace the rusted bolts on the Site B flare rig sometime this weekend."
+### OUTPUT
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Replace the rusted bolts on the flare rig",
+  "due_date": "2025-07-13",
+  "status": "pending",
+  "created_at": "2025-07-09T12:00",
+  "site": "Site B"
+}
