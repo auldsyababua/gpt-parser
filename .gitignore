@@ -1,0 +1,43 @@
+# Ignore Python cache and virtual environment files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+venv/
+.env
+.env.*
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore test output and coverage
+coverage/
+*.cover
+*.coverage
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+*.swp
+
+# Ignore Excel and other data files
+*.xlsx
+*.csv
+*.tsv
+
+# Ignore build and distribution folders
+build/
+dist/
+*.egg-info/
+
+# Ignore node modules (if any)
+node_modules/
+
+# Ignore Jupyter notebooks
+*.ipynb
+
+# Ignore tasks and secrets
+secrets.*
+tasks.xlsx
+
+# Add more patterns as needed for your project
