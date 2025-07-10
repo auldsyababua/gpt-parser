@@ -6,7 +6,6 @@ import time
 import logging
 from dotenv import load_dotenv
 from datetime import datetime, timezone
-from zoneinfo import ZoneInfo
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -180,7 +179,7 @@ def get_or_create_assistant():
 def parse_task(assistant, input_text, assigner="Colin"):
     """
     Uses the assistant to parse input text and returns the parsed JSON.
-    
+
     Args:
         assistant: The OpenAI assistant object
         input_text: The natural language task description
@@ -188,14 +187,16 @@ def parse_task(assistant, input_text, assigner="Colin"):
     """
     logger = logging.getLogger(__name__)
     logger.info(f"parse_task called with input: {input_text}")
-    
+
     # Get assigner's timezone
     assigner_tz = get_user_timezone(assigner)
-    
+
     # Inject current date in assigner's timezone into the prompt
     today_in_tz = datetime.now(assigner_tz)
     today_str = today_in_tz.strftime("%Y-%m-%d")
-    prompt_with_date = f"(Today's date is {today_str} in {assigner}'s timezone) {input_text}"
+    prompt_with_date = (
+        f"(Today's date is {today_str} in {assigner}'s timezone) {input_text}"
+    )
     print(f"\nProcessing input: '{prompt_with_date}'")
 
     assistant_id = assistant["id"]
@@ -279,10 +280,12 @@ def parse_task(assistant, input_text, assigner="Colin"):
             "%Y-%m-%dT%H:%M"
         )
         print(f"Set created_at to: {parsed_json['created_at']}")
-        
+
         # Apply timezone conversions
         parsed_json = process_task_with_timezones(parsed_json, assigner)
-        print(f"Applied timezone conversions for assignee: {parsed_json.get('assignee')}")
+        print(
+            f"Applied timezone conversions for assignee: {parsed_json.get('assignee')}"
+        )
 
         return parsed_json
 
@@ -299,44 +302,45 @@ def format_task_for_confirmation(parsed_json):
     Formats the parsed JSON into a human-readable format for user confirmation.
     """
     lines = []
-    
+
     # Task description
     lines.append(f"📋 Task: {parsed_json.get('task', 'N/A')}")
-    
+
     # Assignee
     lines.append(f"👤 Assigned to: {parsed_json.get('assignee', 'N/A')}")
-    
+
     # Get timezone info
-    tz_info = parsed_json.get('timezone_info', {})
-    assignee = parsed_json.get('assignee', 'N/A')
-    assignee_tz = tz_info.get('assignee_tz', 'UTC').split('/')[-1]  # Get last part of timezone name
-    
+    tz_info = parsed_json.get("timezone_info", {})
+    assignee = parsed_json.get("assignee", "N/A")
+
     # Due date and time
-    due_date = parsed_json.get('due_date', 'N/A')
-    due_time = parsed_json.get('due_time')
+    due_date = parsed_json.get("due_date", "N/A")
+    due_time = parsed_json.get("due_time")
     if due_time:
         lines.append(f"📅 Due by: {due_date} at {due_time} ({assignee}'s local time)")
     else:
         lines.append(f"📅 Due by: {due_date}")
-    
+
     # Reminder date and time
-    reminder_date = parsed_json.get('reminder_date')
-    reminder_time = parsed_json.get('reminder_time')
+    reminder_date = parsed_json.get("reminder_date")
+    reminder_time = parsed_json.get("reminder_time")
     if reminder_date and reminder_time:
-        lines.append(f"⏰ Reminder set for: {reminder_date} at {reminder_time} ({assignee}'s local time)")
+        lines.append(
+            f"⏰ Reminder set for: {reminder_date} at {reminder_time} ({assignee}'s local time)"
+        )
     elif reminder_date:
         lines.append(f"⏰ Reminder set for: {reminder_date}")
-    
+
     # Site (if present)
-    site = parsed_json.get('site')
+    site = parsed_json.get("site")
     if site:
         lines.append(f"📍 Site: {site}")
-    
+
     # Repeat interval (if present)
-    repeat_interval = parsed_json.get('repeat_interval')
+    repeat_interval = parsed_json.get("repeat_interval")
     if repeat_interval:
         lines.append(f"🔄 Repeats: {repeat_interval}")
-    
+
     return "\n".join(lines)
 
 
