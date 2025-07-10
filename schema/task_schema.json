@@ -9,9 +9,19 @@
       "task": { "type": "string" },
       "due_date": { "type": "string", "format": "date" },
       "due_time": { "type": "string", "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$" },
+      "reminder_date": { "type": "string", "format": "date" },
+      "reminder_time": { "type": "string", "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$" },
       "status": { "type": "string", "enum": ["pending"] },
       "created_at": { "type": "string", "format": "date-time" },
       "site": { "type": "string" },
-      "repeat_interval": { "type": "string" }
+      "repeat_interval": { "type": "string" },
+      "timezone_info": {
+        "type": "object",
+        "properties": {
+          "assigner_tz": { "type": "string" },
+          "assignee_tz": { "type": "string" },
+          "converted": { "type": "boolean" }
+        }
+      }
     }
   }
