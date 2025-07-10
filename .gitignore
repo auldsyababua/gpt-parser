@@ -44,3 +44,27 @@ tasks.xlsx
 
 # Log files
 logs/
+*.local.toml
+.ruff.local.toml
+.black.local.toml
+pyproject.local.toml
+*$py.class
+*.so
+.Python
+env/
+ENV/
+.venv
+.coverage
+.pytest_cache/
+.hypothesis/
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+.pyre/
+.vscode/settings.json
+.idea/
+*.swo
