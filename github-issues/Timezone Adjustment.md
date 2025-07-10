@@ -88,3 +88,21 @@ However, **both times are understood in Colin’s timezone (PDT)**, but Joel liv
 ---
 
 Let me know if you want this applied to the future automation pipeline or just added to schema/plumbing design now.
+
+---
+
+### 🔄 Update: Explicit Timezone Handling
+
+**Additional Requirement:**
+When a timezone is explicitly stated in the input (e.g., "4pm CST", "9am EST"), the system should:
+
+1. Parse and recognize the explicit timezone
+2. Use that timezone for the time calculation instead of defaulting to assigner's timezone
+3. Still convert to assignee's local timezone for display
+
+**Example:**
+- Input: "At 4pm CST tomorrow, remind Joel to check the oil"
+- System recognizes "CST" and interprets 4pm as Central Time
+- Converts to Joel's local time for the reminder (which happens to also be CST)
+
+This prevents confusion when assigners specify times in the recipient's timezone or any other explicit timezone.

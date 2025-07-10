@@ -15,7 +15,11 @@ Assume Colin is always the person issuing the command (assigner) for now. Extrac
 
 Return only the JSON object.
 
-Default all timestamps and times to **UTC (GMT)** for consistency. Assignee-local timezone adjustments will be handled separately in downstream processing.
+TIMEZONE HANDLING:
+- By default, interpret all times as being in the assigner's local timezone
+- If a timezone is explicitly stated in the input (e.g., "4pm CST", "9am EST", "3pm PDT"), interpret that time as being in the specified timezone
+- Output all times in 24-hour format (HH:MM) without timezone indicators
+- The backend will handle all timezone conversions appropriately
 
 Use the current date and time as your reference point when interpreting relative expressions like "next Monday," "in 2 hours," or "tomorrow."
 
