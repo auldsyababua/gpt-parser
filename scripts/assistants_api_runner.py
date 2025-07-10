@@ -3,6 +3,7 @@ import requests
 import os
 import sys
 import time
+import logging
 from dotenv import load_dotenv
 from datetime import datetime, timezone
 
@@ -174,6 +175,9 @@ def parse_and_send(assistant, input_text):
     """
     Uses the assistant to parse input text via direct HTTP calls.
     """
+    logger = logging.getLogger(__name__)
+    logger.info(f"parse_and_send called with input: {input_text}")
+    
     # Inject current date into the prompt
     today_str = datetime.now().strftime("%Y-%m-%d")
     prompt_with_date = f"(Today's date is {today_str}) {input_text}"
