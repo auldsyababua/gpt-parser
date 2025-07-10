@@ -28,6 +28,13 @@ if pgrep -f "telegram_bot.py" > /dev/null; then
 else
     # Start the bot with monitoring in background
     cd "$PROJECT_DIR"
+    
+    # Check if venv exists and use it
+    if [ -f "$PROJECT_DIR/venv/bin/activate" ]; then
+        source "$PROJECT_DIR/venv/bin/activate"
+        echo -e "\033[92mActivated virtual environment\033[0m"
+    fi
+    
     python scripts/run_bot_with_monitoring.py &
     BOT_PID=$!
     echo -e "\033[92mBot monitor started (PID: $BOT_PID)\033[0m"

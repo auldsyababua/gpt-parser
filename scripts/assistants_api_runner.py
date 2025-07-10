@@ -171,12 +171,12 @@ def get_or_create_assistant():
         sys.exit(1)
 
 
-def parse_and_send(assistant, input_text):
+def parse_task(assistant, input_text):
     """
-    Uses the assistant to parse input text via direct HTTP calls.
+    Uses the assistant to parse input text and returns the parsed JSON.
     """
     logger = logging.getLogger(__name__)
-    logger.info(f"parse_and_send called with input: {input_text}")
+    logger.info(f"parse_task called with input: {input_text}")
     
     # Inject current date into the prompt
     today_str = datetime.now().strftime("%Y-%m-%d")
@@ -265,7 +265,62 @@ def parse_and_send(assistant, input_text):
         )
         print(f"Set created_at to: {parsed_json['created_at']}")
 
-        # 6. POST to Google Apps Script
+        return parsed_json
+
+    except json.JSONDecodeError as e:
+        print(f"Error: Failed to decode JSON from assistant response. {e}")
+        raise
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        raise
+
+
+def format_task_for_confirmation(parsed_json):
+    """
+    Formats the parsed JSON into a human-readable format for user confirmation.
+    """
+    lines = []
+    
+    # Task description
+    lines.append(f"📋 Task: {parsed_json.get('task', 'N/A')}")
+    
+    # Assignee
+    lines.append(f"👤 Assigned to: {parsed_json.get('assignee', 'N/A')}")
+    
+    # Due date and time
+    due_date = parsed_json.get('due_date', 'N/A')
+    due_time = parsed_json.get('due_time')
+    if due_time:
+        lines.append(f"📅 Due by: {due_date} at {due_time} UTC")
+    else:
+        lines.append(f"📅 Due by: {due_date}")
+    
+    # Reminder date and time
+    reminder_date = parsed_json.get('reminder_date')
+    reminder_time = parsed_json.get('reminder_time')
+    if reminder_date and reminder_time:
+        lines.append(f"⏰ Reminder set for: {reminder_date} at {reminder_time} UTC")
+    elif reminder_date:
+        lines.append(f"⏰ Reminder set for: {reminder_date}")
+    
+    # Site (if present)
+    site = parsed_json.get('site')
+    if site:
+        lines.append(f"📍 Site: {site}")
+    
+    # Repeat interval (if present)
+    repeat_interval = parsed_json.get('repeat_interval')
+    if repeat_interval:
+        lines.append(f"🔄 Repeats: {repeat_interval}")
+    
+    return "\n".join(lines)
+
+
+def send_to_google_sheets(parsed_json):
+    """
+    Sends the parsed JSON to Google Apps Script.
+    """
+    try:
         print(f"Sending JSON to Google Apps Script URL: {GOOGLE_APPS_SCRIPT_URL}")
         gs_headers = {"Content-Type": "application/json"}
         log_interaction(
@@ -280,13 +335,10 @@ def parse_and_send(assistant, input_text):
             f"Successfully sent data. Response from Google Apps Script ({response.status_code}):"
         )
         print(response.text)
-
+        return True
     except requests.exceptions.RequestException as e:
         print(f"Error sending data to Google Apps Script: {e}")
-    except json.JSONDecodeError as e:
-        print(f"Error: Failed to decode JSON from assistant response. {e}")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        return False
 
 
 def main():
@@ -295,13 +347,23 @@ def main():
     if task_parser_assistant:
         if len(sys.argv) > 1:
             user_input = " ".join(sys.argv[1:])
-            parse_and_send(task_parser_assistant, user_input)
+            parsed_json = parse_task(task_parser_assistant, user_input)
+            if parsed_json:
+                print("\nFormatted task:")
+                print(format_task_for_confirmation(parsed_json))
+                print("\nJSON output:")
+                print(json.dumps(parsed_json, indent=2))
         else:
             print("\nNo input provided. Running with a default test case.")
             default_input = (
                 "Remind Joel tomorrow at 8am to check the solar battery charge."
             )
-            parse_and_send(task_parser_assistant, default_input)
+            parsed_json = parse_task(task_parser_assistant, default_input)
+            if parsed_json:
+                print("\nFormatted task:")
+                print(format_task_for_confirmation(parsed_json))
+                print("\nJSON output:")
+                print(json.dumps(parsed_json, indent=2))
 
 
 if __name__ == "__main__":

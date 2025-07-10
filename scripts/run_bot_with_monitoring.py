@@ -46,13 +46,25 @@ def monitor_process(proc, name):
 def run_bot():
     """Run the telegram bot with monitoring"""
     logger.info("🚀 Starting Telegram Bot with monitoring...")
+    
+    # Get the project root and venv python
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    venv_python = os.path.join(project_root, "venv", "bin", "python3")
+    
+    # Use venv python if it exists, otherwise fall back to system python
+    if os.path.exists(venv_python):
+        python_executable = venv_python
+        logger.info(f"Using venv Python: {python_executable}")
+    else:
+        python_executable = sys.executable
+        logger.warning(f"Venv not found, using system Python: {python_executable}")
 
     while True:
         try:
             # Start the bot process
             proc = subprocess.Popen(
                 [
-                    sys.executable,
+                    python_executable,
                     os.path.join(os.path.dirname(__file__), "telegram_bot.py"),
                 ],
                 stdout=subprocess.PIPE,
