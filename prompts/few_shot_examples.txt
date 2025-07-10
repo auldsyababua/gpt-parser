@@ -118,3 +118,33 @@ Text: "At 3pm PST, remind Joel to perform maintenance at 5pm PST at Site A"
   "created_at": "2025-07-09T12:00",
   "site": "Site A"
 }
+
+### INPUT
+Text: "Remind Joel to check the generators tomorrow at 2pm. User clarification: I meant 2pm CST, Joel's timezone"
+### OUTPUT
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Check the generators",
+  "due_date": "2025-07-10",
+  "due_time": "14:00",
+  "reminder_date": "2025-07-10",
+  "reminder_time": "14:00",
+  "status": "pending",
+  "created_at": "2025-07-09T12:00"
+}
+
+### INPUT
+Text: "Bryan needs to update the firewall tomorrow morning. User clarification: make it 10am instead of morning"
+### OUTPUT
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Update the firewall",
+  "due_date": "2025-07-10",
+  "due_time": "10:00",
+  "reminder_date": "2025-07-10",
+  "reminder_time": "10:00",
+  "status": "pending",
+  "created_at": "2025-07-09T12:00"
+}
