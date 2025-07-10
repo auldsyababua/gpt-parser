@@ -1,11 +1,11 @@
-### <¯ Enhancement: Add Structured Parsing Options for LLM Task Processing
+### <ï¿½ Enhancement: Add Structured Parsing Options for LLM Task Processing
 
 **Goal:**
 Provide the LLM with structured, selectable options for complex fields like repeat intervals, status updates, and other dynamic parameters to improve parsing accuracy and consistency.
 
 ---
 
-### >à Problem
+### >ï¿½ Problem
 
 Currently, the LLM interprets free-form text for complex fields like repeat intervals, resulting in inconsistent outputs. For example:
 
@@ -45,12 +45,12 @@ Break down into selectable components:
 
 Structured status transitions with required parameters:
 
-- `pending` ’ Default state
-- `complete` ’ Task finished
-- `deferred` ’ Requires: `new_date`, `new_time`, `reason` (optional)
-- `reassigned` ’ Requires: `new_assignee`, `handoff_notes` (optional)
-- `cancelled` ’ Requires: `reason`
-- `in_progress` ’ Optional: `completion_percentage`
+- `pending` ï¿½ Default state
+- `complete` ï¿½ Task finished
+- `deferred` ï¿½ Requires: `new_date`, `new_time`, `reason` (optional)
+- `reassigned` ï¿½ Requires: `new_assignee`, `handoff_notes` (optional)
+- `cancelled` ï¿½ Requires: `reason`
+- `in_progress` ï¿½ Optional: `completion_percentage`
 
 #### 3. **Priority Levels**
 
@@ -67,7 +67,7 @@ Structured status transitions with required parameters:
 
 ---
 
-### >ê Examples
+### >ï¿½ Examples
 
 **Input:**
 > "Send a letter at 3am every 3rd Thursday of the month"
@@ -125,34 +125,34 @@ Structured status transitions with required parameters:
 
 ---
 
-### =Ê Additional Option Categories to Consider
+### =ï¿½ Additional Option Categories to Consider
 
 1. **Duration Options**
    - `minutes` | `hours` | `days` | `weeks` | `months`
    - Compound durations: "2 hours 30 minutes"
 
 2. **Conditional Triggers**
-   - `if_not_complete_by` ’ time
-   - `if_no_response_from` ’ assignee
-   - `after_task_complete` ’ task_id
+   - `if_not_complete_by` ï¿½ time
+   - `if_no_response_from` ï¿½ assignee
+   - `after_task_complete` ï¿½ task_id
 
 3. **Escalation Paths**
-   - `notify_manager_after` ’ duration
-   - `escalate_to` ’ person/role
-   - `max_deferrals` ’ number
+   - `notify_manager_after` ï¿½ duration
+   - `escalate_to` ï¿½ person/role
+   - `max_deferrals` ï¿½ number
 
 4. **Location Constraints**
    - `onsite_only` | `remote_ok` | `specific_location`
    - GPS coordinates for field work
 
 5. **Resource Requirements**
-   - `requires_equipment` ’ list
-   - `requires_personnel` ’ count/roles
-   - `weather_dependent` ’ conditions
+   - `requires_equipment` ï¿½ list
+   - `requires_personnel` ï¿½ count/roles
+   - `weather_dependent` ï¿½ conditions
 
 ---
 
-### >ñ Dependencies
+### >ï¿½ Dependencies
 
 * Schema validation library (e.g., `jsonschema`, `zod`)
 * Enum management for database
@@ -160,9 +160,55 @@ Structured status transitions with required parameters:
 
 ---
 
-### <¯ Success Metrics
+### <ï¿½ Success Metrics
 
 - Reduction in parsing errors by 80%
 - Consistent output format across all tasks
 - Ability to programmatically validate all LLM outputs
 - Support for complex scheduling patterns without ambiguity
+
+---
+
+### â° Temporal Expression Parsing
+
+**Problem:** Inconsistent handling of time-based expressions
+
+**Examples of Issues:**
+- "end of the hour" â†’ Should parse to :59 of current hour (e.g., 18:59 if said at 18:35)
+- "end of tonight" â†’ Correctly parses to 23:59
+- "by morning" â†’ Ambiguous (6am? 8am? 9am?)
+- "in a bit" â†’ Completely subjective
+
+**Proposed Solutions:**
+
+1. **Define Standard Mappings**
+   ```json
+   {
+     "end_of_hour": "current_hour:59",
+     "end_of_day": "23:59",
+     "end_of_tonight": "23:59",
+     "end_of_morning": "11:59",
+     "end_of_afternoon": "17:59",
+     "end_of_evening": "20:59",
+     "end_of_business_day": "17:00",
+     "morning": "09:00",
+     "afternoon": "14:00",
+     "evening": "18:00",
+     "night": "21:00"
+   }
+   ```
+
+2. **Context Awareness Requirements**
+   - Always provide current time to LLM
+   - Include user's timezone in prompt
+   - Add examples of edge cases in system prompt
+
+3. **Validation Layer**
+   - Post-process LLM output to catch common patterns
+   - Flag ambiguous times for user confirmation
+   - Apply rule-based corrections for known patterns
+
+4. **Confidence Scoring**
+   - Have LLM indicate confidence in time parsing
+   - Low confidence â†’ request clarification
+   - High confidence â†’ proceed with parsed time
