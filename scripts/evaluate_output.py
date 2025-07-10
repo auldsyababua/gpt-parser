@@ -1,6 +1,4 @@
-```python
 import json
-from datetime import datetime
 from dateutil.parser import parse
 
 # === Load test inputs from file ===
@@ -13,10 +11,15 @@ with open("tests/inputs.txt", "r") as f:
 # Each output follows an "### OUTPUT" tag inside a single example block.
 with open("prompts/few_shot_examples.txt", "r") as f:
     expected_outputs = f.read().split("### INPUT")[1:]
-    expected_outputs = [i.split("### OUTPUT")[1].strip() for i in expected_outputs if "### OUTPUT" in i]
+    expected_outputs = [
+        i.split("### OUTPUT")[1].strip() for i in expected_outputs if "### OUTPUT" in i
+    ]
 
 # === Sanity check ===
-assert len(test_inputs) == len(expected_outputs), "Mismatch between test inputs and expected outputs."
+assert len(test_inputs) == len(
+    expected_outputs
+), "Mismatch between test inputs and expected outputs."
+
 
 # === Function: validate_fields ===
 # Compares actual and expected task objects on a fixed set of fields.
@@ -27,8 +30,12 @@ def validate_fields(expected, actual, fields):
             if field not in actual:
                 return False, f"Missing field: {field}"
             if expected[field] != actual[field]:
-                return False, f"Field mismatch for '{field}': expected {expected[field]} but got {actual[field]}"
+                return (
+                    False,
+                    f"Field mismatch for '{field}': expected {expected[field]} but got {actual[field]}",
+                )
     return True, ""
+
 
 # === Function: normalize_datetime ===
 # Ensures date-like fields (due_date, reminder_date) are in YYYY-MM-DD format.
@@ -38,9 +45,10 @@ def normalize_datetime(obj):
         if key in obj:
             try:
                 obj[key] = str(parse(obj[key]).date()) if "date" in key else obj[key]
-            except:
+            except Exception:
                 pass  # Fallback: leave it unchanged if it can't parse
     return obj
+
 
 # === Main Evaluation Loop ===
 # For each input:
@@ -66,8 +74,17 @@ for i, (input_text, expected_json) in enumerate(zip(test_inputs, expected_output
             actual["reminder_date"] = actual["due_date"]
 
         # === Validate all fields including new reminder fields ===
-        fields_to_check = ["assignee", "assigner", "task", "due_date", "due_time",
-                           "reminder_date", "reminder_time", "status", "created_at"]
+        fields_to_check = [
+            "assignee",
+            "assigner",
+            "task",
+            "due_date",
+            "due_time",
+            "reminder_date",
+            "reminder_time",
+            "status",
+            "created_at",
+        ]
         ok, message = validate_fields(expected, actual, fields_to_check)
 
         if not ok:
@@ -77,4 +94,3 @@ for i, (input_text, expected_json) in enumerate(zip(test_inputs, expected_output
 
     except Exception as e:
         print(f"❌ Error: {e}")
-```
