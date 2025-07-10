@@ -212,3 +212,44 @@ Structured status transitions with required parameters:
    - Have LLM indicate confidence in time parsing
    - Low confidence → request clarification
    - High confidence → proceed with parsed time
+
+---
+
+### 👤 Task Perspective Normalization
+
+**Problem:** Tasks are written from assigner's perspective instead of assignee's perspective
+
+**Example:**
+```
+Input: "at 5pm tomorrow, tell van to see her mom tomorrow"
+Current output: "see her mom" (incorrect - third person)
+Expected output: "see your mom" (correct - second person)
+```
+
+**Pronoun Transformation Rules:**
+
+1. **Third to Second Person Conversion**
+   ```
+   her/his → your
+   she/he → you
+   them → you
+   their → your
+   Van's/Joel's → your (when assignee matches)
+   ```
+
+2. **Context-Aware Examples**
+   - "tell Joel to check his email" → "check your email" 
+   - "remind Bryan to call his client" → "call your client"
+   - "have Van see her mom" → "see your mom"
+   - "tell them to submit their report" → "submit your report"
+
+3. **Name Reference Handling**
+   - "tell Van to call Van's mom" → "call your mom"
+   - "remind Joel about Joel's meeting" → "attend your meeting"
+   - "have Bryan update Bryan's calendar" → "update your calendar"
+
+4. **Implementation Strategy**
+   - Add instruction: "Write all tasks as direct commands to the assignee"
+   - Include examples in system prompt showing perspective shifts
+   - Post-process to catch common pronoun patterns
+   - Validate that task doesn't contain assignee's name (unless referring to someone else)
