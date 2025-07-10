@@ -8,11 +8,12 @@ from telegram.ext import (
     MessageHandler,
     filters,
     ContextTypes,
+    ConversationHandler,
 )
 from dotenv import load_dotenv
 
 # Import the assistant runner functions
-from assistants_api_runner import get_or_create_assistant, parse_and_send
+from assistants_api_runner import get_or_create_assistant, parse_task, format_task_for_confirmation, send_to_google_sheets
 
 # --- Configuration ---
 load_dotenv()
@@ -40,6 +41,10 @@ logger = logging.getLogger(__name__)
 # We will store the assistant object globally since bot_data usage has changed
 assistant = None
 
+# Conversation states
+AWAITING_CONFIRMATION = 1
+AWAITING_CLARIFICATION = 2
+
 
 # --- Bot Handlers ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -50,7 +55,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Handles incoming text messages and passes them to the task parser."""
     user_message = update.message.text
     logger.info(
@@ -64,21 +69,102 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text(
             "Assistant is not initialized. Please wait a moment and try again."
         )
-        return
+        return ConversationHandler.END
 
     await update.message.reply_text(f"Processing your request: '{user_message}'...")
 
     try:
         # Run the parsing function in a separate thread to avoid blocking the bot
-        logger.info("Starting parse_and_send in executor...")
+        logger.info("Starting parse_task in executor...")
         loop = asyncio.get_running_loop()
-        await loop.run_in_executor(None, parse_and_send, assistant, user_message)
-        logger.info("parse_and_send completed successfully")
-        await update.message.reply_text("✅ Task created successfully!")
-        logger.info("Success message sent to user")
+        parsed_json = await loop.run_in_executor(None, parse_task, assistant, user_message)
+        logger.info("parse_task completed successfully")
+        
+        # Store the parsed JSON in context for later use
+        context.user_data['parsed_json'] = parsed_json
+        context.user_data['original_message'] = user_message
+        
+        # Format the task for confirmation
+        formatted_task = format_task_for_confirmation(parsed_json)
+        
+        # Ask for confirmation
+        confirmation_message = f"I've parsed your task:\n\n{formatted_task}\n\n✅ Reply 'yes' to confirm\n❌ Reply 'no' to cancel\n✏️ Or describe what needs to be changed"
+        await update.message.reply_text(confirmation_message)
+        
+        return AWAITING_CONFIRMATION
+        
     except Exception as e:
         logger.error(f"Error processing task: {e}", exc_info=True)
         await update.message.reply_text(f"❌ An error occurred: {e}")
+        return ConversationHandler.END
+
+
+async def handle_confirmation(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Handles the user's confirmation response."""
+    response = update.message.text.lower().strip()
+    logger.info(f"Received confirmation response: {response}")
+    
+    if response in ['yes', 'y', 'confirm', 'ok', 'correct']:
+        # User confirmed - send to Google Sheets
+        parsed_json = context.user_data.get('parsed_json')
+        if not parsed_json:
+            await update.message.reply_text("❌ Error: No task data found. Please try again.")
+            return ConversationHandler.END
+            
+        try:
+            await update.message.reply_text("📤 Sending task to Google Sheets...")
+            loop = asyncio.get_running_loop()
+            success = await loop.run_in_executor(None, send_to_google_sheets, parsed_json)
+            
+            if success:
+                await update.message.reply_text("✅ Task created successfully!")
+            else:
+                await update.message.reply_text("❌ Failed to send task to Google Sheets. Please try again.")
+                
+        except Exception as e:
+            logger.error(f"Error sending to Google Sheets: {e}", exc_info=True)
+            await update.message.reply_text(f"❌ An error occurred: {e}")
+            
+        return ConversationHandler.END
+        
+    elif response in ['no', 'n', 'cancel', 'stop']:
+        # User cancelled
+        await update.message.reply_text("❌ Task cancelled. Send me a new task when you're ready.")
+        return ConversationHandler.END
+        
+    else:
+        # User wants to clarify/modify
+        context.user_data['clarification'] = update.message.text
+        await update.message.reply_text("📝 I'll update the task based on your feedback. Processing...")
+        
+        # Combine original message with clarification
+        original = context.user_data.get('original_message', '')
+        combined_message = f"{original}. User clarification: {update.message.text}"
+        
+        try:
+            loop = asyncio.get_running_loop()
+            parsed_json = await loop.run_in_executor(None, parse_task, assistant, combined_message)
+            
+            # Store the updated parsed JSON
+            context.user_data['parsed_json'] = parsed_json
+            
+            # Format and show the updated task
+            formatted_task = format_task_for_confirmation(parsed_json)
+            confirmation_message = f"I've updated the task:\n\n{formatted_task}\n\n✅ Reply 'yes' to confirm\n❌ Reply 'no' to cancel\n✏️ Or describe what needs to be changed"
+            await update.message.reply_text(confirmation_message)
+            
+            return AWAITING_CONFIRMATION
+            
+        except Exception as e:
+            logger.error(f"Error reprocessing task: {e}", exc_info=True)
+            await update.message.reply_text(f"❌ An error occurred while updating the task: {e}")
+            return ConversationHandler.END
+
+
+async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """Cancels the current conversation."""
+    await update.message.reply_text("❌ Task cancelled. Send me a new task when you're ready.")
+    return ConversationHandler.END
 
 
 def main() -> None:
@@ -104,10 +190,18 @@ def main() -> None:
     # on different commands - answer in Telegram
     application.add_handler(CommandHandler("start", start))
 
-    # on non command i.e message - handle the message from Telegram
-    application.add_handler(
-        MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)
+    # Create conversation handler for task processing
+    conv_handler = ConversationHandler(
+        entry_points=[MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)],
+        states={
+            AWAITING_CONFIRMATION: [
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_confirmation)
+            ],
+        },
+        fallbacks=[CommandHandler("cancel", cancel)],
     )
+    
+    application.add_handler(conv_handler)
 
     # Run the bot until the user presses Ctrl-C
     logger.info("Starting bot polling...")
