@@ -22,7 +22,7 @@ if not OPENAI_API_KEY:
 
 GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZZkhc3f9nP4IcllbuH24c22D-nlsWrlOEAWc0sr-VNxuiWKLKhsx96W1-6koShzsxTg/exec"
 ASSISTANT_NAME = "Task Parser v7"
-ASSISTANT_MODEL = "gpt-4-turbo-preview"
+ASSISTANT_MODEL = "gpt-4o-mini"
 SYSTEM_PROMPT_FILE = os.path.join(
     os.path.dirname(__file__), "..", "prompts", "system_prompt.txt"
 )
@@ -83,13 +83,13 @@ def get_or_create_assistant():
     try:
         with open(SYSTEM_PROMPT_FILE, "r") as f:
             system_prompt = f.read()
-        
+
         with open(FEW_SHOT_EXAMPLES_FILE, "r") as f:
             few_shot_examples = f.read()
-        
+
         # Combine prompts with clear separation
         combined_prompt = f"{system_prompt}\n\n## Examples:\n\n{few_shot_examples}"
-        
+
     except Exception as e:
         print(f"Error loading prompt files: {e}")
         sys.exit(1)
@@ -108,7 +108,7 @@ def get_or_create_assistant():
                 update_url = f"{OPENAI_API_BASE_URL}/assistants/{assistant['id']}"
                 update_payload = {
                     "instructions": combined_prompt,
-                    "tools": []  # No file search needed
+                    "tools": [],  # No file search needed
                 }
                 update_response = api_request(
                     "post", update_url, headers=HEADERS, json=update_payload
@@ -153,43 +153,49 @@ def parse_task(assistant, input_text, assigner="Colin"):
     today_in_tz = datetime.now(assigner_tz)
     today_str = today_in_tz.strftime("%Y-%m-%d")
     tz_abbr = today_in_tz.strftime("%Z")
-    
+
     # Pre-process temporal expressions
     processor = TemporalProcessor(default_timezone=str(assigner_tz))
     start_time = time.time()
     preprocessed = processor.preprocess(input_text, reference_time=today_in_tz)
     preprocess_time = time.time() - start_time
-    
-    logger.info(f"Preprocessing took {preprocess_time:.3f}s, confidence: {preprocessed['confidence']}")
-    
+
+    logger.info(
+        f"Preprocessing took {preprocess_time:.3f}s, confidence: {preprocessed['confidence']}"
+    )
+
     # Build prompt based on preprocessing results
-    if preprocessed['confidence'] >= 0.7 and preprocessed['temporal_data']:
+    if preprocessed["confidence"] >= 0.7 and preprocessed["temporal_data"]:
         # High confidence - send structured data
-        temporal_info = preprocessed['temporal_data']
+        temporal_info = preprocessed["temporal_data"]
         prompt_parts = [
             f"(Today's date is {today_str} in {assigner}'s timezone: {tz_abbr})",
             f"Task: {preprocessed['processed_text']}",
         ]
-        
+
         # Add pre-parsed temporal data
-        if 'due_date' in temporal_info:
+        if "due_date" in temporal_info:
             prompt_parts.append(f"Pre-parsed due date: {temporal_info['due_date']}")
-        if 'due_time' in temporal_info:
+        if "due_time" in temporal_info:
             prompt_parts.append(f"Pre-parsed due time: {temporal_info['due_time']}")
-        if 'reminder_time' in temporal_info and temporal_info.get('reminder_time') != temporal_info.get('due_time'):
-            prompt_parts.append(f"Pre-parsed reminder time: {temporal_info['reminder_time']}")
-        if 'timezone_context' in temporal_info:
-            prompt_parts.append(f"Detected timezone: {temporal_info['timezone_context']}")
-        
+        if "reminder_time" in temporal_info and temporal_info.get(
+            "reminder_time"
+        ) != temporal_info.get("due_time"):
+            prompt_parts.append(
+                f"Pre-parsed reminder time: {temporal_info['reminder_time']}"
+            )
+        if "timezone_context" in temporal_info:
+            prompt_parts.append(
+                f"Detected timezone: {temporal_info['timezone_context']}"
+            )
+
         prompt_with_date = "\n".join(prompt_parts)
         print(f"\nHigh-confidence preprocessing ({preprocessed['confidence']:.1%})")
     else:
         # Low confidence - fall back to original approach
-        prompt_with_date = (
-            f"(Today's date is {today_str} in {assigner}'s timezone: {tz_abbr}) {input_text}"
-        )
+        prompt_with_date = f"(Today's date is {today_str} in {assigner}'s timezone: {tz_abbr}) {input_text}"
         print(f"\nLow-confidence preprocessing, using original approach")
-    
+
     print(f"Processing input: '{prompt_with_date}'")
 
     assistant_id = assistant["id"]
@@ -197,9 +203,7 @@ def parse_task(assistant, input_text, assigner="Colin"):
     try:
         # 1. Create a thread
         threads_url = f"{OPENAI_API_BASE_URL}/threads"
-        thread_payload = {
-            "messages": [{"role": "user", "content": prompt_with_date}]
-        }
+        thread_payload = {"messages": [{"role": "user", "content": prompt_with_date}]}
         thread_response = api_request(
             "post", threads_url, headers=HEADERS, json=thread_payload
         )
@@ -270,25 +274,27 @@ def parse_task(assistant, input_text, assigner="Colin"):
         print(
             f"Applied timezone conversions for assignee: {parsed_json.get('assignee')}"
         )
-        
+
         # Add original prompt (without the date injection)
         parsed_json["original_prompt"] = input_text
-        
+
         # Initialize corrections_history as empty (will be populated by telegram bot if needed)
         if "corrections_history" not in parsed_json:
             parsed_json["corrections_history"] = ""
-        
+
         # Add preprocessing metadata if high confidence was used
-        if preprocessed['confidence'] >= 0.7:
+        if preprocessed["confidence"] >= 0.7:
             parsed_json["_preprocessing"] = {
                 "used": True,
-                "confidence": preprocessed['confidence'],
-                "time_saved": preprocess_time
+                "confidence": preprocessed["confidence"],
+                "time_saved": preprocess_time,
             }
-        
+
         # Log total processing time
         total_time = time.time() - start_time
-        logger.info(f"Total parse_task time: {total_time:.2f}s (preprocessing: {preprocess_time:.3f}s)")
+        logger.info(
+            f"Total parse_task time: {total_time:.2f}s (preprocessing: {preprocess_time:.3f}s)"
+        )
 
         return parsed_json
 

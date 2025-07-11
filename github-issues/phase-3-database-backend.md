@@ -47,6 +47,14 @@ Replace Google Sheets with a proper PostgreSQL database to enable advanced query
    - Disaster recovery procedures
    - Files: Create `database/backup.py`
 
+6. **BERT-Based Intent Parsing (ML Pipeline)**
+   - Local intent classification to reduce API dependency
+   - Named Entity Recognition for assignees/sites/equipment
+   - 85%+ accuracy on common patterns
+   - <100ms inference time
+   - Falls back to LLM for complex/ambiguous inputs
+   - Files: Create `utils/bert_parser.py`, `models/train_intent_classifier.py`
+
 ### 📊 Database Schema Design
 
 ```sql
@@ -189,12 +197,42 @@ CREATE TRIGGER update_tasks_updated_at
            """Update task status with audit trail"""
    ```
 
+3. **BERT Intent Parser Implementation**
+   ```python
+   # utils/bert_parser.py
+   class BERTTaskParser:
+       def __init__(self):
+           self.intent_classifier = pipeline(
+               "text-classification", 
+               model="./models/task-intent-distilbert"
+           )
+           self.ner = pipeline(
+               "ner", 
+               model="./models/task-ner-bert"
+           )
+           
+       def parse(self, text: str, temporal_data: dict) -> dict:
+           # Classify intent (oil_check, restart, etc.)
+           intent = self.intent_classifier(text)[0]
+           
+           # Extract entities (Bryan, Site A, generator)
+           entities = self.ner(text)
+           
+           # Map to task schema
+           if intent['score'] > 0.85:
+               return self.build_task_json(intent, entities, temporal_data)
+           else:
+               return {"use_llm": True, "reason": "Low confidence"}
+   ```
+
 ### 🎯 Success Metrics
 - [ ] Zero data loss during migration
 - [ ] All queries complete in < 200ms
 - [ ] 99.9% uptime
 - [ ] Automated backups running daily
 - [ ] Support for 1M+ tasks
+- [ ] BERT parser handles 60%+ of inputs locally
+- [ ] 50%+ reduction in API costs
 
 ### 🚨 Risk Mitigation
 1. **Data Loss**: Triple backup strategy (DB, filesystem, cloud)
