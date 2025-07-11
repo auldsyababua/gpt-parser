@@ -1,6 +1,8 @@
 import os
 import logging
 import asyncio
+import json
+from datetime import datetime
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -148,23 +150,39 @@ async def handle_confirmation(
 
     else:
         # User wants to clarify/modify
-        context.user_data["clarification"] = update.message.text
+        clarification = update.message.text
+        context.user_data["clarification"] = clarification
         await update.message.reply_text(
             "📝 I'll update the task based on your feedback. Processing..."
         )
 
+        # Track correction history
+        corrections_history = context.user_data.get("corrections_history", [])
+        
         # Combine original message with clarification
         original = context.user_data.get("original_message", "")
-        combined_message = f"{original}. User clarification: {update.message.text}"
+        combined_message = f"{original}. User clarification: {clarification}"
 
         try:
             loop = asyncio.get_running_loop()
             parsed_json = await loop.run_in_executor(
                 None, parse_task, assistant, combined_message
             )
-
-            # Store the updated parsed JSON
+            
+            # Add to corrections history
+            correction_entry = {
+                "user_correction": clarification,
+                "bot_response": format_task_for_confirmation(parsed_json),
+                "timestamp": datetime.now().isoformat()
+            }
+            corrections_history.append(correction_entry)
+            
+            # Store correction history in parsed JSON
+            parsed_json["corrections_history"] = json.dumps(corrections_history)
+            
+            # Store the updated parsed JSON and history
             context.user_data["parsed_json"] = parsed_json
+            context.user_data["corrections_history"] = corrections_history
 
             # Format and show the updated task
             formatted_task = format_task_for_confirmation(parsed_json)

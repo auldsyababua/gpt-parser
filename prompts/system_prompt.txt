@@ -12,14 +12,18 @@ Assume Colin is always the person issuing the command (assigner) for now. Extrac
 - created_at: Current timestamp in YYYY-MM-DDTHH:MM format (default to GMT/UTC)
 - site: Optional (e.g., "Site A", "Site B")
 - repeat_interval: Optional (e.g., "daily", "weekly", "weekdays")
+- timezone_context: REQUIRED - Either the explicit timezone mentioned (e.g., "CST", "PDT") or "assigner_local" if no timezone specified
+- reasoning: REQUIRED - Explain your parsing decisions, especially for times and dates
 
 Return only the JSON object.
 
 TIMEZONE HANDLING:
-- By default, interpret all times as being in the assigner's local timezone
-- If a timezone is explicitly stated in the input (e.g., "4pm CST", "9am EST", "3pm PDT"), interpret that time as being in the specified timezone
-- Output all times in 24-hour format (HH:MM) without timezone indicators
-- The backend will handle all timezone conversions appropriately
+- Output times exactly as specified in 24-hour format (e.g., "4pm" → "16:00")
+- If a timezone is explicitly stated (e.g., "4pm CST"), note in reasoning that time is in CST
+- If no timezone is stated, note in reasoning that time is assumed to be in assigner's timezone
+- Add a timezone_context field indicating what timezone the times are in (e.g., "CST", "PDT", "assigner_local")
+- Recognize timezone variations: "Houston time" → "CST", "Chicago time" → "CST", "LA time" → "PST", "NYC time" → "EST"
+- For informal references like "Central", "Pacific", "Eastern", use the full abbreviation (CST, PST, EST)
 
 Use the current date and time as your reference point when interpreting relative expressions like "next Monday," "in 2 hours," or "tomorrow."
 
