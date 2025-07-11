@@ -81,12 +81,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         # Run the parsing function in a separate thread to avoid blocking the bot
         logger.info("Starting parse_task in executor...")
         loop = asyncio.get_running_loop()
-        
+
         # Add timeout to prevent hanging
-        logger.info(f"Calling parse_task with assistant={assistant.get('id') if assistant else 'None'}, message='{user_message}'")
+        logger.info(
+            f"Calling parse_task with assistant={assistant.get('id') if assistant else 'None'}, message='{user_message}'"
+        )
         parsed_json = await asyncio.wait_for(
             loop.run_in_executor(None, parse_task, assistant, user_message),
-            timeout=30.0  # 30 second timeout
+            timeout=30.0,  # 30 second timeout
         )
         logger.info(f"parse_task completed successfully: {parsed_json}")
 
@@ -168,7 +170,7 @@ async def handle_confirmation(
 
         # Track correction history
         corrections_history = context.user_data.get("corrections_history", [])
-        
+
         # Combine original message with clarification
         original = context.user_data.get("original_message", "")
         combined_message = f"{original}. User clarification: {clarification}"
@@ -178,18 +180,18 @@ async def handle_confirmation(
             parsed_json = await loop.run_in_executor(
                 None, parse_task, assistant, combined_message
             )
-            
+
             # Add to corrections history
             correction_entry = {
                 "user_correction": clarification,
                 "bot_response": format_task_for_confirmation(parsed_json),
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             }
             corrections_history.append(correction_entry)
-            
+
             # Store correction history in parsed JSON
             parsed_json["corrections_history"] = json.dumps(corrections_history)
-            
+
             # Store the updated parsed JSON and history
             context.user_data["parsed_json"] = parsed_json
             context.user_data["corrections_history"] = corrections_history

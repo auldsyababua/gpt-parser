@@ -60,10 +60,10 @@ def process_task_with_timezones(task_json: Dict, assigner: str = "Colin") -> Dic
         Updated task dictionary with timezone-adjusted times
     """
     assignee = task_json.get("assignee", "Colin")
-    
+
     # Check timezone context from LLM
     timezone_context = task_json.get("timezone_context", "assigner_local")
-    
+
     # If times are already in a specific timezone (not assigner's local), don't convert
     if timezone_context != "assigner_local":
         # Just add timezone info for reference
