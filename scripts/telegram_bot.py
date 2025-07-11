@@ -1,6 +1,8 @@
 import os
 import logging
 import asyncio
+import json
+from datetime import datetime
 from telegram import Update
 from telegram.ext import (
     Application,
@@ -79,10 +81,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         # Run the parsing function in a separate thread to avoid blocking the bot
         logger.info("Starting parse_task in executor...")
         loop = asyncio.get_running_loop()
-        parsed_json = await loop.run_in_executor(
-            None, parse_task, assistant, user_message
+        
+        # Add timeout to prevent hanging
+        logger.info(f"Calling parse_task with assistant={assistant.get('id') if assistant else 'None'}, message='{user_message}'")
+        parsed_json = await asyncio.wait_for(
+            loop.run_in_executor(None, parse_task, assistant, user_message),
+            timeout=30.0  # 30 second timeout
         )
-        logger.info("parse_task completed successfully")
+        logger.info(f"parse_task completed successfully: {parsed_json}")
 
         # Store the parsed JSON in context for later use
         context.user_data["parsed_json"] = parsed_json
@@ -97,6 +103,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
         return AWAITING_CONFIRMATION
 
+    except asyncio.TimeoutError:
+        logger.error("parse_task timed out after 30 seconds")
+        await update.message.reply_text(
+            "❌ Request timed out. The OpenAI API might be slow. Please try again."
+        )
+        return ConversationHandler.END
     except Exception as e:
         logger.error(f"Error processing task: {e}", exc_info=True)
         await update.message.reply_text(f"❌ An error occurred: {e}")
@@ -148,23 +160,39 @@ async def handle_confirmation(
 
     else:
         # User wants to clarify/modify
-        context.user_data["clarification"] = update.message.text
+        clarification = update.message.text
+        context.user_data["clarification"] = clarification
         await update.message.reply_text(
             "📝 I'll update the task based on your feedback. Processing..."
         )
 
+        # Track correction history
+        corrections_history = context.user_data.get("corrections_history", [])
+        
         # Combine original message with clarification
         original = context.user_data.get("original_message", "")
-        combined_message = f"{original}. User clarification: {update.message.text}"
+        combined_message = f"{original}. User clarification: {clarification}"
 
         try:
             loop = asyncio.get_running_loop()
             parsed_json = await loop.run_in_executor(
                 None, parse_task, assistant, combined_message
             )
-
-            # Store the updated parsed JSON
+            
+            # Add to corrections history
+            correction_entry = {
+                "user_correction": clarification,
+                "bot_response": format_task_for_confirmation(parsed_json),
+                "timestamp": datetime.now().isoformat()
+            }
+            corrections_history.append(correction_entry)
+            
+            # Store correction history in parsed JSON
+            parsed_json["corrections_history"] = json.dumps(corrections_history)
+            
+            # Store the updated parsed JSON and history
             context.user_data["parsed_json"] = parsed_json
+            context.user_data["corrections_history"] = corrections_history
 
             # Format and show the updated task
             formatted_task = format_task_for_confirmation(parsed_json)
@@ -203,13 +231,17 @@ def main() -> None:
 
     # Initialize the assistant
     logger.info("Initializing OpenAI Assistant...")
-    assistant = get_or_create_assistant()
-    if assistant:
-        logger.info("Assistant initialized successfully.")
-    else:
-        logger.error(
-            "Failed to initialize assistant. The bot may not function correctly."
-        )
+    try:
+        assistant = get_or_create_assistant()
+        if assistant:
+            logger.info(f"Assistant initialized successfully: {assistant.get('id')}")
+        else:
+            logger.error(
+                "Failed to initialize assistant. The bot may not function correctly."
+            )
+    except Exception as e:
+        logger.error(f"Exception initializing assistant: {e}", exc_info=True)
+        raise
 
     # on different commands - answer in Telegram
     application.add_handler(CommandHandler("start", start))

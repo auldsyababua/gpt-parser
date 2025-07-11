@@ -3,13 +3,24 @@
 ## Overview
 This phase adds support for multiple users with different timezones and roles, ensuring tasks are processed correctly regardless of who creates them or when.
 
-## Status: NOT STARTED
+## Status: PARTIALLY COMPLETE
 
 ### Prerequisites
 - Phase 1 must be complete with 90%+ test accuracy
 - Temporal expression parsing must be reliable
 
-### 🎯 Target Features
+### ✅ Completed Features
+
+1. **Timezone-Aware Processing** (Completed in improve-system-prompts branch)
+   - ✅ Parse times with explicit timezone mentions (CST, PDT, EST)
+   - ✅ Handle city-based timezone references ("Houston time" → CST)
+   - ✅ Store timezone context with each task
+   - ✅ Added timezone_info structure tracking assigner/assignee timezones
+   - ✅ Google Sheets updated with new columns: timezone_context, reasoning
+   - ✅ 30+ timezone test cases passing
+   - Files implemented: `timezone_config.py`, `timezone_converter.py`
+
+### 🎯 Remaining Features
 
 1. **User Profile System**
    - Store user preferences (timezone, default site, role)
@@ -17,23 +28,13 @@ This phase adds support for multiple users with different timezones and roles, e
    - Support for adding new users without code changes
    - Files: Create `user_manager.py`, update database schema
 
-2. **Timezone-Aware Processing**
-   - Reference: [Timezone Adjustment.md](./Timezone%20Adjustment.md)
-   - Current issue: All times interpreted in Colin's timezone (PDT)
-   - Solution: Parse in assigner TZ → store in UTC → display in assignee TZ
-   - Known timezones:
-     - Colin: PDT (UTC-7)
-     - Joel: CST (UTC-5)
-     - Bryan: TBD
-   - Files: Create `timezone_handler.py`
-
-3. **Multiple Assigners Support**
+2. **Multiple Assigners Support**
    - Remove hardcoded "Colin" as assigner
    - Detect assigner from Telegram user
    - Support delegation chains (Colin → Bryan → Joel)
    - Files: Update `system_prompt.txt`, `assistants_api_runner.py`
 
-4. **Structured Options Implementation**
+3. **Structured Options Implementation**
    - Reference: [Better Parsing Options.md](./Better%20Parsing%20Options.md)
    - Replace free-form fields with structured options:
      - Repeat intervals: ["never", "daily", "weekly", "weekdays", "monthly"]
@@ -41,7 +42,7 @@ This phase adds support for multiple users with different timezones and roles, e
      - Task status: ["pending", "in_progress", "completed", "cancelled"]
    - Files: Update `task_schema.json`, create `schema_validator.py`
 
-5. **Enhanced Validation**
+4. **Enhanced Validation**
    - Validate all LLM outputs against schema
    - Reject invalid JSON before showing to user
    - Provide specific error messages

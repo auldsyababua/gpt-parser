@@ -94,9 +94,54 @@ Parsed: xx:xx (failed - should be 18:59)
 
 ---
 
+### 🌐 Timezone Expression Handling
+
+**Additional Complexity:** Various timezone invocations need consistent handling
+
+**Common Variations:**
+- Explicit abbreviations: "CST", "PDT", "EST"
+- Full names: "Central Standard Time", "Pacific Daylight Time"
+- Regional references: "Houston time", "Chicago time", "LA time"
+- Informal: "Central", "Pacific", "Eastern"
+- Mixed case: "central standard", "CENTRAL", "Central"
+
+**Proposed Handling:**
+```python
+timezone_mappings = {
+    # Abbreviations
+    "CST": "America/Chicago",
+    "CDT": "America/Chicago",
+    "EST": "America/New_York",
+    "EDT": "America/New_York",
+    "PST": "America/Los_Angeles",
+    "PDT": "America/Los_Angeles",
+    
+    # Full names (case insensitive)
+    "central": "America/Chicago",
+    "eastern": "America/New_York", 
+    "pacific": "America/Los_Angeles",
+    "mountain": "America/Denver",
+    
+    # City references
+    "houston time": "America/Chicago",
+    "chicago time": "America/Chicago",
+    "la time": "America/Los_Angeles",
+    "nyc time": "America/New_York",
+}
+```
+
+**Implementation Notes:**
+- Normalize input to lowercase before matching
+- Strip "time", "standard", "daylight" suffixes
+- Default to assigner's timezone if no match found
+- Add timezone_context field to indicate explicit timezone usage
+
+---
+
 ### 🎯 Success Criteria
 
 - 95% consistent parsing for common expressions
 - Clear handling of ambiguous cases
 - User-configurable defaults for subjective times
 - Comprehensive test coverage for edge cases
+- Robust timezone variation handling

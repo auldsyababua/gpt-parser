@@ -1,0 +1,48 @@
+# Timezone and Temporal Expression Test Cases
+# Each line has: Input | Expected reminder_time | Expected due_time | Notes
+
+## Explicit Timezone Tests
+at 4pm CST tomorrow, remind Joel to check the oil levels | 16:00 | 16:00 | CST explicitly stated
+Bryan needs to restart the miners at 9am EST on Friday | 09:00 | 09:00 | EST explicitly stated
+At 3pm PST, remind Joel to perform maintenance at 5pm PST | 15:00 | 17:00 | Both times in PST
+at 2pm CST tomorrow, remind Joel to check the oil cans by 5pm | 14:00 | 17:00 | Reminder in CST, due time inherits CST
+Remind Joel at 2pm PDT to check batteries at 4pm PDT | 14:00 | 16:00 | Both times PDT
+
+## Mixed/Ambiguous Timezone
+Remind Joel in his timezone at 4pm to check the batteries | 16:00 | 16:00 | "his timezone" = Joel's (CST)
+Bryan has a task due at 9am California time | 09:00 | 09:00 | California time = PDT/PST
+at 4pm tomorrow, remind Joel to check oil | 16:00 | 16:00 | No timezone = assigner's timezone
+
+## Complex Reminder/Due Patterns
+Remind Joel 30 minutes before the 4pm maintenance window | 15:30 | 16:00 | Offset reminder
+At 2pm tomorrow, remind Bryan about the 5pm meeting | 14:00 | 17:00 | Different reminder/due times
+Tomorrow, remind Joel at 3pm to shut down miners by 6pm | 15:00 | 18:00 | Explicit different times
+
+## User Clarification Tests
+Remind Joel to check generators tomorrow at 2pm. User clarification: I meant 2pm CST | 14:00 | 14:00 | Clarified timezone
+Bryan needs to update firewall tomorrow morning. User clarification: make it 10am | 10:00 | 10:00 | Clarified time
+at 4pm CST tomorrow, remind Joel to check oil. User clarification: I said 4pm CST not midnight | 16:00 | 16:00 | Reinforcing original
+
+## Edge Cases
+Tonight at midnight, Colin needs to run the backup script | 00:00 | 00:00 | Midnight handling
+This afternoon around 3ish, Bryan should test equipment | 15:00 | 15:00 | Approximate time
+ASAP remind Joel to check the emergency generators | current+15min | current+15min | ASAP handling
+Every weekday at 6:45am, Joel needs to check VPN tunnels | 06:45 | 06:45 | Recurring with specific time
+
+## Additional Edge Cases
+Next week, Bryan needs to check the flare sensors | N/A | N/A | Vague date reference
+Remind Joel end of day to submit the report | 17:00 | 17:00 | "End of day" interpretation
+Tell Bryan first thing tomorrow to restart servers | 08:00 | 08:00 | "First thing" interpretation
+at noon EST, Colin should review the logs | 12:00 | 12:00 | Noon with timezone
+Joel needs to check equipment before lunch | 11:30 | 11:30 | "Before lunch" interpretation
+After hours, Bryan should monitor the systems | 18:00 | 18:00 | "After hours" interpretation
+
+## City-based Timezone References
+at 3pm New York time, remind Joel to join the call | 15:00 | 15:00 | NYC time reference
+Bryan has a meeting at 10am Denver time | 10:00 | 10:00 | Denver time reference
+Remind Colin at 2pm Seattle time about the demo | 14:00 | 14:00 | Seattle time reference
+at 4pm Dallas time, Joel needs to check systems | 16:00 | 16:00 | Dallas time reference
+
+## Multiple Tasks/Complex Parsing
+Remind Joel at 9am to 1) check oil 2) test generators 3) call support | 09:00 | 09:00 | Multiple subtasks
+Tomorrow: Bryan 10am meeting, Joel 2pm maintenance | varies | varies | Multiple assignments
