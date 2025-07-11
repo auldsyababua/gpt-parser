@@ -42,6 +42,9 @@ tasks.xlsx
 
 # Add more patterns as needed for your project
 
+# Test archives
+tests/archive/
+
 # Log files
 logs/
 *.local.toml

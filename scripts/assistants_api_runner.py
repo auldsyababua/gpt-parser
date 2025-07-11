@@ -20,7 +20,7 @@ if not OPENAI_API_KEY:
     sys.exit(1)
 
 GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZZkhc3f9nP4IcllbuH24c22D-nlsWrlOEAWc0sr-VNxuiWKLKhsx96W1-6koShzsxTg/exec"
-ASSISTANT_NAME = "Task Parser"
+ASSISTANT_NAME = "Task Parser v7"
 ASSISTANT_MODEL = "gpt-4-turbo-preview"
 SYSTEM_PROMPT_FILE = os.path.join(
     os.path.dirname(__file__), "..", "prompts", "system_prompt.txt"
@@ -76,56 +76,24 @@ def api_request(method, url, **kwargs):
 
 def get_or_create_assistant():
     """
-    Retrieves an existing assistant or creates a new one, managing files and vector stores.
+    Retrieves an existing assistant or creates a new one with combined prompt.
     """
-    # 1. Upload knowledge file
-    files_url = f"{OPENAI_API_BASE_URL}/files"
+    # Load and combine prompts
     try:
-        with open(FEW_SHOT_EXAMPLES_FILE, "rb") as f:
-            files = {
-                "file": (
-                    os.path.basename(FEW_SHOT_EXAMPLES_FILE),
-                    f,
-                    "application/octet-stream",
-                )
-            }
-            params = {"purpose": "assistants"}
-            upload_headers = {k: v for k, v in HEADERS.items() if k != "Content-Type"}
-            response = api_request(
-                "post", files_url, headers=upload_headers, files=files, data=params
-            )
-            if response.status_code != 200:
-                return handle_api_error(response, "file upload")
-            knowledge_file = response.json()
-            file_id = knowledge_file["id"]
-            print(f"Uploaded knowledge file with ID: {file_id}")
+        with open(SYSTEM_PROMPT_FILE, "r") as f:
+            system_prompt = f.read()
+        
+        with open(FEW_SHOT_EXAMPLES_FILE, "r") as f:
+            few_shot_examples = f.read()
+        
+        # Combine prompts with clear separation
+        combined_prompt = f"{system_prompt}\n\n## Examples:\n\n{few_shot_examples}"
+        
     except Exception as e:
-        print(f"Error uploading knowledge file: {e}")
+        print(f"Error loading prompt files: {e}")
         sys.exit(1)
 
-    # 2. Create a Vector Store
-    vector_stores_url = f"{OPENAI_API_BASE_URL}/vector_stores"
-    vs_payload = {"name": "Task Parsing Examples"}
-    vs_response = api_request(
-        "post", vector_stores_url, headers=HEADERS, json=vs_payload
-    )
-    if vs_response.status_code != 200:
-        return handle_api_error(vs_response, "vector store creation")
-    vector_store = vs_response.json()
-    vector_store_id = vector_store["id"]
-    print(f"Created vector store with ID: {vector_store_id}")
-
-    # 3. Add file to Vector Store
-    vs_files_url = f"{vector_stores_url}/{vector_store_id}/files"
-    vs_file_payload = {"file_id": file_id}
-    vs_file_response = api_request(
-        "post", vs_files_url, headers=HEADERS, json=vs_file_payload
-    )
-    if vs_file_response.status_code != 200:
-        return handle_api_error(vs_file_response, "adding file to vector store")
-    print(f"Added file {file_id} to vector store {vector_store_id}")
-
-    # 4. Check for existing assistant
+    # Check for existing assistant
     assistants_url = f"{OPENAI_API_BASE_URL}/assistants"
     response = api_request(
         "get", assistants_url, headers=HEADERS, params={"limit": 100}
@@ -135,45 +103,36 @@ def get_or_create_assistant():
         for assistant in assistants:
             if assistant.get("name") == ASSISTANT_NAME:
                 print(f"Found existing assistant with ID: {assistant['id']}")
+                # Update with latest combined prompt
                 update_url = f"{OPENAI_API_BASE_URL}/assistants/{assistant['id']}"
                 update_payload = {
-                    "tool_resources": {
-                        "file_search": {"vector_store_ids": [vector_store_id]}
-                    }
+                    "instructions": combined_prompt,
+                    "tools": []  # No file search needed
                 }
                 update_response = api_request(
                     "post", update_url, headers=HEADERS, json=update_payload
                 )
                 if update_response.status_code == 200:
-                    print(f"Updated assistant {assistant['id']} with new vector store.")
+                    print(f"Updated assistant with latest combined prompt.")
                     return update_response.json()
                 else:
                     return handle_api_error(update_response, "assistant update")
 
-    # 5. Create a new assistant
+    # Create a new assistant
     print(f"No existing assistant named '{ASSISTANT_NAME}'. Creating a new one.")
-    try:
-        with open(SYSTEM_PROMPT_FILE, "r") as f:
-            system_prompt = f.read()
-
-        payload = {
-            "name": ASSISTANT_NAME,
-            "instructions": system_prompt,
-            "model": ASSISTANT_MODEL,
-            "tools": [{"type": "file_search"}],
-            "tool_resources": {"file_search": {"vector_store_ids": [vector_store_id]}},
-        }
-        response = api_request("post", assistants_url, headers=HEADERS, json=payload)
-        if response.status_code == 200:
-            new_assistant = response.json()
-            print(f"Created new assistant with ID: {new_assistant['id']}")
-            return new_assistant
-        else:
-            return handle_api_error(response, "assistant creation")
-
-    except Exception as e:
-        print(f"An unexpected error occurred during assistant creation: {e}")
-        sys.exit(1)
+    payload = {
+        "name": ASSISTANT_NAME,
+        "instructions": combined_prompt,
+        "model": ASSISTANT_MODEL,
+        "tools": [],  # No file search needed
+    }
+    response = api_request("post", assistants_url, headers=HEADERS, json=payload)
+    if response.status_code == 200:
+        new_assistant = response.json()
+        print(f"Created new assistant with ID: {new_assistant['id']}")
+        return new_assistant
+    else:
+        return handle_api_error(response, "assistant creation")
 
 
 def parse_task(assistant, input_text, assigner="Colin"):
@@ -194,27 +153,20 @@ def parse_task(assistant, input_text, assigner="Colin"):
     # Inject current date in assigner's timezone into the prompt
     today_in_tz = datetime.now(assigner_tz)
     today_str = today_in_tz.strftime("%Y-%m-%d")
+    # Get timezone abbreviation (PDT, CST, etc)
+    tz_abbr = today_in_tz.strftime("%Z")
     prompt_with_date = (
-        f"(Today's date is {today_str} in {assigner}'s timezone) {input_text}"
+        f"(Today's date is {today_str} in {assigner}'s timezone: {tz_abbr}) {input_text}"
     )
     print(f"\nProcessing input: '{prompt_with_date}'")
 
     assistant_id = assistant["id"]
-    vector_store_id = (
-        assistant.get("tool_resources", {})
-        .get("file_search", {})
-        .get("vector_store_ids", [None])[0]
-    )
-    if not vector_store_id:
-        print("Error: Assistant is not configured with a vector store.")
-        return
 
     try:
         # 1. Create a thread
         threads_url = f"{OPENAI_API_BASE_URL}/threads"
         thread_payload = {
-            "messages": [{"role": "user", "content": prompt_with_date}],
-            "tool_resources": {"file_search": {"vector_store_ids": [vector_store_id]}},
+            "messages": [{"role": "user", "content": prompt_with_date}]
         }
         thread_response = api_request(
             "post", threads_url, headers=HEADERS, json=thread_payload
@@ -286,6 +238,13 @@ def parse_task(assistant, input_text, assigner="Colin"):
         print(
             f"Applied timezone conversions for assignee: {parsed_json.get('assignee')}"
         )
+        
+        # Add original prompt (without the date injection)
+        parsed_json["original_prompt"] = input_text
+        
+        # Initialize corrections_history as empty (will be populated by telegram bot if needed)
+        if "corrections_history" not in parsed_json:
+            parsed_json["corrections_history"] = ""
 
         return parsed_json
 

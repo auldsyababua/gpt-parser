@@ -47,6 +47,13 @@ Transform the Telegram bot from a simple task creator to a full-featured interfa
    - Collapsible task details
    - Files: Create `telegram_bot/message_formatter.py`
 
+6. **Proactive Notifications**
+   - Send reminders at scheduled times
+   - Support for snooze functionality
+   - Escalation for ignored reminders
+   - Interactive buttons (Complete, Snooze, Reschedule)
+   - Files: Create `telegram_bot/notification_sender.py`
+
 ### 📱 User Interface Flows
 
 1. **Voice Task Creation**
