@@ -10,9 +10,11 @@ function doPost(e) {
   }
 
   var data = JSON.parse(e.postData.contents);
+  
+  // DEBUG: Log the received data
+  console.log('Received data:', JSON.stringify(data, null, 2));
 
-  // Define the order of columns in your Google Sheet, matching the exact text of your headers
-  // The values in the 'data' object will be mapped to these columns.
+  // Define the order of columns in your Google Sheet
   var headers = [
     "original_prompt",     // Maps to "Original Prompt"
     "corrections_history", // Maps to "Corrections and responses (if applicable)"
@@ -32,12 +34,33 @@ function doPost(e) {
   ];
 
   var row = [];
+  
+  // DEBUG: Build row with logging
   headers.forEach(function(header) {
-    row.push(data[header] || ""); // Add value from JSON or empty string if not present
+    var value = data[header] || "";
+    console.log('Header:', header, 'Value:', value);
+    row.push(value);
   });
+  
+  // DEBUG: Log the complete row
+  console.log('Complete row:', JSON.stringify(row));
 
+  // Add a debug row first to see column alignment
+  var debugRow = [];
+  for (var i = 0; i < headers.length; i++) {
+    debugRow.push('COL' + (i+1) + ':' + headers[i]);
+  }
+  sheet.appendRow(debugRow);
+  
+  // Then add the actual data
   sheet.appendRow(row);
 
-  return ContentService.createTextOutput(JSON.stringify({ message: "Task added successfully" }))
+  return ContentService.createTextOutput(JSON.stringify({ 
+    message: "Task added successfully",
+    debug: {
+      receivedData: data,
+      rowData: row
+    }
+  }))
     .setMimeType(ContentService.MimeType.JSON);
 }

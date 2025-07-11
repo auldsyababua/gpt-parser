@@ -60,6 +60,20 @@ def process_task_with_timezones(task_json: Dict, assigner: str = "Colin") -> Dic
         Updated task dictionary with timezone-adjusted times
     """
     assignee = task_json.get("assignee", "Colin")
+    
+    # Check timezone context from LLM
+    timezone_context = task_json.get("timezone_context", "assigner_local")
+    
+    # If times are already in a specific timezone (not assigner's local), don't convert
+    if timezone_context != "assigner_local":
+        # Just add timezone info for reference
+        task_json["timezone_info"] = {
+            "times_are_in": timezone_context,
+            "assigner_tz": str(get_user_timezone(assigner)),
+            "assignee_tz": str(get_user_timezone(assignee)),
+            "converted": False,
+        }
+        return task_json
 
     # If assigner and assignee are the same, no conversion needed
     if assigner == assignee:
@@ -68,7 +82,7 @@ def process_task_with_timezones(task_json: Dict, assigner: str = "Colin") -> Dic
     # Get current date as base (this will be in assigner's context)
     base_date = datetime.strptime(task_json["due_date"], "%Y-%m-%d")
 
-    # Convert due date/time
+    # Convert due date/time only if in assigner's local timezone
     due_time = task_json.get("due_time", "")
     if due_time:
         due_date, due_time = convert_time_between_users(

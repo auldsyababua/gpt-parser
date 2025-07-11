@@ -10,7 +10,9 @@ Text: "Remind Joel tomorrow at 8am to check the solar battery charge."
   "reminder_date": "2025-07-10",
   "reminder_time": "08:00",
   "status": "pending",
-  "created_at": "2025-07-09T12:00"
+  "created_at": "2025-07-09T12:00",
+  "timezone_context": "assigner_local",
+  "reasoning": "User said 'tomorrow at 8am' which is 2025-07-10 at 08:00. No timezone specified, so using assigner's timezone. Both reminder and due time set to 8am as only one time mentioned."
 }
 
 ### INPUT
@@ -41,7 +43,9 @@ Text: "Make sure to remind Joel 30 minutes before he needs to reset the firewall
   "reminder_date": "2025-07-09",
   "reminder_time": "15:30",
   "status": "pending",
-  "created_at": "2025-07-09T12:00"
+  "created_at": "2025-07-09T12:00",
+  "timezone_context": "assigner_local",
+  "reasoning": "Task is due at 4pm (16:00). Reminder requested 30 minutes before, so reminder_time is 15:30. No timezone specified, using assigner's timezone. Date is today since no other date mentioned."
 }
 
 ### INPUT
@@ -85,7 +89,9 @@ Text: "At 4pm CST tomorrow, remind Joel to check the oil levels"
   "reminder_date": "2025-07-10",
   "reminder_time": "16:00",
   "status": "pending",
-  "created_at": "2025-07-09T12:00"
+  "created_at": "2025-07-09T12:00",
+  "timezone_context": "CST",
+  "reasoning": "User explicitly specified '4pm CST' so I'm interpreting this as 16:00 in CST timezone. Tomorrow is 2025-07-10. Both reminder and due time are set to 4pm CST as requested."
 }
 
 ### INPUT
@@ -100,7 +106,9 @@ Text: "Bryan needs to restart the miners at 9am EST on Friday"
   "reminder_date": "2025-07-12",
   "reminder_time": "09:00",
   "status": "pending",
-  "created_at": "2025-07-09T12:00"
+  "created_at": "2025-07-09T12:00",
+  "timezone_context": "EST",
+  "reasoning": "User specified '9am EST' explicitly, so using EST timezone. Friday is 2025-07-12. Both reminder and due time set to 9am EST."
 }
 
 ### INPUT
@@ -147,4 +155,21 @@ Text: "Bryan needs to update the firewall tomorrow morning. User clarification: 
   "reminder_time": "10:00",
   "status": "pending",
   "created_at": "2025-07-09T12:00"
+}
+
+### INPUT
+Text: "at 2pm Houston time, remind Joel to check the generators"
+### OUTPUT
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Check the generators",
+  "due_date": "2025-07-09",
+  "due_time": "14:00",
+  "reminder_date": "2025-07-09",
+  "reminder_time": "14:00",
+  "status": "pending",
+  "created_at": "2025-07-09T12:00",
+  "timezone_context": "CST",
+  "reasoning": "User specified '2pm Houston time' which refers to CST timezone. Houston is in Central Standard Time. Both reminder and due time set to 2pm CST as only one time mentioned."
 }

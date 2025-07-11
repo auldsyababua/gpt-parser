@@ -22,6 +22,8 @@
           "assignee_tz": { "type": "string" },
           "converted": { "type": "boolean" }
         }
-      }
+      },
+      "reasoning": { "type": "string" },
+      "timezone_context": { "type": "string" }
     }
   }
