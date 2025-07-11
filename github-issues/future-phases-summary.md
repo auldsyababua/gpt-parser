@@ -66,6 +66,7 @@
 - **Slack/Discord**: Team notifications
 - **QuickBooks**: Financial data export
 - **Twilio**: SMS notifications
+- **Gmail**: Email notifications and reports
 - **Zapier**: General automation
 
 ### Technical Architecture

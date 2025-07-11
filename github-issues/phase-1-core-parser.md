@@ -48,21 +48,32 @@ This phase focuses on building a reliable natural language task parser that can 
    - Approach: Post-processing layer for pronoun replacement
    - Files: Create `perspective_normalizer.py`
 
-2. **Comprehensive Test Suite**
+2. **Improved Clarification Handling**
+   - Issue: Current approach appends clarifications which confuses LLM
+   - Solution: Structured prompt showing original parsing and correction separately
+   - Example: "Original: {task}, User correction: {clarification}"
+   - Files: Update `telegram_bot.py` clarification flow
+
+3. **Better Parsing Options**
+   - Replace free-form text with structured options
+   - Implement enums for: repeat_interval, priority, status
+   - Pre-validate LLM outputs against allowed values
+   - Files: Update `task_schema.json` and prompts
+
+4. **Comprehensive Test Suite**
    - Expand from current test inputs to 50+ cases
    - Cover edge cases for temporal expressions
    - Test perspective normalization
    - Add automated test runner
    - Files: Enhance `tests/` directory
-   
 
-3. **Error Handling & Retry Logic**
+5. **Error Handling & Retry Logic**
    - Graceful handling of API failures
    - Retry with exponential backoff
    - Better error messages for users
    - Files: Update `assistants_api_runner.py`
 
-4. **Schema Validation**
+6. **Schema Validation**
    - Ensure all parsed tasks match schema
    - Reject invalid outputs before confirmation
    - Files: Enhance `task_schema.json` usage

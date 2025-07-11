@@ -81,10 +81,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         # Run the parsing function in a separate thread to avoid blocking the bot
         logger.info("Starting parse_task in executor...")
         loop = asyncio.get_running_loop()
-        parsed_json = await loop.run_in_executor(
-            None, parse_task, assistant, user_message
+        
+        # Add timeout to prevent hanging
+        logger.info(f"Calling parse_task with assistant={assistant.get('id') if assistant else 'None'}, message='{user_message}'")
+        parsed_json = await asyncio.wait_for(
+            loop.run_in_executor(None, parse_task, assistant, user_message),
+            timeout=30.0  # 30 second timeout
         )
-        logger.info("parse_task completed successfully")
+        logger.info(f"parse_task completed successfully: {parsed_json}")
 
         # Store the parsed JSON in context for later use
         context.user_data["parsed_json"] = parsed_json
@@ -99,6 +103,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
         return AWAITING_CONFIRMATION
 
+    except asyncio.TimeoutError:
+        logger.error("parse_task timed out after 30 seconds")
+        await update.message.reply_text(
+            "❌ Request timed out. The OpenAI API might be slow. Please try again."
+        )
+        return ConversationHandler.END
     except Exception as e:
         logger.error(f"Error processing task: {e}", exc_info=True)
         await update.message.reply_text(f"❌ An error occurred: {e}")
@@ -221,13 +231,17 @@ def main() -> None:
 
     # Initialize the assistant
     logger.info("Initializing OpenAI Assistant...")
-    assistant = get_or_create_assistant()
-    if assistant:
-        logger.info("Assistant initialized successfully.")
-    else:
-        logger.error(
-            "Failed to initialize assistant. The bot may not function correctly."
-        )
+    try:
+        assistant = get_or_create_assistant()
+        if assistant:
+            logger.info(f"Assistant initialized successfully: {assistant.get('id')}")
+        else:
+            logger.error(
+                "Failed to initialize assistant. The bot may not function correctly."
+            )
+    except Exception as e:
+        logger.error(f"Exception initializing assistant: {e}", exc_info=True)
+        raise
 
     # on different commands - answer in Telegram
     application.add_handler(CommandHandler("start", start))
