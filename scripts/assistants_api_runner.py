@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config.timezone_config import get_user_timezone
 from utils.timezone_converter import process_task_with_timezones
+from utils.temporal_processor import TemporalProcessor
 
 # --- Configuration ---
 load_dotenv()
@@ -149,16 +150,47 @@ def parse_task(assistant, input_text, assigner="Colin"):
 
     # Get assigner's timezone
     assigner_tz = get_user_timezone(assigner)
-
-    # Inject current date in assigner's timezone into the prompt
     today_in_tz = datetime.now(assigner_tz)
     today_str = today_in_tz.strftime("%Y-%m-%d")
-    # Get timezone abbreviation (PDT, CST, etc)
     tz_abbr = today_in_tz.strftime("%Z")
-    prompt_with_date = (
-        f"(Today's date is {today_str} in {assigner}'s timezone: {tz_abbr}) {input_text}"
-    )
-    print(f"\nProcessing input: '{prompt_with_date}'")
+    
+    # Pre-process temporal expressions
+    processor = TemporalProcessor(default_timezone=str(assigner_tz))
+    start_time = time.time()
+    preprocessed = processor.preprocess(input_text, reference_time=today_in_tz)
+    preprocess_time = time.time() - start_time
+    
+    logger.info(f"Preprocessing took {preprocess_time:.3f}s, confidence: {preprocessed['confidence']}")
+    
+    # Build prompt based on preprocessing results
+    if preprocessed['confidence'] >= 0.7 and preprocessed['temporal_data']:
+        # High confidence - send structured data
+        temporal_info = preprocessed['temporal_data']
+        prompt_parts = [
+            f"(Today's date is {today_str} in {assigner}'s timezone: {tz_abbr})",
+            f"Task: {preprocessed['processed_text']}",
+        ]
+        
+        # Add pre-parsed temporal data
+        if 'due_date' in temporal_info:
+            prompt_parts.append(f"Pre-parsed due date: {temporal_info['due_date']}")
+        if 'due_time' in temporal_info:
+            prompt_parts.append(f"Pre-parsed due time: {temporal_info['due_time']}")
+        if 'reminder_time' in temporal_info and temporal_info.get('reminder_time') != temporal_info.get('due_time'):
+            prompt_parts.append(f"Pre-parsed reminder time: {temporal_info['reminder_time']}")
+        if 'timezone_context' in temporal_info:
+            prompt_parts.append(f"Detected timezone: {temporal_info['timezone_context']}")
+        
+        prompt_with_date = "\n".join(prompt_parts)
+        print(f"\nHigh-confidence preprocessing ({preprocessed['confidence']:.1%})")
+    else:
+        # Low confidence - fall back to original approach
+        prompt_with_date = (
+            f"(Today's date is {today_str} in {assigner}'s timezone: {tz_abbr}) {input_text}"
+        )
+        print(f"\nLow-confidence preprocessing, using original approach")
+    
+    print(f"Processing input: '{prompt_with_date}'")
 
     assistant_id = assistant["id"]
 
@@ -245,6 +277,18 @@ def parse_task(assistant, input_text, assigner="Colin"):
         # Initialize corrections_history as empty (will be populated by telegram bot if needed)
         if "corrections_history" not in parsed_json:
             parsed_json["corrections_history"] = ""
+        
+        # Add preprocessing metadata if high confidence was used
+        if preprocessed['confidence'] >= 0.7:
+            parsed_json["_preprocessing"] = {
+                "used": True,
+                "confidence": preprocessed['confidence'],
+                "time_saved": preprocess_time
+            }
+        
+        # Log total processing time
+        total_time = time.time() - start_time
+        logger.info(f"Total parse_task time: {total_time:.2f}s (preprocessing: {preprocess_time:.3f}s)")
 
         return parsed_json
 
