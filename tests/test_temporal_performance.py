@@ -84,7 +84,7 @@ def test_performance():
             elapsed = time.time() - start_time
 
             if result and "_preprocessing" in result:
-                print(f"✓ Preprocessed (unexpected)")
+                print("✓ Preprocessed (unexpected)")
             else:
                 print("✓ Full LLM parsing (as expected)")
 

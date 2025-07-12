@@ -166,9 +166,7 @@ async def handle_confirmation(
 
         try:
             loop = asyncio.get_running_loop()
-            parsed_json = await loop.run_in_executor(
-                None, parse_task, combined_message
-            )
+            parsed_json = await loop.run_in_executor(None, parse_task, combined_message)
 
             # Add to corrections history
             correction_entry = {

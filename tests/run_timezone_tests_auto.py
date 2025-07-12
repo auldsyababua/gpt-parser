@@ -5,8 +5,6 @@ Automated timezone test runner - runs all tests without user input
 import sys
 import os
 import time
-import json
-from datetime import datetime
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -15,7 +13,6 @@ from scripts.assistants_api_runner import (
     get_or_create_assistant,
     parse_task,
     send_to_google_sheets,
-    format_task_for_confirmation,
 )
 
 # Test cases specifically for timezone handling
@@ -113,7 +110,7 @@ def main():
     print("Starting Automated Timezone Test Runner")
     print("======================================")
     print(f"Running {len(TIMEZONE_TEST_CASES)} test cases")
-    print(f"Results will be sent to Google Sheets")
+    print("Results will be sent to Google Sheets")
 
     # Get or create assistant
     print("\nInitializing assistant...")
