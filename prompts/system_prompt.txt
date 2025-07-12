@@ -39,4 +39,4 @@ If only one time is mentioned in the input, apply that time to both `due_time` a
 
 If the reminder occurs on a different day than the task, treat `reminder_date` and `due_date` independently.
 
-Reference few-shot examples provided in the knowledge base for formatting guidance.
+Reference few-shot examples provided for formatting guidance.

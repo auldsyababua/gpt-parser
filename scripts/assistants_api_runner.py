@@ -152,7 +152,7 @@ def parse_task(assistant, input_text, assigner="Colin"):
     assigner_tz = get_user_timezone(assigner)
     today_in_tz = datetime.now(assigner_tz)
     today_str = today_in_tz.strftime("%Y-%m-%d")
-    tz_abbr = today_in_tz.strftime("%Z")
+    current_time_str = today_in_tz.strftime("%H:%M")
 
     # Pre-process temporal expressions
     processor = TemporalProcessor(default_timezone=str(assigner_tz))
@@ -169,7 +169,7 @@ def parse_task(assistant, input_text, assigner="Colin"):
         # High confidence - send structured data
         temporal_info = preprocessed["temporal_data"]
         prompt_parts = [
-            f"(Today's date is {today_str} in {assigner}'s timezone: {tz_abbr})",
+            f"(Context: It is currently {current_time_str} on {today_str} where {assigner} is located)",
             f"Task: {preprocessed['processed_text']}",
         ]
 
@@ -193,7 +193,7 @@ def parse_task(assistant, input_text, assigner="Colin"):
         print(f"\nHigh-confidence preprocessing ({preprocessed['confidence']:.1%})")
     else:
         # Low confidence - fall back to original approach
-        prompt_with_date = f"(Today's date is {today_str} in {assigner}'s timezone: {tz_abbr}) {input_text}"
+        prompt_with_date = f"(Context: It is currently {current_time_str} on {today_str} where {assigner} is located) {input_text}"
         print(f"\nLow-confidence preprocessing, using original approach")
 
     print(f"Processing input: '{prompt_with_date}'")

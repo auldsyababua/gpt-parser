@@ -1,0 +1,94 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_99fa36eb0b91873088b95fe7f54fa279226a6a02"
+      ]
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/colinaulds/Desktop/projects/gpt-parser"
+      ]
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ]
+    },
+    "omnisearch": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-omnisearch"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}",
+        "KAGI_API_KEY": "${KAGI_API_KEY}",
+        "JINA_API_KEY": "${JINA_API_KEY}",
+        "TAVILY_API_KEY": "${TAVILY_API_KEY}",
+        "PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}",
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
+      }
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@arben-adm/mcp-sequential-thinking"
+      ]
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-context-server"
+      ],
+      "env": {
+        "UPSTASH_CONTEXT7_URL": "${UPSTASH_CONTEXT7_URL}",
+        "UPSTASH_CONTEXT7_TOKEN": "${UPSTASH_CONTEXT7_TOKEN}"
+      }
+    },
+    "sentry": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@sentry/mcp-server-sentry",
+        "--auth-token",
+        "${SENTRY_AUTH_TOKEN}"
+      ]
+    },
+    "package-version": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@sammcj/mcp-package-version"
+      ]
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ]
+    }
+  }
+}
