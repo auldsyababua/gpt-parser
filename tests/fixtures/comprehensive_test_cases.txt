@@ -1,0 +1,98 @@
+# Comprehensive Test Suite for GPT-Parser Models
+# These 30 test cases are designed to push the limits of both the temporal preprocessor and LLM parsing
+# Categories: Complex Temporal, Ambiguous Context, Multiple Assignees, Edge Cases, Recurring Tasks
+#
+# FUTURE FEATURE IDEAS:
+# - Context-aware conditionals (e.g., weather-based tasks, equipment status checks)
+# - External API integration for real-time conditions
+# - Smart task dependencies based on external factors
+
+# 1. Complex relative dates with multiple time references
+Remind Joel next Tuesday at 3pm MST if it's not a holiday, otherwise Wednesday at 2pm to check the generator oil levels at Site B and email Bryan the results by EOD
+
+# 2. Ambiguous pronoun resolution
+Tell Bryan to coordinate with Joel about the maintenance schedule, and have him report back to me by Friday afternoon
+
+# 3. Multi-timezone coordination
+Schedule a call between Colin (PDT), Bryan (MST), and Joel (CST) for 2pm Colin's time next Monday to discuss the flare skid installation
+
+# 4. Complex "top of the hour" expressions
+Have Joel check the telemetry readings at the top of the next hour, then again 30 minutes later
+
+# 5. Complex recurring pattern
+Every other Tuesday starting next week, have Bryan check the telemetry systems at all sites, but skip any weeks where Monday is a holiday
+
+# 6. Ambiguous "next" interpretation
+Next Friday at 5pm, unless that's already passed this week, then the Friday after, remind Joel to submit the maintenance report
+
+# 7. Multiple tasks with dependencies
+First have Bryan shut down the node at Site C at 10am tomorrow, then 30 minutes later have Joel restart it, and finally have Bryan verify it's online by noon
+
+# 8. Natural language with typos and informal speech
+yo joel tmrw mornin around 8ish can u check if the generater at site b needs oil... bryan said it was making weird noises
+
+# 9. Implicit timezone from context
+When Joel gets to the office tomorrow morning, have him call the contractor about the Site D repairs
+
+# 10. Business day calculations
+Remind Bryan in 3 business days to follow up on the equipment order, accounting for the upcoming holiday weekend
+
+# 11. Pronoun perspective changes (from assignee's POV)
+Tell Bryan: "You need to meet Joel at Site C after he finishes his morning rounds at 10am"
+
+# 12. Multiple assignees with different tasks
+Have Joel inspect Site A at 9am and Bryan inspect Site B at 10am tomorrow, then both meet at Site C by 2pm to compare notes
+
+# 13. Contextual deadline interpretation
+Make sure Bryan gets the monthly report done before the end of the month, with a reminder 3 days prior
+
+# 14. Colloquial time expressions
+Have Joel swing by Site D first thing in the morning and check if the new equipment arrived
+
+# 15. Complex conditional with fallback
+If Joel is available tomorrow at 3pm CST, have him do the inspection, otherwise ask Bryan to cover it at 4pm MST
+
+# 16. Ambiguous date references
+Remind whoever is on duty this weekend to check all sites on Saturday
+
+# 17. "Top of the hour" with timezone context
+At the top of the hour in Joel's timezone (CST), have him restart the monitoring system
+
+# 18. Multiple temporal constraints
+Sometime between next Monday and Wednesday, but not Tuesday afternoon, have Bryan schedule the vendor visit
+
+# 19. Informal recurring pattern
+Every few days, maybe 3 or 4, have someone check the bitcoin node status at Site B
+
+# 20. Context-dependent urgency
+ASAP, but no later than end of day tomorrow, have Joel fix the telemetry issue at Site C that Bryan reported
+
+# 21. Chained temporal dependencies
+Once Bryan confirms the delivery tomorrow morning, immediately have Joel start the installation, aiming to finish by 3pm
+
+# 22. Ambiguous "this/next" week boundary
+This coming week, but not this Monday or Tuesday, schedule Joel to do a full site inspection
+
+# 23. Natural language with multiple interpretations
+Have Bryan or Joel (whoever's closer) check Site A in about an hour or so
+
+# 24. Fiscal period references
+Before the end of Q1, remind Bryan to submit the equipment budget for next fiscal year
+
+# 25. Complex pronoun resolution with multiple actors
+Have Bryan tell Joel that he needs to finish his inspection before he can start the maintenance
+
+# 26. Partial information with inference needed
+The contractor is coming Tuesday... make sure someone (probably Bryan since he's been handling it) is there by 8am to let them in
+
+# 27. Multiple time formats mixed
+At 14:00 tomorrow (that's 2pm for Joel), have him start the system diagnostic which should take about 90 minutes
+
+# 28. Vague urgency with context
+When you get a chance, but definitely before the weekend, have Joel inventory the spare parts at Site B
+
+# 29. Cross-referenced temporal logic
+The same time we did it last week, have Bryan run the backup procedures, but 30 minutes earlier if it's a Friday
+
+# 30. Complex multi-step with conditional branches
+If the morning inspection by Joel shows any issues, have Bryan order parts by noon, then schedule Joel to install them within 2 business days of arrival, otherwise just have Joel do the routine maintenance next Monday at 10am

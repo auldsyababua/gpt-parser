@@ -1,0 +1,1960 @@
+INFO:assistants_api_runner:parse_task called with input: Remind Joel next Tuesday at 3pm MST if it's not a holiday, otherwise Wednesday at 2pm to check the generator oil levels at Site B and email Bryan the results by EOD
+INFO:assistants_api_runner:Preprocessing took 0.565s, confidence: 0.7
+INFO:assistants_api_runner:Total parse_task time: 12.07s (preprocessing: 0.565s)
+INFO:assistants_api_runner:parse_task called with input: Tell Bryan to coordinate with Joel about the maintenance schedule, and have him report back to me by Friday afternoon
+INFO:assistants_api_runner:Preprocessing took 0.001s, confidence: 0.0
+INFO:assistants_api_runner:Total parse_task time: 8.96s (preprocessing: 0.001s)
+INFO:assistants_api_runner:parse_task called with input: Schedule a call between Colin (PDT), Bryan (MST), and Joel (CST) for 2pm Colin's time next Monday to discuss the flare skid installation
+INFO:assistants_api_runner:Preprocessing took 0.472s, confidence: 0.7
+INFO:assistants_api_runner:Total parse_task time: 15.93s (preprocessing: 0.472s)
+INFO:assistants_api_runner:parse_task called with input: Have Joel check the telemetry readings at the top of the next hour, then again 30 minutes later
+INFO:assistants_api_runner:Preprocessing took 0.566s, confidence: 0.0
+INFO:assistants_api_runner:Total parse_task time: 9.94s (preprocessing: 0.566s)
+INFO:assistants_api_runner:parse_task called with input: Every other Tuesday starting next week, have Bryan check the telemetry systems at all sites, but skip any weeks where Monday is a holiday
+INFO:assistants_api_runner:Preprocessing took 0.023s, confidence: 0.7
+INFO:assistants_api_runner:Total parse_task time: 13.12s (preprocessing: 0.023s)
+INFO:assistants_api_runner:parse_task called with input: Next Friday at 5pm, unless that's already passed this week, then the Friday after, remind Joel to submit the maintenance report
+INFO:assistants_api_runner:Preprocessing took 0.574s, confidence: 0.0
+INFO:assistants_api_runner:Total parse_task time: 11.68s (preprocessing: 0.574s)
+INFO:assistants_api_runner:parse_task called with input: First have Bryan shut down the node at Site C at 10am tomorrow, then 30 minutes later have Joel restart it, and finally have Bryan verify it's online by noon
+INFO:assistants_api_runner:Preprocessing took 0.026s, confidence: 0.8
+INFO:assistants_api_runner:Total parse_task time: 16.43s (preprocessing: 0.026s)
+INFO:assistants_api_runner:parse_task called with input: yo joel tmrw mornin around 8ish can u check if the generater at site b needs oil... bryan said it was making weird noises
+INFO:assistants_api_runner:Preprocessing took 0.285s, confidence: 0.0
+INFO:assistants_api_runner:Total parse_task time: 11.89s (preprocessing: 0.285s)
+INFO:assistants_api_runner:parse_task called with input: When Joel gets to the office tomorrow morning, have him call the contractor about the Site D repairs
+INFO:assistants_api_runner:Preprocessing took 0.005s, confidence: 0.7
+INFO:assistants_api_runner:Total parse_task time: 14.77s (preprocessing: 0.005s)
+INFO:assistants_api_runner:parse_task called with input: Remind Bryan in 3 business days to follow up on the equipment order, accounting for the upcoming holiday weekend
+INFO:assistants_api_runner:Preprocessing took 0.000s, confidence: 0.9
+INFO:assistants_api_runner:Total parse_task time: 9.43s (preprocessing: 0.000s)
+INFO:assistants_api_runner:parse_task called with input: Tell Bryan: "You need to meet Joel at Site C after he finishes his morning rounds at 10am"
+INFO:assistants_api_runner:Preprocessing took 0.018s, confidence: 0.8
+INFO:assistants_api_runner:Total parse_task time: 14.00s (preprocessing: 0.018s)
+INFO:assistants_api_runner:parse_task called with input: Have Joel inspect Site A at 9am and Bryan inspect Site B at 10am tomorrow, then both meet at Site C by 2pm to compare notes
+INFO:assistants_api_runner:Preprocessing took 0.005s, confidence: 0.8
+INFO:assistants_api_runner:Total parse_task time: 12.66s (preprocessing: 0.005s)
+INFO:assistants_api_runner:parse_task called with input: Make sure Bryan gets the monthly report done before the end of the month, with a reminder 3 days prior
+INFO:assistants_api_runner:Preprocessing took 0.053s, confidence: 0.0
+INFO:assistants_api_runner:Total parse_task time: 12.71s (preprocessing: 0.053s)
+INFO:assistants_api_runner:parse_task called with input: Have Joel swing by Site D first thing in the morning and check if the new equipment arrived
+INFO:assistants_api_runner:Preprocessing took 0.001s, confidence: 0.0
+INFO:assistants_api_runner:Total parse_task time: 19.44s (preprocessing: 0.001s)
+INFO:assistants_api_runner:parse_task called with input: If Joel is available tomorrow at 3pm CST, have him do the inspection, otherwise ask Bryan to cover it at 4pm MST
+INFO:assistants_api_runner:Preprocessing took 0.004s, confidence: 0.8
+INFO:assistants_api_runner:Total parse_task time: 11.45s (preprocessing: 0.004s)
+INFO:assistants_api_runner:parse_task called with input: Remind whoever is on duty this weekend to check all sites on Saturday
+INFO:assistants_api_runner:Preprocessing took 0.000s, confidence: 0.9
+INFO:assistants_api_runner:Total parse_task time: 10.32s (preprocessing: 0.000s)
+INFO:assistants_api_runner:parse_task called with input: At the top of the hour in Joel's timezone (CST), have him restart the monitoring system
+INFO:assistants_api_runner:Preprocessing took 0.000s, confidence: 0.9
+INFO:assistants_api_runner:Total parse_task time: 14.48s (preprocessing: 0.000s)
+INFO:assistants_api_runner:parse_task called with input: Sometime between next Monday and Wednesday, but not Tuesday afternoon, have Bryan schedule the vendor visit
+INFO:assistants_api_runner:Preprocessing took 0.193s, confidence: 0.0
+🔄 Initializing models...
+
+Loaded 30 test cases from comprehensive suite.
+
+1️⃣ Testing GPT-4o-mini (OpenAI):
+Found existing assistant with ID: asst_4HK8zLpNGcl1uxpJVIc90FmL
+Updated assistant with latest combined prompt.
+
+  [1/30] Testing: 'Remind Joel next Tuesday at 3pm MST if it's not a holiday, o...'
+
+High-confidence preprocessing (70.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Remind Joel next Tuesday at 3pm  if it's not a holiday, otherwise Wednesday at 2pm to check the generator oil levels at Site B and email Bryan the results by EOD
+Detected timezone: MST'
+Created new thread with ID: thread_ajvbJ8cnTBPN9U1NtRISoy2C
+Started run with ID: run_hBx7tXnCeP96lpC50POGVQ63
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Check the generator oil levels at Site B and email Bryan the results by EOD",
+  "due_date": "2025-07-15",
+  "due_time": "15:00",
+  "reminder_date": "2025-07-15",
+  "reminder_time": "15:00",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "site": "Site B",
+  "timezone_context": "MST",
+  "reasoning": "Next Tuesday from today (2025-07-11 in PDT) is 2025-07-15. The instruction includes a condition related to holidays but no specific holiday information is provided, so it defaults to the first option (next Tuesday). The detected timezone for the task is MST, so the times are encoded as such. Reminder and due are set according to the primary scenario."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:12
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 12.09s (API: 12.09s)
+
+  [2/30] Testing: 'Tell Bryan to coordinate with Joel about the maintenance sch...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Tell Bryan to coordinate with Joel about the maintenance schedule, and have him report back to me by Friday afternoon'
+Created new thread with ID: thread_dt4VXMkAHXYbj57tAtlnLOzq
+Started run with ID: run_d3imohVTdGQNZIjZ93mQ1Qg2
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Coordinate with Joel about the maintenance schedule and report back",
+  "due_date": "2025-07-11",
+  "due_time": "15:00",
+  "reminder_date": "2025-07-11",
+  "reminder_time": "15:00",
+  "status": "pending",
+  "created_at": "2025-07-11T00:00",
+  "timezone_context": "PDT",
+  "reasoning": "The task is assigned today with a due date of 'Friday afternoon', which is today, reflecting the current date in Colin's timezone (PDT). 'Afternoon' is interpreted as 15:00 for due and reminder times."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:13
+Applied timezone conversions for assignee: Bryan
+  ✓ Success in 8.96s (API: 8.96s)
+
+  [3/30] Testing: 'Schedule a call between Colin (PDT), Bryan (MST), and Joel (...'
+
+High-confidence preprocessing (70.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Schedule a call between Colin (), Bryan (), and Joel () for 2pm Colin's time next Monday to discuss the flare skid installation
+Detected timezone: PDT'
+Created new thread with ID: thread_y51QVmt5lcqLQ1Tl3LJJm2e6
+Started run with ID: run_aq3hfrbmDRWRDq4O5pftn8Dn
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Colin, Bryan, Joel",
+  "assigner": "Colin",
+  "task": "Schedule a call to discuss the flare skid installation",
+  "due_date": "2025-07-14",
+  "due_time": "14:00",
+  "reminder_date": "2025-07-14",
+  "reminder_time": "14:00",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "PDT",
+  "reasoning": "The command requested scheduling a call at 2pm Colin's time (PDT) on the next Monday, which falls on 2025-07-14. Both reminder and due times are set to 2pm in the PDT timezone."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:13
+Applied timezone conversions for assignee: Colin, Bryan, Joel
+  ✓ Success in 15.93s (API: 15.93s)
+
+  [4/30] Testing: 'Have Joel check the telemetry readings at the top of the nex...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) so'
+Created new thread with ID: thread_8efJiqto7SgaoOlj7KxgIpcf
+Started run with ID: run_qeW1usCs9WoYG1edIFsyB5SR
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Check the telemetry readings at the top of the next hour, then again 30 minutes later",
+  "due_date": "2025-07-11",
+  "due_time": "13:00",
+  "reminder_date": "2025-07-11",
+  "reminder_time": "13:00",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "PDT",
+  "reasoning": "The command was issued in PDT timezone and specifies the top of the next hour from the current timestamp '2025-07-11T12:00', which is 13:00 PDT. A second check is mentioned 30 minutes later but only one time can be represented; thus, only the initial due time is included. The task encompasses both checks."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:13
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 9.95s (API: 9.95s)
+
+  [5/30] Testing: 'Every other Tuesday starting next week, have Bryan check the...'
+
+High-confidence preprocessing (70.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Every other Tuesday starting , have Bryan check the telemetry systems at all sites, but skip any weeks where Monday is a holiday [on 2025-07-18]
+Pre-parsed due date: 2025-07-18'
+Created new thread with ID: thread_hTM6jxG1ScP8osCN3VLD0Buc
+Started run with ID: run_AjurFf1fkEoO6yl2GQyiD5Zw
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Check the telemetry systems at all sites, but skip any weeks where Monday is a holiday",
+  "due_date": "2025-07-18",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "repeat_interval": "Every other Tuesday starting 2025-07-18",
+  "timezone_context": "PDT",
+  "reasoning": "The pre-parsed due date '2025-07-18' will be the starting point. 'Every other Tuesday' task repetition is noted, but since specific times are not provided, due time and reminder times are omitted. The 'skip any weeks where Monday is a holiday' part of the task is included for completeness."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:13
+Applied timezone conversions for assignee: Bryan
+  ✓ Success in 13.12s (API: 13.12s)
+
+  [6/30] Testing: 'Next Friday at 5pm, unless that's already passed this week, ...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Next Friday at 5pm, unless that's already passed this week, then the Friday after, remind Joel to submit the maintenance report'
+Created new thread with ID: thread_ZdIohmsHjLKB4QSvTqjYA8Nj
+Started run with ID: run_mczcRVdhghiCC5QGKl03sgR7
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Submit the maintenance report",
+  "due_date": "2025-07-18",
+  "due_time": "17:00",
+  "reminder_date": "2025-07-18",
+  "reminder_time": "17:00",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "PDT",
+  "reasoning": "Next Friday from today's date (2025-07-11) is 2025-07-18. The instruction includes a condition for the next available Friday, thus setting due and reminder times for 2025-07-18 at 5pm PDT."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:13
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 11.68s (API: 11.68s)
+
+  [7/30] Testing: 'First have Bryan shut down the node at Site C at 10am tomorr...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: First have Bryan shut down the node at Site C  , then 30 minutes later have Joel restart it, and finally have Bryan verify it's online by noon [on 2025-07-12 at 10:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 10:00'
+Created new thread with ID: thread_oKmuiQFMsI3tbQ0WNCbK0XWF
+Started run with ID: run_IBunij3QiBUrChHicsa5T6FU
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Shut down the node at Site C, then 30 minutes later have Joel restart it, and finally verify it's online by noon",
+  "due_date": "2025-07-12",
+  "due_time": "10:00",
+  "reminder_date": "2025-07-12",
+  "reminder_time": "10:00",
+  "status": "pending",
+  "created_at": "2025-07-11T00:00",
+  "site": "Site C",
+  "timezone_context": "PDT",
+  "reasoning": "Pre-parsed data provided for due date and due time, which are 2025-07-12 and 10:00, respectively. The tasks are sequential and share the same ultimate due time. No specific timezone mentioned in the pre-parsed context, so the timezone_context is [PDT], which is Colin's timezone on the date of task creation."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:14
+Applied timezone conversions for assignee: Bryan
+  ✓ Success in 16.43s (API: 16.43s)
+
+  [8/30] Testing: 'yo joel tmrw mornin around 8ish can u check if the generater...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) yo joel tmrw mornin around 8ish can u check if the generater at site b needs oil... bryan said it was making weird noises'
+Created new thread with ID: thread_kFlOa4Dr7ZP47eqQ8xt54haB
+Started run with ID: run_sQ1KWPwkWMsNVHMsMUvWkyqy
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Check if the generator at Site B needs oil, as it was making weird noises",
+  "due_date": "2025-07-12",
+  "due_time": "08:00",
+  "reminder_date": "2025-07-12",
+  "reminder_time": "08:00",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "site": "Site B",
+  "timezone_context": "PDT",
+  "reasoning": "User stated 'tmrw mornin around 8ish' which translates to an approximate task time of 8:00 AM PDT for the next day, following Colin's timezone. Bryan's mention suggests the reason for the task."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:14
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 11.89s (API: 11.89s)
+
+  [9/30] Testing: 'When Joel gets to the office tomorrow morning, have him call...'
+
+High-confidence preprocessing (70.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: When Joel gets to the office  morning, have him call the contractor about the Site D repairs [on 2025-07-12]
+Pre-parsed due date: 2025-07-12'
+Created new thread with ID: thread_nXodICJ6SM52apxNACoEd0jN
+Started run with ID: run_i6BrUL9bhcp420wt4mwe4riw
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Call the contractor about the Site D repairs",
+  "due_date": "2025-07-12",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "site": "Site D",
+  "timezone_context": "PDT",
+  "reasoning": "Due date explicitly provided as 2025-07-12 with the task to be performed by Joel. No specific due time or reminder time provided; hence, those fields are omitted. The task specifies a morning activity, but since no exact time is given, it's left unspecified. The timezone context is set to PDT, which is Colin's timezone."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:14
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 14.77s (API: 14.77s)
+
+  [10/30] Testing: 'Remind Bryan in 3 business days to follow up on the equipmen...'
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Remind Bryan in 3 business days to follow up on the equipment order, accounting for the upcoming holiday on 2025-07-12
+Pre-parsed due date: 2025-07-12'
+Created new thread with ID: thread_F1am63cdM85G6i6UuVupyF1N
+Started run with ID: run_Q7aZbjktknzTCcEo4lAqiJdJ
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Follow up on the equipment order",
+  "due_date": "2025-07-16",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "PDT",
+  "reasoning": "Given a pre-parsed due date that doesn't match the task requirements. 'In 3 business days' from today (2025-07-11) accounting for a holiday on 2025-07-12. The next business days are 2025-07-15, 2025-07-16, and 2025-07-17. The correct due date is three business days from 2025-07-11, excluding weekends and the holiday, which lands on 2025-07-16."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:14
+Applied timezone conversions for assignee: Bryan
+  ✓ Success in 9.43s (API: 9.43s)
+
+  [11/30] Testing: 'Tell Bryan: "You need to meet Joel at Site C after he finish...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Tell Bryan: "You need to meet Joel at Site C after he finishes his morning rounds am" [on 2025-10-11 at 10:00]
+Pre-parsed due date: 2025-10-11
+Pre-parsed due time: 10:00'
+Created new thread with ID: thread_dRJDoEpQW6xzm31MEnDtBXt7
+Started run with ID: run_ZRhuC9FxVxCRSOYIQAE7XUO8
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Meet Joel at Site C after he finishes his morning rounds",
+  "due_date": "2025-10-11",
+  "due_time": "10:00",
+  "reminder_date": "2025-10-11",
+  "reminder_time": "10:00",
+  "status": "pending",
+  "created_at": "2025-07-11T00:00",
+  "timezone_context": "PDT",
+  "reasoning": "Provided pre-parsed data specifies the due date as 2025-10-11 and due time as 10:00, indicating the task's completion timeline. Since the information is pre-parsed and no explicit mention of time conversion needed, it's inputted directly. The assumed timestamp context is PDT, which is Colin's timezone, as mentioned."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:15
+Applied timezone conversions for assignee: Bryan
+  ✓ Success in 14.01s (API: 14.01s)
+
+  [12/30] Testing: 'Have Joel inspect Site A at 9am and Bryan inspect Site B at ...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Have Joel inspect Site A  and Bryan inspect Site B at 10am , then both meet at Site C by 2pm to compare notes [on 2025-07-12 at 09:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 09:00'
+INFO:assistants_api_runner:Total parse_task time: 11.99s (preprocessing: 0.193s)
+INFO:assistants_api_runner:parse_task called with input: Every few days, maybe 3 or 4, have someone check the bitcoin node status at Site B
+INFO:assistants_api_runner:Preprocessing took 0.039s, confidence: 0.0
+INFO:assistants_api_runner:Total parse_task time: 13.96s (preprocessing: 0.039s)
+INFO:assistants_api_runner:parse_task called with input: ASAP, but no later than end of day tomorrow, have Joel fix the telemetry issue at Site C that Bryan reported
+INFO:assistants_api_runner:Preprocessing took 0.000s, confidence: 0.9
+INFO:assistants_api_runner:Total parse_task time: 12.36s (preprocessing: 0.000s)
+INFO:assistants_api_runner:parse_task called with input: Once Bryan confirms the delivery tomorrow morning, immediately have Joel start the installation, aiming to finish by 3pm
+INFO:assistants_api_runner:Preprocessing took 0.002s, confidence: 0.8
+INFO:assistants_api_runner:Total parse_task time: 11.54s (preprocessing: 0.002s)
+INFO:assistants_api_runner:parse_task called with input: This coming week, but not this Monday or Tuesday, schedule Joel to do a full site inspection
+INFO:assistants_api_runner:Preprocessing took 0.029s, confidence: 0.0
+INFO:assistants_api_runner:Total parse_task time: 13.24s (preprocessing: 0.029s)
+INFO:assistants_api_runner:parse_task called with input: Have Bryan or Joel (whoever's closer) check Site A in about an hour or so
+INFO:assistants_api_runner:Preprocessing took 0.000s, confidence: 0.0
+INFO:assistants_api_runner:Total parse_task time: 11.50s (preprocessing: 0.000s)
+INFO:assistants_api_runner:parse_task called with input: Before the end of Q1, remind Bryan to submit the equipment budget for next fiscal year
+INFO:assistants_api_runner:Preprocessing took 0.017s, confidence: 0.0
+INFO:assistants_api_runner:Total parse_task time: 13.11s (preprocessing: 0.017s)
+INFO:assistants_api_runner:parse_task called with input: Have Bryan tell Joel that he needs to finish his inspection before he can start the maintenance
+INFO:assistants_api_runner:Preprocessing took 0.033s, confidence: 0.0
+INFO:assistants_api_runner:Total parse_task time: 9.13s (preprocessing: 0.033s)
+INFO:assistants_api_runner:parse_task called with input: The contractor is coming Tuesday... make sure someone (probably Bryan since he's been handling it) is there by 8am to let them in
+INFO:assistants_api_runner:Preprocessing took 0.004s, confidence: 0.8
+INFO:assistants_api_runner:Total parse_task time: 11.27s (preprocessing: 0.004s)
+INFO:assistants_api_runner:parse_task called with input: At 14:00 tomorrow (that's 2pm for Joel), have him start the system diagnostic which should take about 90 minutes
+INFO:assistants_api_runner:Preprocessing took 0.002s, confidence: 0.8
+INFO:assistants_api_runner:Total parse_task time: 13.64s (preprocessing: 0.002s)
+INFO:assistants_api_runner:parse_task called with input: When you get a chance, but definitely before the weekend, have Joel inventory the spare parts at Site B
+INFO:assistants_api_runner:Preprocessing took 0.000s, confidence: 0.9
+INFO:assistants_api_runner:Total parse_task time: 13.50s (preprocessing: 0.000s)
+INFO:assistants_api_runner:parse_task called with input: The same time we did it last week, have Bryan run the backup procedures, but 30 minutes earlier if it's a Friday
+INFO:assistants_api_runner:Preprocessing took 0.029s, confidence: 0.0
+INFO:assistants_api_runner:Total parse_task time: 75.07s (preprocessing: 0.029s)
+INFO:assistants_api_runner:parse_task called with input: If the morning inspection by Joel shows any issues, have Bryan order parts by noon, then schedule Joel to install them within 2 business days of arrival, otherwise just have Joel do the routine maintenance next Monday at 10am
+INFO:assistants_api_runner:Preprocessing took 0.019s, confidence: 0.0
+Created new thread with ID: thread_ppCkJQj7puagk7uv4cSXI3jD
+Started run with ID: run_Mzc8DBW0q1TRc3UAPb24nD2u
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel, Bryan",
+  "assigner": "Colin",
+  "task": "Joel to inspect Site A and Bryan to inspect Site B at 10am, then both meet at Site C by 2pm to compare notes",
+  "due_date": "2025-07-12",
+  "due_time": "09:00",
+  "status": "pending",
+  "created_at": "2025-07-11T00:00",
+  "timezone_context": "PDT",
+  "reasoning": "Pre-parsed date and time are used directly (2025-07-12 at 09:00). Task indicates multiple locations and actions for Joel and Bryan with a final meeting at 2pm which is earlier than specified in pre-parsed data, showing a discrepancy. Assuming that 'by 2pm' is part of the task details and not linked to the pre-parsed due time. Timezone context is set to PDT based on Colin's current timezone."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:15
+Applied timezone conversions for assignee: Joel, Bryan
+  ✓ Success in 12.66s (API: 12.66s)
+
+  [13/30] Testing: 'Make sure Bryan gets the monthly report done before the end ...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Make sure Bryan gets the monthly report done before the end of the month, with a reminder 3 days prior'
+Created new thread with ID: thread_Azsd6v37hmwKOaxrUDwln0xw
+Started run with ID: run_0iBt91X6jXpzEaK8ka5mEFsG
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Get the monthly report done",
+  "due_date": "2025-07-31",
+  "reminder_date": "2025-07-28",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "PDT",
+  "reasoning": "Task due 'before the end of the month', setting due date to the last day of this month, 2025-07-31. Reminder set for '3 days prior', which is 2025-07-28. No specific due time or reminder time was mentioned."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:15
+Applied timezone conversions for assignee: Bryan
+  ✓ Success in 12.71s (API: 12.71s)
+
+  [14/30] Testing: 'Have Joel swing by Site D first thing in the morning and che...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Have Joel swing by Site D first thing in the morning and check if the new equipment arrived'
+Created new thread with ID: thread_OLgevDhvPo1RabpXutVGi6ka
+Started run with ID: run_ugL6oOCzDXlGsvALUbM3ot5b
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Swing by Site D first thing in the morning and check if the new equipment arrived",
+  "due_date": "2025-07-12",
+  "due_time": "08:00",
+  "reminder_date": "2025-07-12",
+  "reminder_time": "08:00",
+  "status": "pending",
+  "created_at": "2025-07-11T00:00",
+  "site": "Site D",
+  "timezone_context": "PDT",
+  "reasoning": "First thing in the morning is generally understood as the start of the business day, approximated here as 8:00 AM. No specific time given but morning in business context interpreted as 8:00 AM PDT. Date set to the next day (2025-07-12) since the task was assigned on 2025-07-11."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:15
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 19.44s (API: 19.44s)
+
+  [15/30] Testing: 'If Joel is available tomorrow at 3pm CST, have him do the in...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: If Joel is available   , have him do the inspection, otherwise ask Bryan to cover it at 4pm [on 2025-07-12 at 15:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 15:00
+Detected timezone: CST'
+Created new thread with ID: thread_FsANnV0yKt3WdKTIsIA7n6N0
+Started run with ID: run_8DhV1cRMdavmF81vhQ1ovtyb
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel/Bryan",
+  "assigner": "Colin",
+  "task": "Do the inspection",
+  "due_date": "2025-07-12",
+  "due_time": "15:00",
+  "reminder_date": "2025-07-12",
+  "reminder_time": "15:00",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "CST",
+  "reasoning": "Due to potential unavailability of Joel, Bryan is set as alternate assignee. Task is explicitly set for 2025-07-12 at 15:00 CST as per pre-parsed data."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:16
+Applied timezone conversions for assignee: Joel/Bryan
+  ✓ Success in 11.45s (API: 11.45s)
+
+  [16/30] Testing: 'Remind whoever is on duty this weekend to check all sites on...'
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Remind whoever is on duty on 2025-07-12 to check all sites on Saturday
+Pre-parsed due date: 2025-07-12'
+Created new thread with ID: thread_1UOcNGHLOZmB9Y9vFQz5OE77
+Started run with ID: run_OMFa9NimJ95fgS5FscgPnAC4
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Colin",
+  "assigner": "Colin",
+  "task": "Check all sites",
+  "due_date": "2025-07-12",
+  "status": "pending",
+  "created_at": "2025-07-11T00:00",
+  "timezone_context": "PDT",
+  "reasoning": "Although assignee was not explicitly named, the task is to remind 'whoever is on duty', defaulting to Colin as no specific assignee is mentioned. Pre-parsed due date directly used. No specific due time or reminder time provided, and the task is for 2025-07-12. The timezone context is set to PDT as per Colin's timezone."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:16
+Applied timezone conversions for assignee: Colin
+  ✓ Success in 10.32s (API: 10.32s)
+
+  [17/30] Testing: 'At the top of the hour in Joel's timezone (CST), have him re...'
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: At the at 15:00 in Joel's timezone (), have him restart the monitoring system
+Pre-parsed due date: 2025-07-11
+Pre-parsed due time: 15:00'
+Created new thread with ID: thread_jKgR1YisXTMbWlQKu2GmOXtz
+Started run with ID: run_lPi4JXZDhlhWvZ24LyhxKgFq
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Restart the monitoring system",
+  "due_date": "2025-07-11",
+  "due_time": "15:00",
+  "reminder_date": "2025-07-11",
+  "reminder_time": "15:00",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "assigner_local",
+  "reasoning": "Due date and time were pre-parsed, implying precision. There was an omission ('in Joel's timezone ()'), appearing to introduce timezone context but without actual timezone data. Given the context, 'assigner_local' is used for timezone_context due to missing specific timezone and reliance on pre-parsed data."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:16
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 14.48s (API: 14.48s)
+
+  [18/30] Testing: 'Sometime between next Monday and Wednesday, but not Tuesday ...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Sometime between next Monday and Wednesday, but not Tuesday afternoon, have Bryan schedule the vendor visit'
+Created new thread with ID: thread_O2MmbcwL059WrlKVNPqQiS8Z
+Started run with ID: run_uWcCkFEEcbGkwX8Wca0OQjx8
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Schedule the vendor visit",
+  "due_date": "2025-07-16",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "PDT",
+  "reasoning": "Task needs to be completed between next Monday (2025-07-14) and Wednesday (2025-07-16), avoiding Tuesday afternoon. No specific time given so the due date is set to the latest date in the range given, assuming PDT as no other timezone is mentioned."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:16
+Applied timezone conversions for assignee: Bryan
+  ✓ Success in 11.99s (API: 11.99s)
+
+  [19/30] Testing: 'Every few days, maybe 3 or 4, have someone check the bitcoin...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Every few days, maybe 3 or 4, have someone check the bitcoin node status at Site B'
+Created new thread with ID: thread_S04AWMrAa0DTeosYHcmDoPLW
+Started run with ID: run_bk7PDbbbdqaPtuawMFfq3iOa
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Colin",
+  "assigner": "Colin",
+  "task": "Check the bitcoin node status at Site B",
+  "due_date": "2025-07-14",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "site": "Site B",
+  "repeat_interval": "every 3 or 4 days",
+  "timezone_context": "PDT",
+  "reasoning": "Task frequency is 'every few days, maybe 3 or 4' but specific repetition cannot be quantified exactly, so noted as 'every 3 or 4 days'. No specific due time given so that field is omitted. The task is set to start on 2025-07-14, considering 'every few days' as an intent to start soon after the command date. Timezone is specified as PDT, following Colin's current timezone."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:16
+Applied timezone conversions for assignee: Colin
+  ✓ Success in 13.96s (API: 13.96s)
+
+  [20/30] Testing: 'ASAP, but no later than end of day tomorrow, have Joel fix t...'
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: ASAP, but no later than at 23:59 tomorrow, have Joel fix the telemetry issue at Site C that Bryan reported
+Pre-parsed due date: 2025-07-11
+Pre-parsed due time: 23:59'
+Created new thread with ID: thread_LBEimPwmNZEbIMGB2E1P894N
+Started run with ID: run_2MOQ3SoJbBF7DwSSgin7dbNV
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Fix the telemetry issue at Site C that Bryan reported",
+  "due_date": "2025-07-11",
+  "due_time": "23:59",
+  "reminder_date": "2025-07-11",
+  "reminder_time": "23:59",
+  "status": "pending",
+  "created_at": "2025-07-11T00:00",
+  "site": "Site C",
+  "timezone_context": "PDT",
+  "reasoning": "Pre-parsed data indicates task due date is 2025-07-11 with a due time of 23:59 PDT. The task is to be completed as soon as possible but no later than the end of the mentioned day."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:17
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 12.36s (API: 12.36s)
+
+  [21/30] Testing: 'Once Bryan confirms the delivery tomorrow morning, immediate...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Once Bryan confirms the delivery  morning, immediately have Joel start the installation, aiming to finish by [on 2025-07-12 at 15:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 15:00'
+Created new thread with ID: thread_ENInfGbK7wHM7P5LMEiwlh6D
+Started run with ID: run_keLfX8GNfe32RHVk3erWD7zM
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Start the installation once Bryan confirms the delivery, aiming to finish by",
+  "due_date": "2025-07-12",
+  "due_time": "15:00",
+  "status": "pending",
+  "created_at": "2025-07-11T00:00",
+  "timezone_context": "PDT",
+  "reasoning": "The task uses pre-parsed date and time of 2025-07-12 at 15:00. It is set in the context of PDT, Colin's timezone."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:17
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 11.54s (API: 11.54s)
+
+  [22/30] Testing: 'This coming week, but not this Monday or Tuesday, schedule J...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) This coming week, but not this Monday or Tuesday, schedule Joel to do a full site inspection'
+Created new thread with ID: thread_OnMrGfWNTh3GLQuOsYf2U2Gs
+Started run with ID: run_68Wgjsh70fbolrhg22bw4AsW
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Do a full site inspection",
+  "due_date": "2025-07-16",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "PDT",
+  "reasoning": "The instruction is for the coming week, excluding Monday and Tuesday. The closest date that meets this criteria from today (2025-07-11) is Wednesday, 2025-07-16. Date is based on the PDT timezone context provided."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:17
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 13.24s (API: 13.24s)
+
+  [23/30] Testing: 'Have Bryan or Joel (whoever's closer) check Site A in about ...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Have Bryan or Joel (whoever's closer) check Site A in about an hour or so'
+Created new thread with ID: thread_xsfeOsUWivs1tl9aLhjFpe1r
+Started run with ID: run_8cG1AWRsxhb3YDkP99nhaz20
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Bryan or Joel",
+  "assigner": "Colin",
+  "task": "Check Site A",
+  "due_date": "2025-07-11",
+  "due_time": "13:00",
+  "reminder_date": "2025-07-11",
+  "reminder_time": "13:00",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "PDT",
+  "reasoning": "The task is set for 'about an hour or so' from the current timestamp, which puts the due time at approximately 13:00 PDT. Since the assignment could be to Bryan or Joel, 'whoever's closer' is specified without a specific assignee. 'Today' in Colin's PDT timezone is 2025-07-11."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:17
+Applied timezone conversions for assignee: Bryan or Joel
+  ✓ Success in 11.50s (API: 11.50s)
+
+  [24/30] Testing: 'Before the end of Q1, remind Bryan to submit the equipment b...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Before the end of Q1, remind Bryan to submit the equipment budget for next fiscal year'
+Created new thread with ID: thread_J2smIO9H4XseYoiApCoZ7pH7
+Started run with ID: run_fGVXuYbsFOwp7sPwTFKa4SnG
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Submit the equipment budget for next fiscal year",
+  "due_date": "2025-09-30",
+  "due_time": "23:59",
+  "reminder_date": "2025-09-30",
+  "reminder_time": "23:59",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "PDT",
+  "reasoning": "End of Q1 (fiscal quarter one) in most contexts refers to September 30th, hence due date is set as 2025-09-30. No specific time was given, so assuming end of day for the due time and reminder. Assigner's timezone is PDT."
+}
+Successfully parsed JSON.
+INFO:assistants_api_runner:Total parse_task time: 9.01s (preprocessing: 0.019s)
+INFO:groq_parser:parse_task called with input: Remind Joel next Tuesday at 3pm MST if it's not a holiday, otherwise Wednesday at 2pm to check the generator oil levels at Site B and email Bryan the results by EOD
+INFO:groq_parser:Preprocessing took 0.028s, confidence: 0.7
+INFO:groq_parser:Total parse_task time: 1.29s (preprocessing: 0.028s, API: 1.260s)
+INFO:groq_parser:parse_task called with input: Tell Bryan to coordinate with Joel about the maintenance schedule, and have him report back to me by Friday afternoon
+INFO:groq_parser:Preprocessing took 0.000s, confidence: 0.0
+INFO:groq_parser:Total parse_task time: 1.18s (preprocessing: 0.000s, API: 1.176s)
+INFO:groq_parser:parse_task called with input: Schedule a call between Colin (PDT), Bryan (MST), and Joel (CST) for 2pm Colin's time next Monday to discuss the flare skid installation
+INFO:groq_parser:Preprocessing took 0.031s, confidence: 0.7
+INFO:groq_parser:parse_task called with input: Have Joel check the telemetry readings at the top of the next hour, then again 30 minutes later
+INFO:groq_parser:Preprocessing took 0.024s, confidence: 0.0
+INFO:groq_parser:parse_task called with input: Every other Tuesday starting next week, have Bryan check the telemetry systems at all sites, but skip any weeks where Monday is a holiday
+INFO:groq_parser:Preprocessing took 0.002s, confidence: 0.7
+INFO:groq_parser:parse_task called with input: Next Friday at 5pm, unless that's already passed this week, then the Friday after, remind Joel to submit the maintenance report
+INFO:groq_parser:Preprocessing took 0.019s, confidence: 0.0
+INFO:groq_parser:parse_task called with input: First have Bryan shut down the node at Site C at 10am tomorrow, then 30 minutes later have Joel restart it, and finally have Bryan verify it's online by noon
+INFO:groq_parser:Preprocessing took 0.001s, confidence: 0.8
+INFO:groq_parser:parse_task called with input: yo joel tmrw mornin around 8ish can u check if the generater at site b needs oil... bryan said it was making weird noises
+INFO:groq_parser:Preprocessing took 0.026s, confidence: 0.0
+INFO:groq_parser:parse_task called with input: When Joel gets to the office tomorrow morning, have him call the contractor about the Site D repairs
+INFO:groq_parser:Preprocessing took 0.002s, confidence: 0.7
+INFO:groq_parser:parse_task called with input: Remind Bryan in 3 business days to follow up on the equipment order, accounting for the upcoming holiday weekend
+INFO:groq_parser:Preprocessing took 0.000s, confidence: 0.9
+INFO:groq_parser:parse_task called with input: Tell Bryan: "You need to meet Joel at Site C after he finishes his morning rounds at 10am"
+INFO:groq_parser:Preprocessing took 0.001s, confidence: 0.8
+INFO:groq_parser:parse_task called with input: Have Joel inspect Site A at 9am and Bryan inspect Site B at 10am tomorrow, then both meet at Site C by 2pm to compare notes
+INFO:groq_parser:Preprocessing took 0.001s, confidence: 0.8
+INFO:groq_parser:parse_task called with input: Make sure Bryan gets the monthly report done before the end of the month, with a reminder 3 days prior
+INFO:groq_parser:Preprocessing took 0.031s, confidence: 0.0
+INFO:groq_parser:parse_task called with input: Have Joel swing by Site D first thing in the morning and check if the new equipment arrived
+INFO:groq_parser:Preprocessing took 0.000s, confidence: 0.0
+INFO:groq_parser:parse_task called with input: If Joel is available tomorrow at 3pm CST, have him do the inspection, otherwise ask Bryan to cover it at 4pm MST
+INFO:groq_parser:Preprocessing took 0.002s, confidence: 0.8
+INFO:groq_parser:parse_task called with input: Remind whoever is on duty this weekend to check all sites on Saturday
+INFO:groq_parser:Preprocessing took 0.000s, confidence: 0.9
+INFO:groq_parser:parse_task called with input: At the top of the hour in Joel's timezone (CST), have him restart the monitoring system
+INFO:groq_parser:Preprocessing took 0.000s, confidence: 0.9
+INFO:groq_parser:parse_task called with input: Sometime between next Monday and Wednesday, but not Tuesday afternoon, have Bryan schedule the vendor visit
+INFO:groq_parser:Preprocessing took 0.022s, confidence: 0.0
+INFO:groq_parser:parse_task called with input: Every few days, maybe 3 or 4, have someone check the bitcoin node status at Site B
+INFO:groq_parser:Preprocessing took 0.020s, confidence: 0.0
+INFO:groq_parser:parse_task called with input: ASAP, but no later than end of day tomorrow, have Joel fix the telemetry issue at Site C that Bryan reported
+INFO:groq_parser:Preprocessing took 0.000s, confidence: 0.9
+Set created_at to: 2025-07-11T21:17
+Applied timezone conversions for assignee: Bryan
+  ✓ Success in 13.11s (API: 13.11s)
+
+  [25/30] Testing: 'Have Bryan tell Joel that he needs to finish his inspection ...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Have Bryan tell Joel that he needs to finish his inspection before he can start the maintenance'
+Created new thread with ID: thread_QpR3YGLZBoACqZYNH8mLEmQ5
+Started run with ID: run_Ck4fOBFJZIJleoRNLtvWsGA2
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Tell Joel that he needs to finish his inspection before he can start the maintenance",
+  "due_date": "2025-07-11",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "PDT",
+  "reasoning": "The task doesn't specify a due date or time, so it's assumed to be due as soon as possible, which defaults to today's date in Colin's timezone, PDT. The instruction is for Bryan to inform Joel about the order of tasks, implying no direct action required from Colin beyond issuing the order."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:18
+Applied timezone conversions for assignee: Bryan
+  ✓ Success in 9.13s (API: 9.13s)
+
+  [26/30] Testing: 'The contractor is coming Tuesday... make sure someone (proba...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: The contractor is coming Tuesday... make sure someone (probably Bryan since he's been handling it) is there am to let them in [on 2025-08-11 at 08:00]
+Pre-parsed due date: 2025-08-11
+Pre-parsed due time: 08:00'
+Created new thread with ID: thread_I8ZUcJ7XnLBSvVcYrmUUhcnb
+Started run with ID: run_VYVbcSl7q4fYVkRJhnxZLIl2
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Let the contractor in",
+  "due_date": "2025-08-11",
+  "due_time": "08:00",
+  "reminder_date": "2025-08-11",
+  "reminder_time": "08:00",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "timezone_context": "PDT",
+  "reasoning": "Task mentions 'the contractor is coming Tuesday' with a pre-parsed date and time of 2025-08-11 at 08:00, indicating the explicit planning. Bryan is suggested to handle it thus assigned. Timezone is indicated by 'Colin's timezone' as PDT."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:18
+Applied timezone conversions for assignee: Bryan
+  ✓ Success in 11.27s (API: 11.27s)
+
+  [27/30] Testing: 'At 14:00 tomorrow (that's 2pm for Joel), have him start the ...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: (that's 2pm for Joel), have him start the system diagnostic which should take about 90 minutes [on 2025-07-12 at 14:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 14:00'
+Created new thread with ID: thread_CgSPtNK7olaguZApnGBbNDp6
+Started run with ID: run_tpvxHDeNYG6jBTmNEnIypmN2
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Start the system diagnostic which should take about 90 minutes",
+  "due_date": "2025-07-12",
+  "due_time": "14:00",
+  "reminder_date": "2025-07-12",
+  "reminder_time": "14:00",
+  "status": "pending",
+  "created_at": "2025-07-11T00:00",
+  "timezone_context": "PDT",
+  "reasoning": "Given the pre-parsed due date and time, and no explicit mention of a timezone for the due event in the instruction itself, it's assumed the due time is in Joel's timezone. However, since it was also stated 'that's 2pm for Joel,' and the assistant's current context is Colin's timezone (PDT), the reference to '2pm' directly reflects Joel's situation without altering the pre-parsed data. Assuming due time implicitly respects Joel's situation, the reasoning focuses on aligning with the provided pre-parsed temporal data."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:18
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 13.65s (API: 13.65s)
+
+  [28/30] Testing: 'When you get a chance, but definitely before the weekend, ha...'
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: When you get a chance, but definitely before the on 2025-07-12, have Joel inventory the spare parts at Site B
+Pre-parsed due date: 2025-07-12'
+Created new thread with ID: thread_T4ZoKlRZX0s5L4lZNEFqTBIt
+Started run with ID: run_JtSBKoUCbcqOIR4OciwOSXXf
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Inventory the spare parts at Site B",
+  "due_date": "2025-07-12",
+  "status": "pending",
+  "created_at": "2025-07-11T12:00",
+  "site": "Site B",
+  "timezone_context": "PDT",
+  "reasoning": "Pre-parsed due date is provided as 2025-07-12, directly used that for due_date. The task is specified for Joel to complete before 2025-07-12, with no specific time given. Task location is specified as Site B. Due to the lack of a specified time and the immediacy of the task ('When you get a chance'), no due_time is set. The date is interpreted to be in PDT, matching Colin's timezone context."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:18
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 13.50s (API: 13.50s)
+
+  [29/30] Testing: 'The same time we did it last week, have Bryan run the backup...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) The same time we did it last week, have Bryan run the backup procedures, but 30 minutes earlier if it's a Friday'
+Created new thread with ID: thread_ScJdwnScdTBnKp0LNIMRXVcE
+Started run with ID: run_rorrrMhqFnwUIp5oaK0OQUih
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Bryan",
+  "assigner": "Colin",
+  "task": "Run the backup procedures",
+  "due_date": "2025-07-11",
+  "due_time": "Not Specified",
+  "reminder_date": "2025-07-11",
+  "reminder_time": "Not Specified",
+  "status": "pending",
+  "created_at": "2025-07-11T00:00",
+  "timezone_context": "PDT",
+  "reasoning": "Given instructions imply a task recurrence similar to a previous event, modified for Fridays. Specific timing is not given, but an adjustment of 30 minutes earlier on Fridays is mentioned, though the exact time of last week's event is not specified, making it impossible to define a precise due or reminder time. Today is Friday, the due date is set to today; reasoning is based on the mention of adjusting the timing for Fridays."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:19
+Applied timezone conversions for assignee: Bryan
+  ✓ Success in 75.07s (API: 75.07s)
+
+  [30/30] Testing: 'If the morning inspection by Joel shows any issues, have Bry...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) If the morning inspection by Joel shows any issues, have Bryan order parts by noon, then schedule Joel to install them within 2 business days of arrival, otherwise just have Joel do the routine maintenance next Monday at 10am'
+Created new thread with ID: thread_uKeFn2oWZFh3B2w8AsPrjSGE
+Started run with ID: run_aeGnwjPx8i8KvEvJgjIgrD80
+Current run status: in_progress
+Current run status: in_progress
+Current run status: completed
+Assistant response received:
+{
+  "assignee": "Joel",
+  "assigner": "Colin",
+  "task": "Do the routine maintenance",
+  "due_date": "2025-07-14",
+  "due_time": "10:00",
+  "reminder_date": "2025-07-14",
+  "reminder_time": "10:00",
+  "status": "pending",
+  "created_at": "2025-07-11T00:00",
+  "timezone_context": "PDT",
+  "reasoning": "Given 'next Monday at 10am' specifically targets Joel for maintenance, implying no action needed by Bryan unless issues are found during the morning inspection. The current date is 2025-07-11, making next Monday the 14th. Timezone specified by user's context as PDT."
+}
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:20
+Applied timezone conversions for assignee: Joel
+  ✓ Success in 9.01s (API: 9.01s)
+
+
+2️⃣ Testing Llama3-8B (Groq):
+
+  [1/30] Testing: 'Remind Joel next Tuesday at 3pm MST if it's not a holiday, o...'
+
+High-confidence preprocessing (70.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Remind Joel next Tuesday at 3pm  if it's not a holiday, otherwise Wednesday at 2pm to check the generator oil levels at Site B and email Bryan the results by EOD
+Detected timezone: MST'
+Assistant response received (in 1.26s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:20
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3-8b-8192, Total=1.29s (preprocessing=0.028s, API=1.260s)
+  ✓ Success in 1.29s (API: 1.26s)
+
+  [2/30] Testing: 'Tell Bryan to coordinate with Joel about the maintenance sch...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Tell Bryan to coordinate with Joel about the maintenance schedule, and have him report back to me by Friday afternoon'
+Assistant response received (in 1.18s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:20
+Applied timezone conversions for assignee: Bryan
+
+⏱️  Performance: Model=llama3-8b-8192, Total=1.18s (preprocessing=0.000s, API=1.176s)
+  ✓ Success in 1.18s (API: 1.18s)
+
+  [3/30] Testing: 'Schedule a call between Colin (PDT), Bryan (MST), and Joel (...'
+
+High-confidence preprocessing (70.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Schedule a call between Colin (), Bryan (), and Joel () for 2pm Colin's time next Monday to discuss the flare skid installation
+Detected timezone: PDT'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5192, Requested 2022. Please try again in 12.137s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [4/30] Testing: 'Have Joel check the telemetry readings at the top of the nex...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Have Joel check the telemetry readings at the top of the next hour, then again 30 minutes later'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5173, Requested 2007. Please try again in 11.794s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [5/30] Testing: 'Every other Tuesday starting next week, have Bryan check the...'
+
+High-confidence preprocessing (70.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Every other Tuesday starting , have Bryan check the telemetry systems at all sites, but skip any weeks where Monday is a holiday [on 2025-07-18]
+Pre-parsed due date: 2025-07-18'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5146, Requested 2029. Please try again in 11.743s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [6/30] Testing: 'Next Friday at 5pm, unless that's already passed this week, ...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Next Friday at 5pm, unless that's already passed this week, then the Friday after, remind Joel to submit the maintenance report'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5127, Requested 2015. Please try again in 11.412s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [7/30] Testing: 'First have Bryan shut down the node at Site C at 10am tomorr...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: First have Bryan shut down the node at Site C  , then 30 minutes later have Joel restart it, and finally have Bryan verify it's online by noon [on 2025-07-12 at 10:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 10:00'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5110, Requested 2041. Please try again in 11.507s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [8/30] Testing: 'yo joel tmrw mornin around 8ish can u check if the generater...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) yo joel tmrw mornin around 8ish can u check if the generater at site b needs oil... bryan said it was making weird noises'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5093, Requested 2013. Please try again in 11.050999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [9/30] Testing: 'When Joel gets to the office tomorrow morning, have him call...'
+
+High-confidence preprocessing (70.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: When Joel gets to the office  morning, have him call the contractor about the Site D repairs [on 2025-07-12]
+Pre-parsed due date: 2025-07-12'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5075, Requested 2020. Please try again in 10.945s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [10/30] Testing: 'Remind Bryan in 3 business days to follow up on the equipmen...'
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Remind Bryan in 3 business days to follow up on the equipment order, accounting for the upcoming holiday on 2025-07-12
+Pre-parsed due date: 2025-07-12'
+Error: API request failed with status 429
+INFO:groq_parser:parse_task called with input: Once Bryan confirms the delivery tomorrow morning, immediately have Joel start the installation, aiming to finish by 3pm
+INFO:groq_parser:Preprocessing took 0.002s, confidence: 0.8
+INFO:groq_parser:parse_task called with input: This coming week, but not this Monday or Tuesday, schedule Joel to do a full site inspection
+INFO:groq_parser:Preprocessing took 0.023s, confidence: 0.0
+INFO:groq_parser:parse_task called with input: Have Bryan or Joel (whoever's closer) check Site A in about an hour or so
+INFO:groq_parser:Preprocessing took 0.000s, confidence: 0.0
+INFO:groq_parser:parse_task called with input: Before the end of Q1, remind Bryan to submit the equipment budget for next fiscal year
+INFO:groq_parser:Preprocessing took 0.023s, confidence: 0.0
+INFO:groq_parser:parse_task called with input: Have Bryan tell Joel that he needs to finish his inspection before he can start the maintenance
+INFO:groq_parser:Preprocessing took 0.028s, confidence: 0.0
+INFO:groq_parser:parse_task called with input: The contractor is coming Tuesday... make sure someone (probably Bryan since he's been handling it) is there by 8am to let them in
+INFO:groq_parser:Preprocessing took 0.001s, confidence: 0.8
+INFO:groq_parser:parse_task called with input: At 14:00 tomorrow (that's 2pm for Joel), have him start the system diagnostic which should take about 90 minutes
+INFO:groq_parser:Preprocessing took 0.001s, confidence: 0.8
+INFO:groq_parser:parse_task called with input: When you get a chance, but definitely before the weekend, have Joel inventory the spare parts at Site B
+INFO:groq_parser:Preprocessing took 0.000s, confidence: 0.9
+INFO:groq_parser:parse_task called with input: The same time we did it last week, have Bryan run the backup procedures, but 30 minutes earlier if it's a Friday
+INFO:groq_parser:Preprocessing took 0.028s, confidence: 0.0
+INFO:groq_parser:parse_task called with input: If the morning inspection by Joel shows any issues, have Bryan order parts by noon, then schedule Joel to install them within 2 business days of arrival, otherwise just have Joel do the routine maintenance next Monday at 10am
+INFO:groq_parser:Preprocessing took 0.023s, confidence: 0.0
+INFO:local_llama_parser:parse_task called with input: Remind Joel next Tuesday at 3pm MST if it's not a holiday, otherwise Wednesday at 2pm to check the generator oil levels at Site B and email Bryan the results by EOD
+INFO:local_llama_parser:Preprocessing took 0.019s, confidence: 0.7
+INFO:local_llama_parser:Total parse_task time: 35.04s (preprocessing: 0.019s, API: 35.017s)
+INFO:local_llama_parser:parse_task called with input: Tell Bryan to coordinate with Joel about the maintenance schedule, and have him report back to me by Friday afternoon
+INFO:local_llama_parser:Preprocessing took 0.000s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 13.55s (preprocessing: 0.000s, API: 13.551s)
+INFO:local_llama_parser:parse_task called with input: Schedule a call between Colin (PDT), Bryan (MST), and Joel (CST) for 2pm Colin's time next Monday to discuss the flare skid installation
+INFO:local_llama_parser:Preprocessing took 0.032s, confidence: 0.7
+INFO:local_llama_parser:parse_task called with input: Have Joel check the telemetry readings at the top of the next hour, then again 30 minutes later
+INFO:local_llama_parser:Preprocessing took 0.044s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 12.15s (preprocessing: 0.044s, API: 12.101s)
+INFO:local_llama_parser:parse_task called with input: Every other Tuesday starting next week, have Bryan check the telemetry systems at all sites, but skip any weeks where Monday is a holiday
+INFO:local_llama_parser:Preprocessing took 0.003s, confidence: 0.7
+INFO:local_llama_parser:Total parse_task time: 11.67s (preprocessing: 0.003s, API: 11.660s)
+INFO:local_llama_parser:parse_task called with input: Next Friday at 5pm, unless that's already passed this week, then the Friday after, remind Joel to submit the maintenance report
+INFO:local_llama_parser:Preprocessing took 0.050s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 14.60s (preprocessing: 0.050s, API: 14.553s)
+INFO:local_llama_parser:parse_task called with input: First have Bryan shut down the node at Site C at 10am tomorrow, then 30 minutes later have Joel restart it, and finally have Bryan verify it's online by noon
+INFO:local_llama_parser:Preprocessing took 0.006s, confidence: 0.8
+INFO:local_llama_parser:Total parse_task time: 15.27s (preprocessing: 0.006s, API: 15.264s)
+INFO:local_llama_parser:parse_task called with input: yo joel tmrw mornin around 8ish can u check if the generater at site b needs oil... bryan said it was making weird noises
+INFO:local_llama_parser:Preprocessing took 0.045s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 12.66s (preprocessing: 0.045s, API: 12.613s)
+INFO:local_llama_parser:parse_task called with input: When Joel gets to the office tomorrow morning, have him call the contractor about the Site D repairs
+INFO:local_llama_parser:Preprocessing took 0.005s, confidence: 0.7
+INFO:local_llama_parser:Total parse_task time: 9.89s (preprocessing: 0.005s, API: 9.884s)
+INFO:local_llama_parser:parse_task called with input: Remind Bryan in 3 business days to follow up on the equipment order, accounting for the upcoming holiday weekend
+INFO:local_llama_parser:Preprocessing took 0.000s, confidence: 0.9
+INFO:local_llama_parser:Total parse_task time: 13.75s (preprocessing: 0.000s, API: 13.751s)
+INFO:local_llama_parser:parse_task called with input: Tell Bryan: "You need to meet Joel at Site C after he finishes his morning rounds at 10am"
+INFO:local_llama_parser:Preprocessing took 0.006s, confidence: 0.8
+INFO:local_llama_parser:Total parse_task time: 12.11s (preprocessing: 0.006s, API: 12.100s)
+INFO:local_llama_parser:parse_task called with input: Have Joel inspect Site A at 9am and Bryan inspect Site B at 10am tomorrow, then both meet at Site C by 2pm to compare notes
+INFO:local_llama_parser:Preprocessing took 0.005s, confidence: 0.8
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5060, Requested 2022. Please try again in 10.817s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [11/30] Testing: 'Tell Bryan: "You need to meet Joel at Site C after he finish...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Tell Bryan: "You need to meet Joel at Site C after he finishes his morning rounds am" [on 2025-10-11 at 10:00]
+Pre-parsed due date: 2025-10-11
+Pre-parsed due time: 10:00'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5046, Requested 2027. Please try again in 10.722s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [12/30] Testing: 'Have Joel inspect Site A at 9am and Bryan inspect Site B at ...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Have Joel inspect Site A  and Bryan inspect Site B at 10am , then both meet at Site C by 2pm to compare notes [on 2025-07-12 at 09:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 09:00'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5026, Requested 2033. Please try again in 10.583s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [13/30] Testing: 'Make sure Bryan gets the monthly report done before the end ...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Make sure Bryan gets the monthly report done before the end of the month, with a reminder 3 days prior'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 5005, Requested 2009. Please try again in 10.134s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [14/30] Testing: 'Have Joel swing by Site D first thing in the morning and che...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Have Joel swing by Site D first thing in the morning and check if the new equipment arrived'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4989, Requested 2006. Please try again in 9.946s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [15/30] Testing: 'If Joel is available tomorrow at 3pm CST, have him do the in...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: If Joel is available   , have him do the inspection, otherwise ask Bryan to cover it at 4pm [on 2025-07-12 at 15:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 15:00
+Detected timezone: CST'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4974, Requested 2034. Please try again in 10.075s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [16/30] Testing: 'Remind whoever is on duty this weekend to check all sites on...'
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Remind whoever is on duty on 2025-07-12 to check all sites on Saturday
+Pre-parsed due date: 2025-07-12'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4959, Requested 2010. Please try again in 9.684s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [17/30] Testing: 'At the top of the hour in Joel's timezone (CST), have him re...'
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: At the at 15:00 in Joel's timezone (), have him restart the monitoring system
+Pre-parsed due date: 2025-07-11
+Pre-parsed due time: 15:00'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4944, Requested 2019. Please try again in 9.63s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [18/30] Testing: 'Sometime between next Monday and Wednesday, but not Tuesday ...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Sometime between next Monday and Wednesday, but not Tuesday afternoon, have Bryan schedule the vendor visit'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4926, Requested 2010. Please try again in 9.357999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [19/30] Testing: 'Every few days, maybe 3 or 4, have someone check the bitcoin...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Every few days, maybe 3 or 4, have someone check the bitcoin node status at Site B'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4908, Requested 2004. Please try again in 9.114s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [20/30] Testing: 'ASAP, but no later than end of day tomorrow, have Joel fix t...'
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: ASAP, but no later than at 23:59 tomorrow, have Joel fix the telemetry issue at Site C that Bryan reported
+Pre-parsed due date: 2025-07-11
+Pre-parsed due time: 23:59'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4893, Requested 2026. Please try again in 9.185s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [21/30] Testing: 'Once Bryan confirms the delivery tomorrow morning, immediate...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Once Bryan confirms the delivery  morning, immediately have Joel start the installation, aiming to finish by [on 2025-07-12 at 15:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 15:00'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4877, Requested 2033. Please try again in 9.097999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [22/30] Testing: 'This coming week, but not this Monday or Tuesday, schedule J...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) This coming week, but not this Monday or Tuesday, schedule Joel to do a full site inspection'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4861, Requested 2006. Please try again in 8.663s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [23/30] Testing: 'Have Bryan or Joel (whoever's closer) check Site A in about ...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Have Bryan or Joel (whoever's closer) check Site A in about an hour or so'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4847, Requested 2001. Please try again in 8.470999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [24/30] Testing: 'Before the end of Q1, remind Bryan to submit the equipment b...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Before the end of Q1, remind Bryan to submit the equipment budget for next fiscal year'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4825, Requested 2005. Please try again in 8.292s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [25/30] Testing: 'Have Bryan tell Joel that he needs to finish his inspection ...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Have Bryan tell Joel that he needs to finish his inspection before he can start the maintenance'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4809, Requested 2007. Please try again in 8.157999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [26/30] Testing: 'The contractor is coming Tuesday... make sure someone (proba...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: The contractor is coming Tuesday... make sure someone (probably Bryan since he's been handling it) is there am to let them in [on 2025-08-11 at 08:00]
+Pre-parsed due date: 2025-08-11
+Pre-parsed due time: 08:00'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4793, Requested 2037. Please try again in 8.292s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [27/30] Testing: 'At 14:00 tomorrow (that's 2pm for Joel), have him start the ...'
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: (that's 2pm for Joel), have him start the system diagnostic which should take about 90 minutes [on 2025-07-12 at 14:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 14:00'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4776, Requested 2029. Please try again in 8.05s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [28/30] Testing: 'When you get a chance, but definitely before the weekend, ha...'
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: When you get a chance, but definitely before the on 2025-07-12, have Joel inventory the spare parts at Site B
+Pre-parsed due date: 2025-07-12'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4759, Requested 2020. Please try again in 7.785s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [29/30] Testing: 'The same time we did it last week, have Bryan run the backup...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) The same time we did it last week, have Bryan run the backup procedures, but 30 minutes earlier if it's a Friday'
+Error: API request failed with status 429
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4742, Requested 2011. Please try again in 7.522s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+  [30/30] Testing: 'If the morning inspection by Joel shows any issues, have Bry...'
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) If the morning inspection by Joel shows any issues, have Bryan order parts by noon, then schedule Joel to install them within 2 business days of arrival, otherwise just have Joel do the routine maintenance next Monday at 10am'
+Error: API request failed with status 429
+INFO:local_llama_parser:Total parse_task time: 13.65s (preprocessing: 0.005s, API: 13.643s)
+INFO:local_llama_parser:parse_task called with input: Make sure Bryan gets the monthly report done before the end of the month, with a reminder 3 days prior
+INFO:local_llama_parser:Preprocessing took 0.033s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 10.08s (preprocessing: 0.033s, API: 10.044s)
+INFO:local_llama_parser:parse_task called with input: Have Joel swing by Site D first thing in the morning and check if the new equipment arrived
+INFO:local_llama_parser:Preprocessing took 0.000s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 11.17s (preprocessing: 0.000s, API: 11.172s)
+INFO:local_llama_parser:parse_task called with input: If Joel is available tomorrow at 3pm CST, have him do the inspection, otherwise ask Bryan to cover it at 4pm MST
+INFO:local_llama_parser:Preprocessing took 0.005s, confidence: 0.8
+INFO:local_llama_parser:Total parse_task time: 13.96s (preprocessing: 0.005s, API: 13.957s)
+INFO:local_llama_parser:parse_task called with input: Remind whoever is on duty this weekend to check all sites on Saturday
+INFO:local_llama_parser:Preprocessing took 0.000s, confidence: 0.9
+INFO:local_llama_parser:Total parse_task time: 13.15s (preprocessing: 0.000s, API: 13.150s)
+INFO:local_llama_parser:parse_task called with input: At the top of the hour in Joel's timezone (CST), have him restart the monitoring system
+INFO:local_llama_parser:Preprocessing took 0.000s, confidence: 0.9
+INFO:local_llama_parser:Total parse_task time: 11.58s (preprocessing: 0.000s, API: 11.579s)
+INFO:local_llama_parser:parse_task called with input: Sometime between next Monday and Wednesday, but not Tuesday afternoon, have Bryan schedule the vendor visit
+INFO:local_llama_parser:Preprocessing took 0.075s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 11.88s (preprocessing: 0.075s, API: 11.804s)
+INFO:local_llama_parser:parse_task called with input: Every few days, maybe 3 or 4, have someone check the bitcoin node status at Site B
+INFO:local_llama_parser:Preprocessing took 0.041s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 12.17s (preprocessing: 0.041s, API: 12.132s)
+INFO:local_llama_parser:parse_task called with input: ASAP, but no later than end of day tomorrow, have Joel fix the telemetry issue at Site C that Bryan reported
+INFO:local_llama_parser:Preprocessing took 0.000s, confidence: 0.9
+INFO:local_llama_parser:Total parse_task time: 13.69s (preprocessing: 0.000s, API: 13.685s)
+INFO:local_llama_parser:parse_task called with input: Once Bryan confirms the delivery tomorrow morning, immediately have Joel start the installation, aiming to finish by 3pm
+INFO:local_llama_parser:Preprocessing took 0.007s, confidence: 0.8
+INFO:local_llama_parser:Total parse_task time: 13.63s (preprocessing: 0.007s, API: 13.617s)
+INFO:local_llama_parser:parse_task called with input: This coming week, but not this Monday or Tuesday, schedule Joel to do a full site inspection
+INFO:local_llama_parser:Preprocessing took 0.039s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 11.86s (preprocessing: 0.039s, API: 11.820s)
+INFO:local_llama_parser:parse_task called with input: Have Bryan or Joel (whoever's closer) check Site A in about an hour or so
+INFO:local_llama_parser:Preprocessing took 0.000s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 13.61s (preprocessing: 0.000s, API: 13.606s)
+INFO:local_llama_parser:parse_task called with input: Before the end of Q1, remind Bryan to submit the equipment budget for next fiscal year
+INFO:local_llama_parser:Preprocessing took 0.089s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 14.95s (preprocessing: 0.089s, API: 14.861s)
+INFO:local_llama_parser:parse_task called with input: Have Bryan tell Joel that he needs to finish his inspection before he can start the maintenance
+INFO:local_llama_parser:Preprocessing took 0.041s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 11.05s (preprocessing: 0.041s, API: 11.010s)
+INFO:local_llama_parser:parse_task called with input: The contractor is coming Tuesday... make sure someone (probably Bryan since he's been handling it) is there by 8am to let them in
+INFO:local_llama_parser:Preprocessing took 0.005s, confidence: 0.8
+INFO:local_llama_parser:Total parse_task time: 10.95s (preprocessing: 0.005s, API: 10.939s)
+INFO:local_llama_parser:parse_task called with input: At 14:00 tomorrow (that's 2pm for Joel), have him start the system diagnostic which should take about 90 minutes
+INFO:local_llama_parser:Preprocessing took 0.002s, confidence: 0.8
+INFO:local_llama_parser:Total parse_task time: 11.78s (preprocessing: 0.002s, API: 11.774s)
+INFO:local_llama_parser:parse_task called with input: When you get a chance, but definitely before the weekend, have Joel inventory the spare parts at Site B
+INFO:local_llama_parser:Preprocessing took 0.000s, confidence: 0.9
+INFO:local_llama_parser:Total parse_task time: 11.25s (preprocessing: 0.000s, API: 11.246s)
+INFO:local_llama_parser:parse_task called with input: The same time we did it last week, have Bryan run the backup procedures, but 30 minutes earlier if it's a Friday
+INFO:local_llama_parser:Preprocessing took 0.050s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 14.04s (preprocessing: 0.050s, API: 13.991s)
+INFO:local_llama_parser:parse_task called with input: If the morning inspection by Joel shows any issues, have Bryan order parts by noon, then schedule Joel to install them within 2 business days of arrival, otherwise just have Joel do the routine maintenance next Monday at 10am
+INFO:local_llama_parser:Preprocessing took 0.056s, confidence: 0.0
+INFO:local_llama_parser:Total parse_task time: 16.21s (preprocessing: 0.056s, API: 16.157s)
+Response: {"error":{"message":"Rate limit reached for model `llama3-8b-8192` in organization `org_01jzxg76xyetvt9mghfpypyzzk` service tier `on_demand` on tokens per minute (TPM): Limit 6000, Used 4724, Requested 2039. Please try again in 7.627999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing","type":"tokens","code":"rate_limit_exceeded"}}
+
+  ✗ Failed
+
+
+3️⃣ Testing Local Llama3 (Q4):
+
+  [1/30] Testing: 'Remind Joel next Tuesday at 3pm MST if it's not a holiday, o...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (70.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Remind Joel next Tuesday at 3pm  if it's not a holiday, otherwise Wednesday at 2pm to check the generator oil levels at Site B and email Bryan the results by EOD
+Detected timezone: MST'
+Assistant response received (in 35.02s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:20
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=35.04s (preprocessing=0.019s, API=35.017s)
+  ✓ Success in 35.06s (API: 35.02s)
+
+  [2/30] Testing: 'Tell Bryan to coordinate with Joel about the maintenance sch...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Tell Bryan to coordinate with Joel about the maintenance schedule, and have him report back to me by Friday afternoon'
+Assistant response received (in 13.55s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:21
+Applied timezone conversions for assignee: Bryan
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=13.55s (preprocessing=0.000s, API=13.551s)
+  ✓ Success in 13.56s (API: 13.55s)
+
+  [3/30] Testing: 'Schedule a call between Colin (PDT), Bryan (MST), and Joel (...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (70.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Schedule a call between Colin (), Bryan (), and Joel () for 2pm Colin's time next Monday to discuss the flare skid installation
+Detected timezone: PDT'
+Assistant response received (in 12.88s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:21
+An unexpected error occurred: unhashable type: 'list'
+  ✗ Error: unhashable type: 'list'...
+
+  [4/30] Testing: 'Have Joel check the telemetry readings at the top of the nex...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Have Joel check the telemetry readings at the top of the next hour, then again 30 minutes later'
+Assistant response received (in 12.10s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:21
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=12.15s (preprocessing=0.044s, API=12.101s)
+  ✓ Success in 12.15s (API: 12.10s)
+
+  [5/30] Testing: 'Every other Tuesday starting next week, have Bryan check the...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (70.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Every other Tuesday starting , have Bryan check the telemetry systems at all sites, but skip any weeks where Monday is a holiday [on 2025-07-18]
+Pre-parsed due date: 2025-07-18'
+Assistant response received (in 11.66s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:21
+Applied timezone conversions for assignee: Bryan
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=11.67s (preprocessing=0.003s, API=11.660s)
+  ✓ Success in 11.67s (API: 11.66s)
+
+  [6/30] Testing: 'Next Friday at 5pm, unless that's already passed this week, ...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Next Friday at 5pm, unless that's already passed this week, then the Friday after, remind Joel to submit the maintenance report'
+Assistant response received (in 14.55s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:21
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=14.60s (preprocessing=0.050s, API=14.553s)
+  ✓ Success in 14.61s (API: 14.55s)
+
+  [7/30] Testing: 'First have Bryan shut down the node at Site C at 10am tomorr...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: First have Bryan shut down the node at Site C  , then 30 minutes later have Joel restart it, and finally have Bryan verify it's online by noon [on 2025-07-12 at 10:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 10:00'
+Assistant response received (in 15.26s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:22
+Applied timezone conversions for assignee: Bryan
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=15.27s (preprocessing=0.006s, API=15.264s)
+  ✓ Success in 15.28s (API: 15.26s)
+
+  [8/30] Testing: 'yo joel tmrw mornin around 8ish can u check if the generater...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) yo joel tmrw mornin around 8ish can u check if the generater at site b needs oil... bryan said it was making weird noises'
+Assistant response received (in 12.61s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:22
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=12.66s (preprocessing=0.045s, API=12.613s)
+  ✓ Success in 12.67s (API: 12.61s)
+
+  [9/30] Testing: 'When Joel gets to the office tomorrow morning, have him call...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (70.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: When Joel gets to the office  morning, have him call the contractor about the Site D repairs [on 2025-07-12]
+Pre-parsed due date: 2025-07-12'
+Assistant response received (in 9.88s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:22
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=9.89s (preprocessing=0.005s, API=9.884s)
+  ✓ Success in 9.90s (API: 9.88s)
+
+  [10/30] Testing: 'Remind Bryan in 3 business days to follow up on the equipmen...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Remind Bryan in 3 business days to follow up on the equipment order, accounting for the upcoming holiday on 2025-07-12
+Pre-parsed due date: 2025-07-12'
+Assistant response received (in 13.75s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:22
+Applied timezone conversions for assignee: Bryan
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=13.75s (preprocessing=0.000s, API=13.751s)
+  ✓ Success in 13.76s (API: 13.75s)
+
+  [11/30] Testing: 'Tell Bryan: "You need to meet Joel at Site C after he finish...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Tell Bryan: "You need to meet Joel at Site C after he finishes his morning rounds am" [on 2025-10-11 at 10:00]
+Pre-parsed due date: 2025-10-11
+Pre-parsed due time: 10:00'
+Assistant response received (in 12.10s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:22
+Applied timezone conversions for assignee: Bryan
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=12.11s (preprocessing=0.006s, API=12.100s)
+  ✓ Success in 12.12s (API: 12.10s)
+
+  [12/30] Testing: 'Have Joel inspect Site A at 9am and Bryan inspect Site B at ...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Have Joel inspect Site A  and Bryan inspect Site B at 10am , then both meet at Site C by 2pm to compare notes [on 2025-07-12 at 09:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 09:00'
+Assistant response received (in 13.64s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:23
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=13.65s (preprocessing=0.005s, API=13.643s)
+  ✓ Success in 13.66s (API: 13.64s)
+
+  [13/30] Testing: 'Make sure Bryan gets the monthly report done before the end ...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Make sure Bryan gets the monthly report done before the end of the month, with a reminder 3 days prior'
+Assistant response received (in 10.04s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:23
+Applied timezone conversions for assignee: Bryan
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=10.08s (preprocessing=0.033s, API=10.044s)
+  ✓ Success in 10.08s (API: 10.04s)
+
+  [14/30] Testing: 'Have Joel swing by Site D first thing in the morning and che...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Have Joel swing by Site D first thing in the morning and check if the new equipment arrived'
+Assistant response received (in 11.17s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:23
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=11.17s (preprocessing=0.000s, API=11.172s)
+  ✓ Success in 11.18s (API: 11.17s)
+
+  [15/30] Testing: 'If Joel is available tomorrow at 3pm CST, have him do the in...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: If Joel is available   , have him do the inspection, otherwise ask Bryan to cover it at 4pm [on 2025-07-12 at 15:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 15:00
+Detected timezone: CST'
+Assistant response received (in 13.96s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:23
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=13.96s (preprocessing=0.005s, API=13.957s)
+  ✓ Success in 13.97s (API: 13.96s)
+
+  [16/30] Testing: 'Remind whoever is on duty this weekend to check all sites on...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Remind whoever is on duty on 2025-07-12 to check all sites on Saturday
+Pre-parsed due date: 2025-07-12'
+Assistant response received (in 13.15s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:23
+Applied timezone conversions for assignee: Colin
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=13.15s (preprocessing=0.000s, API=13.150s)
+  ✓ Success in 13.16s (API: 13.15s)
+
+  [17/30] Testing: 'At the top of the hour in Joel's timezone (CST), have him re...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: At the at 15:00 in Joel's timezone (), have him restart the monitoring system
+Pre-parsed due date: 2025-07-11
+Pre-parsed due time: 15:00'
+Assistant response received (in 11.58s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:24
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=11.58s (preprocessing=0.000s, API=11.579s)
+  ✓ Success in 11.59s (API: 11.58s)
+
+  [18/30] Testing: 'Sometime between next Monday and Wednesday, but not Tuesday ...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Sometime between next Monday and Wednesday, but not Tuesday afternoon, have Bryan schedule the vendor visit'
+Assistant response received (in 11.80s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:24
+Applied timezone conversions for assignee: Bryan
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=11.88s (preprocessing=0.075s, API=11.804s)
+  ✓ Success in 11.89s (API: 11.80s)
+
+  [19/30] Testing: 'Every few days, maybe 3 or 4, have someone check the bitcoin...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Every few days, maybe 3 or 4, have someone check the bitcoin node status at Site B'
+Assistant response received (in 12.13s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:24
+Applied timezone conversions for assignee: Colin
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=12.17s (preprocessing=0.041s, API=12.132s)
+  ✓ Success in 12.18s (API: 12.13s)
+
+  [20/30] Testing: 'ASAP, but no later than end of day tomorrow, have Joel fix t...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: ASAP, but no later than at 23:59 tomorrow, have Joel fix the telemetry issue at Site C that Bryan reported
+Pre-parsed due date: 2025-07-11
+Pre-parsed due time: 23:59'
+Assistant response received (in 13.68s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:24
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=13.69s (preprocessing=0.000s, API=13.685s)
+  ✓ Success in 13.70s (API: 13.69s)
+
+  [21/30] Testing: 'Once Bryan confirms the delivery tomorrow morning, immediate...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: Once Bryan confirms the delivery  morning, immediately have Joel start the installation, aiming to finish by [on 2025-07-12 at 15:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 15:00'
+Assistant response received (in 13.62s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:25
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=13.63s (preprocessing=0.007s, API=13.617s)
+  ✓ Success in 13.63s (API: 13.62s)
+
+  [22/30] Testing: 'This coming week, but not this Monday or Tuesday, schedule J...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) This coming week, but not this Monday or Tuesday, schedule Joel to do a full site inspection'
+Assistant response received (in 11.82s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:25
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=11.86s (preprocessing=0.039s, API=11.820s)
+  ✓ Success in 11.88s (API: 11.82s)
+
+  [23/30] Testing: 'Have Bryan or Joel (whoever's closer) check Site A in about ...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Have Bryan or Joel (whoever's closer) check Site A in about an hour or so'
+Assistant response received (in 13.61s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:25
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=13.61s (preprocessing=0.000s, API=13.606s)
+  ✓ Success in 13.66s (API: 13.61s)
+
+  [24/30] Testing: 'Before the end of Q1, remind Bryan to submit the equipment b...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Before the end of Q1, remind Bryan to submit the equipment budget for next fiscal year'
+Assistant response received (in 14.86s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:25
+Applied timezone conversions for assignee: Bryan
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=14.95s (preprocessing=0.089s, API=14.861s)
+  ✓ Success in 14.97s (API: 14.86s)
+
+  [25/30] Testing: 'Have Bryan tell Joel that he needs to finish his inspection ...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) Have Bryan tell Joel that he needs to finish his inspection before he can start the maintenance'
+Assistant response received (in 11.01s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:25
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=11.05s (preprocessing=0.041s, API=11.010s)
+  ✓ Success in 11.06s (API: 11.01s)
+
+  [26/30] Testing: 'The contractor is coming Tuesday... make sure someone (proba...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: The contractor is coming Tuesday... make sure someone (probably Bryan since he's been handling it) is there am to let them in [on 2025-08-11 at 08:00]
+Pre-parsed due date: 2025-08-11
+Pre-parsed due time: 08:00'
+Assistant response received (in 10.94s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:26
+Applied timezone conversions for assignee: Bryan
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=10.95s (preprocessing=0.005s, API=10.939s)
+  ✓ Success in 10.95s (API: 10.94s)
+
+  [27/30] Testing: 'At 14:00 tomorrow (that's 2pm for Joel), have him start the ...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (80.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: (that's 2pm for Joel), have him start the system diagnostic which should take about 90 minutes [on 2025-07-12 at 14:00]
+Pre-parsed due date: 2025-07-12
+Pre-parsed due time: 14:00'
+Assistant response received (in 11.77s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:26
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=11.78s (preprocessing=0.002s, API=11.774s)
+  ✓ Success in 11.78s (API: 11.77s)
+
+  [28/30] Testing: 'When you get a chance, but definitely before the weekend, ha...'
+Using model: llama3:8b-instruct-q4_0
+
+High-confidence preprocessing (90.0%)
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT)
+Task: When you get a chance, but definitely before the on 2025-07-12, have Joel inventory the spare parts at Site B
+Pre-parsed due date: 2025-07-12'
+Assistant response received (in 11.25s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:26
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=11.25s (preprocessing=0.000s, API=11.246s)
+  ✓ Success in 11.25s (API: 11.25s)
+
+  [29/30] Testing: 'The same time we did it last week, have Bryan run the backup...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) The same time we did it last week, have Bryan run the backup procedures, but 30 minutes earlier if it's a Friday'
+Assistant response received (in 13.99s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:26
+Applied timezone conversions for assignee: Bryan
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=14.04s (preprocessing=0.050s, API=13.991s)
+  ✓ Success in 14.05s (API: 13.99s)
+
+  [30/30] Testing: 'If the morning inspection by Joel shows any issues, have Bry...'
+Using model: llama3:8b-instruct-q4_0
+
+Low-confidence preprocessing, using original approach
+Processing input: '(Today's date is 2025-07-11 in Colin's timezone: PDT) If the morning inspection by Joel shows any issues, have Bryan order parts by noon, then schedule Joel to install them within 2 business days of arrival, otherwise just have Joel do the routine maintenance next Monday at 10am'
+Assistant response received (in 16.16s)
+Successfully parsed JSON.
+Set created_at to: 2025-07-11T21:26
+Applied timezone conversions for assignee: Joel
+
+⏱️  Performance: Model=llama3:8b-instruct-q4_0, Total=16.21s (preprocessing=0.056s, API=16.157s)
+  ✓ Success in 16.22s (API: 16.16s)
+
+====================================================================================================
+COMPREHENSIVE MODEL COMPARISON - 30 TEST CASES
+====================================================================================================
+
+📊 Performance Summary:
+
+Model                Success Rate    Avg Time     Min Time     Max Time    
+-----------------------------------------------------------------------
+GPT-4o-mini          30/30           14.62s       8.96s        75.07s      
+Groq Llama3-8B       2/30            1.23s        1.18s        1.29s       
+Local Llama3-Q4      29/30           13.50s       9.90s        35.06s      
+
+🔬 Preprocessing Effectiveness:
+  - GPT-4o-mini: 16/30 tasks preprocessed with high confidence
+  - Groq: 1/30 tasks preprocessed with high confidence
+  - Local: 15/30 tasks preprocessed with high confidence
+
+✅ Success Rate:
+  - GPT-4o-mini: 30/30
+  - Groq Llama3-8B: 2/30
+  - Local Llama3-Q4: 29/30
+
+Groq Failure Analysis:
+  - Other: 28
+
+Local Llama Failure Analysis:
+  - Other: 1
+
+📋 Top 10 Slowest Tasks (successful only):
+
+Model      Test                                                           Time      
+----------------------------------------------------------------------------------
+GPT-4o     The same time we did it last week, have Bryan run the backup   75.07s
+Local      Remind Joel next Tuesday at 3pm MST if it's not a holiday, o   35.06s
+GPT-4o     Have Joel swing by Site D first thing in the morning and che   19.44s
+GPT-4o     First have Bryan shut down the node at Site C at 10am tomorr   16.43s
+Local      If the morning inspection by Joel shows any issues, have Bry   16.22s
+GPT-4o     Schedule a call between Colin (PDT), Bryan (MST), and Joel (   15.93s
+Local      First have Bryan shut down the node at Site C at 10am tomorr   15.28s
+Local      Before the end of Q1, remind Bryan to submit the equipment b   14.97s
+GPT-4o     When Joel gets to the office tomorrow morning, have him call   14.77s
+Local      Next Friday at 5pm, unless that's already passed this week,    14.61s
+
+🎯 Success Rate by Test Category:
+
+Complex Temporal (1-10):
+  - GPT-4o-mini: 10/10 (100%)
+  - Groq: 2/10 (20%)
+  - Local: 9/10 (90%)
+
+Ambiguous Context (11-20):
+  - GPT-4o-mini: 10/10 (100%)
+  - Groq: 0/10 (0%)
+  - Local: 10/10 (100%)
+
+Edge Cases (21-30):
+  - GPT-4o-mini: 10/10 (100%)
+  - Groq: 0/10 (0%)
+  - Local: 10/10 (100%)
+
+💡 Recommendations:
+Traceback (most recent call last):
+  File "/Users/colinaulds/Desktop/projects/gpt-parser/tests/compare_models.py", line 316, in <module>
+    main()
+  File "/Users/colinaulds/Desktop/projects/gpt-parser/tests/compare_models.py", line 288, in main
+    if groq_success > len(groq_results) * 0.8 and groq_avg < openai_avg * 0.5:
+       ^^^^^^^^^^^^
+NameError: name 'groq_success' is not defined

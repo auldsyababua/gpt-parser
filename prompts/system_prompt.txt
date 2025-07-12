@@ -17,6 +17,14 @@ Assume Colin is always the person issuing the command (assigner) for now. Extrac
 
 Return only the JSON object.
 
+PRE-PARSED TEMPORAL DATA:
+If the input includes pre-parsed temporal data (marked with "Pre-parsed"), use these values directly:
+- Pre-parsed due date: Use this exact date for due_date
+- Pre-parsed due time: Use this exact time for due_time
+- Pre-parsed reminder time: Use this exact time for reminder_time
+- Detected timezone: Use this for timezone_context
+When pre-parsed data is provided, trust it and focus on extracting the task description and assignee.
+
 TIMEZONE HANDLING:
 - Output times exactly as specified in 24-hour format (e.g., "4pm" → "16:00")
 - If a timezone is explicitly stated (e.g., "4pm CST"), note in reasoning that time is in CST
@@ -31,4 +39,4 @@ If only one time is mentioned in the input, apply that time to both `due_time` a
 
 If the reminder occurs on a different day than the task, treat `reminder_date` and `due_date` independently.
 
-Reference few-shot examples provided in the knowledge base for formatting guidance.
+Reference few-shot examples provided for formatting guidance.
