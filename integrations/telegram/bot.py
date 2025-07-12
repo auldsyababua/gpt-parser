@@ -3,7 +3,7 @@ import logging
 import asyncio
 import json
 from datetime import datetime
-from telegram import Update
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -11,6 +11,7 @@ from telegram.ext import (
     filters,
     ContextTypes,
     ConversationHandler,
+    CallbackQueryHandler,
 )
 from dotenv import load_dotenv
 
@@ -44,27 +45,156 @@ logger = logging.getLogger(__name__)
 # No longer need assistant - using unified parser
 
 # Conversation states
-AWAITING_CONFIRMATION = 1
+AWAITING_TASK_DESCRIPTION = 1
 AWAITING_CLARIFICATION = 2
+
+# Callback data constants
+NEW_TASK = "new_task"
+LIST_TASKS = "list_tasks"
+SUBMIT_TASK = "submit_task"
+CLARIFY_TASK = "clarify_task"
+CANCEL_TASK = "cancel_task"
+COMPLETE_TASK_PREFIX = "complete_task_"
+REFRESH_TASKS = "refresh_tasks"
+UNDO_LAST = "undo_last"
+MAIN_MENU = "main_menu"
+
+
+# --- Keyboard Helpers ---
+def get_user_task_count(user_id, context=None):
+    """Get the number of active tasks for a user."""
+    # If we have tasks in context, count the active ones
+    if context and "user_tasks" in context.user_data:
+        tasks = context.user_data["user_tasks"]
+        return len([task for task in tasks if task.get("status") == "active"])
+
+    # TODO: Query actual database/sheets for real count
+    # For now, return example count based on user
+    return 0  # Start with 0, real tasks will be loaded from sheets
+
+
+def get_main_menu_keyboard(task_count=None):
+    """Create the main menu inline keyboard."""
+    # Format the List Tasks button with count if provided
+    if task_count is not None and task_count > 0:
+        list_button_text = f"📋 List Tasks ({task_count})"
+    else:
+        list_button_text = "📋 List Tasks"
+
+    keyboard = [
+        [
+            InlineKeyboardButton("➕ New Task", callback_data=NEW_TASK),
+            InlineKeyboardButton(list_button_text, callback_data=LIST_TASKS),
+        ]
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+
+def get_task_confirmation_keyboard():
+    """Create the task confirmation inline keyboard."""
+    keyboard = [
+        [
+            InlineKeyboardButton("✅ Submit", callback_data=SUBMIT_TASK),
+            InlineKeyboardButton("✏️ Clarify", callback_data=CLARIFY_TASK),
+            InlineKeyboardButton("❌ Cancel", callback_data=CANCEL_TASK),
+        ]
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+
+def get_task_list_keyboard(tasks):
+    """Create inline keyboard for task list with complete buttons."""
+    keyboard = []
+
+    # Add a complete button for each task
+    for i, task in enumerate(tasks, 1):
+        keyboard.append(
+            [
+                InlineKeyboardButton(
+                    f"✅ Complete Task {i}",
+                    callback_data=f"{COMPLETE_TASK_PREFIX}{task.get('id', i)}",
+                )
+            ]
+        )
+
+    # Add navigation buttons at the bottom
+    keyboard.append(
+        [
+            InlineKeyboardButton("➕ New Task", callback_data=NEW_TASK),
+            InlineKeyboardButton("🔄 Refresh", callback_data=REFRESH_TASKS),
+        ]
+    )
+    keyboard.append([InlineKeyboardButton("🏠 Main Menu", callback_data=MAIN_MENU)])
+
+    return InlineKeyboardMarkup(keyboard)
+
+
+async def show_task_list(query, context=None):
+    """Display the user's task list with complete buttons."""
+    # TODO: Fetch real tasks from database/sheets where assignee = current user
+    # For now, using example tasks
+
+    user_name = query.from_user.first_name
+
+    # Get tasks from context if available (for undo functionality)
+    if context and "user_tasks" in context.user_data:
+        tasks = context.user_data["user_tasks"]
+    else:
+        # TODO: In production, this would query Google Sheets for active tasks
+        # where assignee matches the current Telegram user
+        tasks = []
+        # Store tasks in context for undo functionality
+        if context:
+            context.user_data["user_tasks"] = tasks
+
+    # Filter only active tasks
+    active_tasks = [task for task in tasks if task.get("status") == "active"]
+
+    if not active_tasks:
+        task_text = (
+            f"🎉 Great job {user_name}! No active tasks.\n\nWhat would you like to do?"
+        )
+        keyboard = get_main_menu_keyboard(0)
+    else:
+        task_text = f"📋 Your Active Tasks ({len(active_tasks)}):\n\n"
+
+        for i, task in enumerate(active_tasks, 1):
+            task_text += f"{i}. {task['description']}\n"
+            task_text += f"   🕐 {task['due']} | Assigned by: {task['assigner']}\n\n"
+
+        task_text += f"\nShowing tasks for: {user_name}"
+        keyboard = get_task_list_keyboard(active_tasks)
+
+    await query.edit_message_text(
+        task_text,
+        reply_markup=keyboard,
+    )
 
 
 # --- Bot Handlers ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Sends a welcome message when the /start command is issued."""
-    logger.info(f"Start command received from user {update.message.from_user.username}")
+    """Handle the /start command."""
+    user_id = update.effective_user.id
+    username = update.message.from_user.username or update.message.from_user.first_name
+    logger.info(f"User {user_id} ({username}) started the bot")
+
+    # Get user's task count for the main menu
+    task_count = get_user_task_count(user_id, context)
+
     await update.message.reply_text(
-        "Hi! I'm the Task Parser bot. Send me a task and I'll add it to the list."
+        "Welcome to TaskBot! I help you manage tasks for your team.\n\n"
+        "What would you like to do?",
+        reply_markup=get_main_menu_keyboard(task_count),
     )
 
 
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Handles incoming text messages and passes them to the task parser."""
+async def handle_task_description(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Handles incoming task descriptions and parses them."""
     user_message = update.message.text
-    logger.info(
-        f"Received message from {update.message.from_user.username}: {user_message}"
-    )
-
-    # No need for assistant check - unified parser handles everything
+    username = update.message.from_user.username or update.message.from_user.first_name
+    logger.info(f"Received task description from {username}: {user_message}")
 
     await update.message.reply_text(f"Processing your request: '{user_message}'...")
 
@@ -88,11 +218,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         # Format the task for confirmation
         formatted_task = format_task_for_confirmation(parsed_json)
 
-        # Ask for confirmation
-        confirmation_message = f"I've parsed your task:\n\n{formatted_task}\n\n✅ Reply 'yes' to confirm\n❌ Reply 'no' to cancel\n✏️ Or describe what needs to be changed"
-        await update.message.reply_text(confirmation_message)
+        # Ask for confirmation with buttons
+        confirmation_message = (
+            f"I've parsed your task:\n\n{formatted_task}\n\nWhat would you like to do?"
+        )
+        await update.message.reply_text(
+            confirmation_message, reply_markup=get_task_confirmation_keyboard()
+        )
 
-        return AWAITING_CONFIRMATION
+        return AWAITING_TASK_DESCRIPTION  # Stay in same state for button handling
 
     except asyncio.TimeoutError:
         logger.error("parse_task timed out after 30 seconds")
@@ -183,12 +317,14 @@ async def handle_confirmation(
             context.user_data["parsed_json"] = parsed_json
             context.user_data["corrections_history"] = corrections_history
 
-            # Format and show the updated task
+            # Format and show the updated task with buttons
             formatted_task = format_task_for_confirmation(parsed_json)
-            confirmation_message = f"I've updated the task:\n\n{formatted_task}\n\n✅ Reply 'yes' to confirm\n❌ Reply 'no' to cancel\n✏️ Or describe what needs to be changed"
-            await update.message.reply_text(confirmation_message)
+            confirmation_message = f"I've updated the task:\n\n{formatted_task}\n\nWhat would you like to do?"
+            await update.message.reply_text(
+                confirmation_message, reply_markup=get_task_confirmation_keyboard()
+            )
 
-            return AWAITING_CONFIRMATION
+            return AWAITING_TASK_DESCRIPTION
 
         except Exception as e:
             logger.error(f"Error reprocessing task: {e}", exc_info=True)
@@ -196,6 +332,158 @@ async def handle_confirmation(
                 f"❌ An error occurred while updating the task: {e}"
             )
             return ConversationHandler.END
+
+
+async def handle_button_click(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> int:
+    """Handle inline keyboard button clicks."""
+    query = update.callback_query
+    await query.answer()
+
+    logger.info(f"Button clicked: {query.data}")
+
+    if query.data == NEW_TASK:
+        await query.edit_message_text("Please describe the task:")
+        return AWAITING_TASK_DESCRIPTION
+
+    elif query.data == LIST_TASKS or query.data == REFRESH_TASKS:
+        await show_task_list(query, context)
+        return ConversationHandler.END
+
+    elif query.data == SUBMIT_TASK:
+        # User confirmed - send to Google Sheets
+        parsed_json = context.user_data.get("parsed_json")
+        if not parsed_json:
+            await query.edit_message_text(
+                "❌ Error: No task data found. Please try again."
+            )
+            return ConversationHandler.END
+
+        try:
+            await query.edit_message_text("📤 Sending task to Google Sheets...")
+            loop = asyncio.get_running_loop()
+            success = await loop.run_in_executor(
+                None, send_to_google_sheets, parsed_json
+            )
+
+            if success:
+                user_id = query.from_user.id
+                task_count = get_user_task_count(user_id, context)
+
+                await query.edit_message_text(
+                    "✅ Task successfully created!\n\nWhat would you like to do?",
+                    reply_markup=get_main_menu_keyboard(task_count),
+                )
+            else:
+                await query.edit_message_text(
+                    "❌ Failed to send task to Google Sheets. Please try again."
+                )
+
+        except Exception as e:
+            logger.error(f"Error sending task to sheets: {e}", exc_info=True)
+            await query.edit_message_text(
+                f"❌ An error occurred while saving the task: {e}"
+            )
+
+        return ConversationHandler.END
+
+    elif query.data == CLARIFY_TASK:
+        await query.edit_message_text("Please describe what needs to be changed:")
+        return AWAITING_CLARIFICATION
+
+    elif query.data == CANCEL_TASK:
+        user_id = query.from_user.id
+        task_count = get_user_task_count(user_id, context)
+
+        await query.edit_message_text(
+            "❌ Task cancelled.\n\nWhat would you like to do?",
+            reply_markup=get_main_menu_keyboard(task_count),
+        )
+        return ConversationHandler.END
+
+    elif query.data.startswith(COMPLETE_TASK_PREFIX):
+        # Extract task ID from callback data
+        task_id = query.data.replace(COMPLETE_TASK_PREFIX, "")
+
+        # Get current tasks and mark the specified one as complete
+        if "user_tasks" in context.user_data:
+            tasks = context.user_data["user_tasks"]
+            for task in tasks:
+                if task["id"] == task_id:
+                    task["status"] = "completed"
+                    # Store the completed task for undo
+                    context.user_data["last_completed_task"] = {
+                        "task": task,
+                        "timestamp": update.callback_query.message.date,
+                    }
+                    break
+
+        # TODO: Update task status in database/sheets
+
+        # Show completion confirmation with undo option
+        completed_task_name = next(
+            (
+                task["description"]
+                for task in context.user_data.get("user_tasks", [])
+                if task["id"] == task_id
+            ),
+            "Task",
+        )
+
+        confirmation_text = f"✅ '{completed_task_name}' marked as complete!"
+
+        # Create undo keyboard
+        undo_keyboard = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "↩️ Undo", callback_data=f"{UNDO_LAST}_{task_id}"
+                    ),
+                    InlineKeyboardButton("📋 Back to Tasks", callback_data=LIST_TASKS),
+                ]
+            ]
+        )
+
+        await query.edit_message_text(
+            confirmation_text,
+            reply_markup=undo_keyboard,
+        )
+        return ConversationHandler.END
+
+    elif query.data.startswith(UNDO_LAST):
+        # Extract task ID from undo callback
+        task_id = query.data.split("_")[-1]
+
+        # Restore the task from completed back to active
+        if "user_tasks" in context.user_data:
+            tasks = context.user_data["user_tasks"]
+            for task in tasks:
+                if task["id"] == task_id:
+                    task["status"] = "active"
+                    break
+
+        # TODO: Update task status in database/sheets
+
+        await query.answer("↩️ Task restored!")
+
+        # Show the updated task list
+        await show_task_list(query, context)
+        return ConversationHandler.END
+
+    elif query.data == "main_menu" or query.data == MAIN_MENU:
+        user_id = query.from_user.id
+        task_count = get_user_task_count(user_id, context)
+
+        await query.edit_message_text(
+            "What would you like to do?",
+            reply_markup=get_main_menu_keyboard(task_count),
+        )
+        return ConversationHandler.END
+
+    # Unknown callback data
+    await query.edit_message_text("Unknown action. Returning to main menu.")
+    return ConversationHandler.END
 
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -223,11 +511,22 @@ def main() -> None:
     # on different commands - answer in Telegram
     application.add_handler(CommandHandler("start", start))
 
+    # Add callback query handler for button clicks
+    application.add_handler(CallbackQueryHandler(handle_button_click))
+
     # Create conversation handler for task processing
     conv_handler = ConversationHandler(
-        entry_points=[MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message)],
+        entry_points=[
+            MessageHandler(filters.TEXT & ~filters.COMMAND, handle_task_description)
+        ],
         states={
-            AWAITING_CONFIRMATION: [
+            AWAITING_TASK_DESCRIPTION: [
+                MessageHandler(
+                    filters.TEXT & ~filters.COMMAND, handle_task_description
+                ),
+                CallbackQueryHandler(handle_button_click),
+            ],
+            AWAITING_CLARIFICATION: [
                 MessageHandler(filters.TEXT & ~filters.COMMAND, handle_confirmation)
             ],
         },
