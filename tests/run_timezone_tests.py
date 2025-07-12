@@ -5,9 +5,7 @@ Run timezone test cases automatically and analyze reasoning.
 
 import sys
 import os
-import json
 import time
-from datetime import datetime
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

@@ -6,9 +6,7 @@ Runs without user input and sends results to Google Sheets.
 
 import sys
 import os
-import json
 import time
-from datetime import datetime
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -17,7 +15,6 @@ from scripts.assistants_api_runner import (
     get_or_create_assistant,
     parse_task,
     send_to_google_sheets,
-    format_task_for_confirmation,
 )
 
 
@@ -109,7 +106,7 @@ def run_all_tests():
 
             if parsed_json:
                 # Display results
-                print(f"✓ Parsed successfully")
+                print("✓ Parsed successfully")
                 print(f"Assignee: {parsed_json.get('assignee')}")
                 print(
                     f"Reminder: {parsed_json.get('reminder_time', 'N/A')} (expected: {test_case['expected_reminder']})"

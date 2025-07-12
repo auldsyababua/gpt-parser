@@ -4,7 +4,6 @@ import os
 import sys
 import time
 import logging
-from dotenv import load_dotenv
 from datetime import datetime, timezone
 
 # Add parent directory to path for imports
@@ -14,55 +13,37 @@ from utils.timezone_converter import process_task_with_timezones
 from utils.temporal_processor import TemporalProcessor
 
 # --- Configuration ---
-load_dotenv()
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
-    print("Error: OPENAI_API_KEY not found in .env file or environment.")
-    sys.exit(1)
-
+OLLAMA_BASE_URL = "http://localhost:11434/api/chat"
 GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZZkhc3f9nP4IcllbuH24c22D-nlsWrlOEAWc0sr-VNxuiWKLKhsx96W1-6koShzsxTg/exec"
-ASSISTANT_NAME = "Task Parser v7"
-ASSISTANT_MODEL = "gpt-4o-mini"
+
+# Model variants
+MODEL_VARIANTS = {
+    "fp16": "llama3:8b-instruct-fp16",
+    "q8": "llama3:8b-instruct-q8_0",
+    "q4": "llama3:8b-instruct-q4_0",
+}
+
+# Default model (can be overridden)
+DEFAULT_MODEL = "q4"
+
 SYSTEM_PROMPT_FILE = os.path.join(
     os.path.dirname(__file__), "..", "prompts", "system_prompt.txt"
 )
 FEW_SHOT_EXAMPLES_FILE = os.path.join(
     os.path.dirname(__file__), "..", "prompts", "few_shot_examples.txt"
 )
-LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "logs", "api_log.txt")
-
-# --- API Details ---
-OPENAI_API_BASE_URL = "https://api.openai.com/v1"
-HEADERS = {
-    "Authorization": f"Bearer {OPENAI_API_KEY}",
-    "Content-Type": "application/json",
-    "OpenAI-Beta": "assistants=v2",
-}
-
+LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "logs", "local_llama_log.txt")
 
 # --- Logging ---
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
+
 def log_interaction(message):
     """Appends a message to the log file with a timestamp."""
+    os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
     with open(LOG_FILE, "a") as f:
         f.write(f"--- {datetime.now().isoformat()} ---\n{message}\n\n")
-
-
-def handle_api_error(response, context=""):
-    """Helper function to log and print API errors."""
-    error_message = (
-        f"Error: API request failed for {context} with status {response.status_code}."
-    )
-    try:
-        error_details = response.json()
-        log_interaction(
-            f"{error_message}\nResponse: {json.dumps(error_details, indent=2)}"
-        )
-        print(f"{error_message}\nResponse: {error_details}")
-    except json.JSONDecodeError:
-        error_details = response.text
-        log_interaction(f"{error_message}\nResponse: {error_details}")
-        print(f"{error_message}\nResponse: {error_details}")
-    return None
 
 
 def api_request(method, url, **kwargs):
@@ -75,11 +56,8 @@ def api_request(method, url, **kwargs):
     return response
 
 
-def get_or_create_assistant():
-    """
-    Retrieves an existing assistant or creates a new one with combined prompt.
-    """
-    # Load and combine prompts
+def load_prompts():
+    """Load and combine system prompt and few-shot examples."""
     try:
         with open(SYSTEM_PROMPT_FILE, "r") as f:
             system_prompt = f.read()
@@ -89,70 +67,63 @@ def get_or_create_assistant():
 
         # Combine prompts with clear separation
         combined_prompt = f"{system_prompt}\n\n## Examples:\n\n{few_shot_examples}"
+        return combined_prompt
 
     except Exception as e:
         print(f"Error loading prompt files: {e}")
         sys.exit(1)
 
-    # Check for existing assistant
-    assistants_url = f"{OPENAI_API_BASE_URL}/assistants"
-    response = api_request(
-        "get", assistants_url, headers=HEADERS, params={"limit": 100}
-    )
-    if response.status_code == 200:
-        assistants = response.json().get("data", [])
-        for assistant in assistants:
-            if assistant.get("name") == ASSISTANT_NAME:
-                print(f"Found existing assistant with ID: {assistant['id']}")
-                # Update with latest combined prompt
-                update_url = f"{OPENAI_API_BASE_URL}/assistants/{assistant['id']}"
-                update_payload = {
-                    "instructions": combined_prompt,
-                    "tools": [],  # No file search needed
-                }
-                update_response = api_request(
-                    "post", update_url, headers=HEADERS, json=update_payload
-                )
-                if update_response.status_code == 200:
-                    print("Updated assistant with latest combined prompt.")
-                    return update_response.json()
-                else:
-                    return handle_api_error(update_response, "assistant update")
 
-    # Create a new assistant
-    print(f"No existing assistant named '{ASSISTANT_NAME}'. Creating a new one.")
-    payload = {
-        "name": ASSISTANT_NAME,
-        "instructions": combined_prompt,
-        "model": ASSISTANT_MODEL,
-        "tools": [],  # No file search needed
-    }
-    response = api_request("post", assistants_url, headers=HEADERS, json=payload)
-    if response.status_code == 200:
-        new_assistant = response.json()
-        print(f"Created new assistant with ID: {new_assistant['id']}")
-        return new_assistant
-    else:
-        return handle_api_error(response, "assistant creation")
+def check_model_available(model_name):
+    """Check if a model is available in Ollama."""
+    try:
+        response = requests.get("http://localhost:11434/api/tags")
+        if response.status_code == 200:
+            models = response.json().get("models", [])
+            available_models = [m["name"] for m in models]
+            return model_name in available_models
+    except:
+        return False
+    return False
 
 
-def parse_task(assistant, input_text, assigner="Colin"):
+def parse_task(input_text, assigner="Colin", model_variant=None):
     """
-    Uses the assistant to parse input text and returns the parsed JSON.
+    Uses local Ollama Llama3 model to parse input text and returns the parsed JSON.
 
     Args:
-        assistant: The OpenAI assistant object
         input_text: The natural language task description
         assigner: The person assigning the task (default: Colin)
+        model_variant: Which model variant to use (fp16, q8, q4). Default: q4
     """
-    logger = logging.getLogger(__name__)
     logger.info(f"parse_task called with input: {input_text}")
+
+    # Select model
+    if model_variant is None:
+        model_variant = DEFAULT_MODEL
+
+    if model_variant not in MODEL_VARIANTS:
+        print(
+            f"Error: Invalid model variant '{model_variant}'. Options: {list(MODEL_VARIANTS.keys())}"
+        )
+        return None
+
+    model_name = MODEL_VARIANTS[model_variant]
+
+    # Check if model is available
+    if not check_model_available(model_name):
+        print(
+            f"Error: Model '{model_name}' is not available. Please run: ollama pull {model_name}"
+        )
+        return None
+
+    print(f"Using model: {model_name}")
 
     # Get assigner's timezone
     assigner_tz = get_user_timezone(assigner)
     today_in_tz = datetime.now(assigner_tz)
     today_str = today_in_tz.strftime("%Y-%m-%d")
-    current_time_str = today_in_tz.strftime("%H:%M")
+    tz_abbr = today_in_tz.strftime("%Z")
 
     # Pre-process temporal expressions
     processor = TemporalProcessor(default_timezone=str(assigner_tz))
@@ -169,7 +140,7 @@ def parse_task(assistant, input_text, assigner="Colin"):
         # High confidence - send structured data
         temporal_info = preprocessed["temporal_data"]
         prompt_parts = [
-            f"(Context: It is currently {current_time_str} on {today_str} where {assigner} is located)",
+            f"(Today's date is {today_str} in {assigner}'s timezone: {tz_abbr})",
             f"Task: {preprocessed['processed_text']}",
         ]
 
@@ -193,72 +164,57 @@ def parse_task(assistant, input_text, assigner="Colin"):
         print(f"\nHigh-confidence preprocessing ({preprocessed['confidence']:.1%})")
     else:
         # Low confidence - fall back to original approach
-        prompt_with_date = f"(Context: It is currently {current_time_str} on {today_str} where {assigner} is located) {input_text}"
-        print("\nLow-confidence preprocessing, using original approach")
+        prompt_with_date = f"(Today's date is {today_str} in {assigner}'s timezone: {tz_abbr}) {input_text}"
+        print(f"\nLow-confidence preprocessing, using original approach")
 
     print(f"Processing input: '{prompt_with_date}'")
 
-    assistant_id = assistant["id"]
+    # Load combined prompt
+    system_prompt = load_prompts()
 
     try:
-        # 1. Create a thread
-        threads_url = f"{OPENAI_API_BASE_URL}/threads"
-        thread_payload = {"messages": [{"role": "user", "content": prompt_with_date}]}
-        thread_response = api_request(
-            "post", threads_url, headers=HEADERS, json=thread_payload
-        )
-        if thread_response.status_code != 200:
-            return handle_api_error(thread_response, "thread creation")
-        thread = thread_response.json()
-        thread_id = thread["id"]
-        print(f"Created new thread with ID: {thread_id}")
+        # Build chat completion request
+        payload = {
+            "model": model_name,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt_with_date},
+            ],
+            "stream": False,
+            "options": {"temperature": 0, "num_predict": 1000},
+        }
 
-        # 2. Run the assistant
-        runs_url = f"{threads_url}/{thread_id}/runs"
-        run_payload = {"assistant_id": assistant_id}
-        run_response = api_request("post", runs_url, headers=HEADERS, json=run_payload)
-        if run_response.status_code != 200:
-            return handle_api_error(run_response, "run creation")
-        run = run_response.json()
-        run_id = run["id"]
-        print(f"Started run with ID: {run_id}")
+        # Make API request
+        api_start_time = time.time()
+        response = api_request("post", OLLAMA_BASE_URL, json=payload)
+        api_duration = time.time() - api_start_time
 
-        # 3. Poll for completion
-        while run.get("status") not in ["completed", "failed"]:
-            time.sleep(2)
-            run_status_url = f"{runs_url}/{run_id}"
-            run_status_response = api_request("get", run_status_url, headers=HEADERS)
-            if run_status_response.status_code != 200:
-                return handle_api_error(run_status_response, "run status check")
-            run = run_status_response.json()
-            print(f"Current run status: {run.get('status')}")
+        if response.status_code != 200:
+            print(f"Error: API request failed with status {response.status_code}")
+            print(f"Response: {response.text}")
+            return None
 
-        if run.get("status") == "failed":
-            print(f"Run failed: {run.get('last_error')}")
-            return
+        # Parse response
+        response_data = response.json()
+        assistant_response = response_data["message"]["content"]
+        print(f"Assistant response received (in {api_duration:.2f}s)")
 
-        # 4. Retrieve messages
-        list_messages_url = f"{threads_url}/{thread_id}/messages"
-        messages_response = api_request("get", list_messages_url, headers=HEADERS)
-        if messages_response.status_code != 200:
-            return handle_api_error(messages_response, "retrieving messages")
+        # Parse JSON from response
+        # Extract JSON if wrapped in text
+        json_str = assistant_response
+        if "```json" in json_str:
+            json_str = json_str.split("```json")[1].split("```")[0].strip()
+        elif "{" in json_str:
+            # Find the JSON object in the response
+            start = json_str.find("{")
+            end = json_str.rfind("}") + 1
+            if start != -1 and end > start:
+                json_str = json_str[start:end]
 
-        messages_data = messages_response.json().get("data", [])
-        assistant_message = next(
-            (m for m in messages_data if m["role"] == "assistant"), None
-        )
-        if not assistant_message:
-            print("Error: No assistant response found in the thread.")
-            return
+        # Remove JSON comments (// style) that Llama sometimes adds
+        import re
 
-        assistant_response_content = assistant_message.get("content", [])[0]
-        assistant_response = assistant_response_content.get("text", {}).get("value")
-        print(f"Assistant response received:\n{assistant_response}")
-
-        # 5. Extract and parse JSON
-        json_str = assistant_response.strip()
-        if json_str.startswith("```json"):
-            json_str = json_str[7:-3].strip()
+        json_str = re.sub(r"//.*$", "", json_str, flags=re.MULTILINE)
 
         parsed_json = json.loads(json_str)
         print("Successfully parsed JSON.")
@@ -278,7 +234,7 @@ def parse_task(assistant, input_text, assigner="Colin"):
         # Add original prompt (without the date injection)
         parsed_json["original_prompt"] = input_text
 
-        # Initialize corrections_history as empty (will be populated by telegram bot if needed)
+        # Initialize corrections_history as empty
         if "corrections_history" not in parsed_json:
             parsed_json["corrections_history"] = ""
 
@@ -290,16 +246,30 @@ def parse_task(assistant, input_text, assigner="Colin"):
                 "time_saved": preprocess_time,
             }
 
+        # Add performance metrics
+        parsed_json["_performance"] = {
+            "model": model_name,
+            "model_variant": model_variant,
+            "preprocessing_time": round(preprocess_time, 3),
+            "api_time": round(api_duration, 3),
+            "total_time": round(time.time() - start_time, 3),
+        }
+
         # Log total processing time
         total_time = time.time() - start_time
         logger.info(
-            f"Total parse_task time: {total_time:.2f}s (preprocessing: {preprocess_time:.3f}s)"
+            f"Total parse_task time: {total_time:.2f}s (preprocessing: {preprocess_time:.3f}s, API: {api_duration:.3f}s)"
+        )
+        print(
+            f"\n⏱️  Performance: Model={model_name}, Total={total_time:.2f}s "
+            f"(preprocessing={preprocess_time:.3f}s, API={api_duration:.3f}s)"
         )
 
         return parsed_json
 
     except json.JSONDecodeError as e:
         print(f"Error: Failed to decode JSON from assistant response. {e}")
+        print(f"Response was: {assistant_response}")
         raise
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
@@ -319,7 +289,6 @@ def format_task_for_confirmation(parsed_json):
     lines.append(f"👤 Assigned to: {parsed_json.get('assignee', 'N/A')}")
 
     # Get timezone info
-    # Remove timezone_info (handled by timezone_converter now)
     assignee = parsed_json.get("assignee", "N/A")
 
     # Due date and time
@@ -380,27 +349,35 @@ def send_to_google_sheets(parsed_json):
 
 def main():
     """Provides a command-line interface for the script."""
-    task_parser_assistant = get_or_create_assistant()
-    if task_parser_assistant:
-        if len(sys.argv) > 1:
-            user_input = " ".join(sys.argv[1:])
-            parsed_json = parse_task(task_parser_assistant, user_input)
-            if parsed_json:
-                print("\nFormatted task:")
-                print(format_task_for_confirmation(parsed_json))
-                print("\nJSON output:")
-                print(json.dumps(parsed_json, indent=2))
-        else:
-            print("\nNo input provided. Running with a default test case.")
-            default_input = (
-                "Remind Joel tomorrow at 8am to check the solar battery charge."
-            )
-            parsed_json = parse_task(task_parser_assistant, default_input)
-            if parsed_json:
-                print("\nFormatted task:")
-                print(format_task_for_confirmation(parsed_json))
-                print("\nJSON output:")
-                print(json.dumps(parsed_json, indent=2))
+    # Check for model variant argument
+    model_variant = None
+    args = sys.argv[1:]
+
+    # Check if --model flag is used
+    if "--model" in args:
+        model_idx = args.index("--model")
+        if model_idx + 1 < len(args):
+            model_variant = args[model_idx + 1]
+            # Remove the flag and value from args
+            args = args[:model_idx] + args[model_idx + 2 :]
+
+    if args:
+        user_input = " ".join(args)
+        parsed_json = parse_task(user_input, model_variant=model_variant)
+        if parsed_json:
+            print("\nFormatted task:")
+            print(format_task_for_confirmation(parsed_json))
+            print("\nJSON output:")
+            print(json.dumps(parsed_json, indent=2))
+    else:
+        print("\nNo input provided. Running with a default test case.")
+        default_input = "Remind Joel tomorrow at 8am to check the solar battery charge."
+        parsed_json = parse_task(default_input, model_variant=model_variant)
+        if parsed_json:
+            print("\nFormatted task:")
+            print(format_task_for_confirmation(parsed_json))
+            print("\nJSON output:")
+            print(json.dumps(parsed_json, indent=2))
 
 
 if __name__ == "__main__":
