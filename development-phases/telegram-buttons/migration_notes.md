@@ -51,7 +51,11 @@ application.add_handler(CallbackQueryHandler(handle_button_click))
 
 - [ ] /start command shows main menu buttons
 - [ ] "New Task" button initiates task creation
-- [ ] "List Tasks" button shows task list
+- [ ] "List Tasks" button shows tasks assigned to current user only
+- [ ] Each task in list has a "Complete" button
+- [ ] Clicking "Complete" marks task as done and refreshes list
+- [ ] "Refresh" button updates the task list
+- [ ] "Main Menu" button returns to initial menu
 - [ ] Task confirmation shows Submit/Clarify/Cancel buttons
 - [ ] Submit button creates task and returns to menu
 - [ ] Clarify button allows task modification
@@ -66,6 +70,14 @@ If issues arise:
 2. Can disable buttons by removing `reply_markup` parameters
 3. Conversation flow still works with text input
 
+## Implementation Notes
+
+### User Identification for "List Tasks"
+- Map Telegram user ID/username to system users (Colin/Joel/Bryan)
+- Query should filter tasks where `assignee = current_user`
+- Show who assigned each task (could be self-assigned)
+- Consider adding task counts: "You have 3 active tasks"
+
 ## Future Enhancements
 
 1. **Edit existing tasks** - Add edit buttons to task list
@@ -73,3 +85,4 @@ If issues arise:
 3. **Pagination** - For long task lists
 4. **Rich formatting** - Task cards with more details
 5. **Notification settings** - Inline buttons for preferences
+6. **Filter options** - Show tasks by site, priority, or date range

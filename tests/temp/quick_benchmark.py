@@ -111,11 +111,11 @@ def test_model(model_name: str, prompts: List[str]) -> List[Dict[str, Any]]:
                 },
             }
 
-            logger.debug(f"Request URL: http://localhost:11434/api/generate")
+            logger.debug("Request URL: http://localhost:11434/api/generate")
             logger.debug(f"Request model: {model_name}")
-            logger.debug(f"Request timeout: 10 seconds")
+            logger.debug("Request timeout: 10 seconds")
             logger.debug(f"Prompt length: {len(full_prompt)} characters")
-            logger.debug(f"Temperature: 0.1, Max tokens: 500")
+            logger.debug("Temperature: 0.1, Max tokens: 500")
 
             response = requests.post(
                 "http://localhost:11434/api/generate",
@@ -165,7 +165,7 @@ def test_model(model_name: str, prompts: List[str]) -> List[Dict[str, Any]]:
                     missing = [f for f in required if f not in parsed]
                     if not missing:
                         successful += 1
-                        logger.info(f"✅ Success! All required fields present")
+                        logger.info("✅ Success! All required fields present")
                         results.append(
                             {
                                 "prompt": test_prompt,
@@ -228,7 +228,7 @@ def test_model(model_name: str, prompts: List[str]) -> List[Dict[str, Any]]:
         except requests.exceptions.ConnectionError as e:
             elapsed = time.time() - start_time
             logger.error(f"❌ CONNECTION ERROR after {elapsed:.2f}s")
-            logger.error(f"Could not connect to Ollama at http://localhost:11434")
+            logger.error("Could not connect to Ollama at http://localhost:11434")
             logger.error(f"Error type: {type(e).__name__}")
             logger.error(f"Error details: {str(e)}")
             logger.error("Is Ollama running? Try: ollama serve")
@@ -242,8 +242,8 @@ def test_model(model_name: str, prompts: List[str]) -> List[Dict[str, Any]]:
             )
         except json.JSONDecodeError as e:
             elapsed = time.time() - start_time
-            logger.error(f"❌ JSON DECODE ERROR in response parsing")
-            logger.error(f"This shouldn't happen here - check code logic")
+            logger.error("❌ JSON DECODE ERROR in response parsing")
+            logger.error("This shouldn't happen here - check code logic")
             logger.error(f"Error: {e}")
             results.append(
                 {
@@ -276,7 +276,7 @@ def test_model(model_name: str, prompts: List[str]) -> List[Dict[str, Any]]:
             f"Success so far: {successful}/{i} ({successful/i*100:.1f}% success rate)"
         )
         logger.info(f"Average time so far: {total_time/i:.2f}s per request")
-        logger.debug(f"Sleeping 0.5s before next request...")
+        logger.debug("Sleeping 0.5s before next request...")
         time.sleep(0.5)
         logger.debug("Sleep complete, moving to next test")
 
@@ -450,7 +450,7 @@ def main():
                     error_types[error] = []
                 error_types[error].append(idx)
 
-            logger.info(f"Failure breakdown by error type:")
+            logger.info("Failure breakdown by error type:")
             for error, indices in error_types.items():
                 logger.info(
                     f"  {error}: {len(indices)} failures (prompts: {indices[:5]}{'...' if len(indices) > 5 else ''})"

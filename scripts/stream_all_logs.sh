@@ -18,8 +18,16 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 echo "=== FLRTS Bot Runner & Log Streamer ==="
+
+# Kill existing bot processes first
+echo -e "\033[93mKilling any existing bot processes...\033[0m"
+pkill -f "python.*telegram.*bot" 2>/dev/null
+pkill -f "python.*run_bot" 2>/dev/null
+sleep 1
+
 echo "Starting bot with monitoring..."
 echo ""
+# Note: Python cache clearing is now handled by cli.run_bot
 
 # Check if bot is already running
 if pgrep -f "telegram_bot.py" > /dev/null; then

@@ -43,12 +43,48 @@ def monitor_process(proc, name):
         time.sleep(1)
 
 
+def clear_python_cache(project_root):
+    """Clear Python cache files to ensure latest code is used"""
+    logger.info("🧹 Clearing Python cache...")
+    try:
+        # Clear .pyc files
+        subprocess.run(
+            ["find", project_root, "-name", "*.pyc", "-type", "f", "-delete"],
+            check=True,
+            capture_output=True,
+        )
+        # Clear __pycache__ directories
+        subprocess.run(
+            [
+                "find",
+                project_root,
+                "-name",
+                "__pycache__",
+                "-type",
+                "d",
+                "-exec",
+                "rm",
+                "-rf",
+                "{}",
+                "+",
+            ],
+            check=True,
+            capture_output=True,
+        )
+        logger.info("✅ Python cache cleared successfully")
+    except subprocess.CalledProcessError as e:
+        logger.warning(f"⚠️  Failed to clear some cache files: {e}")
+
+
 def run_bot():
     """Run the telegram bot with monitoring"""
     logger.info("🚀 Starting Telegram Bot with monitoring...")
 
     # Get the project root and venv python
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    # Clear Python cache before starting
+    clear_python_cache(project_root)
     venv_python = os.path.join(project_root, "venv", "bin", "python3")
 
     # Use venv python if it exists, otherwise fall back to system python
@@ -61,16 +97,21 @@ def run_bot():
 
     while True:
         try:
-            # Start the bot process
+            # Start the bot process with bytecode caching disabled
             proc = subprocess.Popen(
                 [
                     python_executable,
+                    "-B",  # Don't write bytecode files
                     "-m",
                     "integrations.telegram.bot",
                 ],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                env={**os.environ, "PYTHONUNBUFFERED": "1"},
+                env={
+                    **os.environ,
+                    "PYTHONUNBUFFERED": "1",
+                    "PYTHONDONTWRITEBYTECODE": "1",
+                },
             )
 
             logger.info(f"✅ Bot started with PID: {proc.pid}")
