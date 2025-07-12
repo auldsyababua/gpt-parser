@@ -15,7 +15,7 @@ from telegram.ext import (
 from dotenv import load_dotenv
 
 # Import the assistant runner functions
-from unified_parser import (
+from parsers.unified import (
     parse_task,
     format_task_for_confirmation,
     send_to_google_sheets,

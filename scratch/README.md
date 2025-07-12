@@ -1,11 +1,23 @@
 # Scratch Directory
 
-This directory contains temporary scripts and demos that are not part of the main codebase.
+⚠️ **TEMPORARY FILES ONLY** ⚠️
 
-## Current Files
+Files in this directory are:
+- Not tracked by git (see .gitignore)
+- Subject to deletion at any time
+- For development experiments only
 
-- `timezone_demo.py` - Demonstrates the new timezone conversion functionality for multi-user support
+Use this for:
+- Testing new features
+- Temporary scripts
+- Work-in-progress code
+- One-time migration scripts
+- Experimental implementations
 
-## Usage
+**DO NOT** put production code here!
 
-These scripts are meant to be run once or used for testing/demonstration purposes. They are not part of the production system.
+## Current Contents
+
+- Various experimental implementations for future features
+- Repository reorganization planning documents
+- Temporary development scripts

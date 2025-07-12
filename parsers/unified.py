@@ -42,10 +42,10 @@ RETRY_DELAY = int(os.getenv("RETRY_DELAY", "1"))
 
 # Load prompts
 SYSTEM_PROMPT_FILE = os.path.join(
-    os.path.dirname(__file__), "..", "prompts", "system_prompt.txt"
+    os.path.dirname(__file__), "..", "config", "prompts", "system_prompt.txt"
 )
 FEW_SHOT_EXAMPLES_FILE = os.path.join(
-    os.path.dirname(__file__), "..", "prompts", "few_shot_examples.txt"
+    os.path.dirname(__file__), "..", "config", "prompts", "few_shot_examples.txt"
 )
 
 # Set up logging
