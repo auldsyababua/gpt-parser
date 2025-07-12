@@ -1,5 +1,8 @@
 # Future Phases Summary (5-9)
 
+## Recent Updates
+- **Temporal Expression Consistency**: Core implementation completed and integrated into Phase 2. Remaining edge cases and user preferences moved to Phase 4.
+
 ## Phase 5: Web Dashboard (Months 5-6)
 **Goal**: Provide managers with real-time operational visibility
 

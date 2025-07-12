@@ -20,6 +20,15 @@ This phase adds support for multiple users with different timezones and roles, e
    - ✅ 30+ timezone test cases passing
    - Files implemented: `timezone_config.py`, `timezone_converter.py`
 
+2. **Temporal Expression Consistency** (Completed in implement-temporal-preprocessor branch)
+   - ✅ Pre-processing rules for common expressions ("end of hour", "top of hour", "end of day")
+   - ✅ Current time included in all prompts for context
+   - ✅ Two-stage processing: temporal processor + LLM
+   - ✅ Confidence-based routing (high confidence uses pre-processed data)
+   - ✅ City-to-timezone mappings (houston, chicago, dallas, etc.)
+   - ✅ Direct timezone detection (CST, PDT, EST, etc.)
+   - Files implemented: `temporal_processor.py`, updates to parsers
+
 ### 🎯 Remaining Features
 
 1. **User Profile System**

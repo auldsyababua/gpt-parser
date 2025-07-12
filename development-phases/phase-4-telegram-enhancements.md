@@ -166,6 +166,24 @@ Transform the Telegram bot from a simple task creator to a full-featured interfa
    - Local task cache
    - Conflict resolution
 
+4. **Enhanced Temporal Expression Handling**
+   - User preference settings for subjective times:
+     - "morning" = configurable (default 8am)
+     - "afternoon" = configurable (default 2pm)
+     - "evening" = configurable (default 6pm)
+   - Comprehensive edge case handling:
+     - "in 5" → Ask clarification: "In 5 minutes or 5 hours?"
+     - "later" → Ask: "When would you like this done?"
+     - "soon" → Default to 1 hour with confirmation
+   - Full timezone variation support:
+     - "Central Standard Time", "Pacific Daylight Time"
+     - "LA time", "NYC time", "Denver time"
+     - Case-insensitive matching
+   - Test suite for temporal edge cases:
+     - Ambiguous expressions
+     - Timezone variations
+     - Relative time references
+
 ### 🧪 Performance Requirements
 - Voice transcription: < 3 seconds
 - Query response: < 1 second
