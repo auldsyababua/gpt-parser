@@ -53,9 +53,9 @@ TEST_CASES = [
 
 def load_prompts():
     """Load the system prompt and few-shot examples."""
-    with open("prompts/system_prompt.txt", "r") as f:
+    with open("config/prompts/system_prompt.txt", "r") as f:
         system_prompt = f.read()
-    with open("prompts/few_shot_examples.txt", "r") as f:
+    with open("config/prompts/few_shot_examples.txt", "r") as f:
         few_shot_examples = f.read()
     return system_prompt, few_shot_examples
 
