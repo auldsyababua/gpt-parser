@@ -24,10 +24,10 @@ GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZZkhc3f9nP4I
 ASSISTANT_NAME = "Task Parser v7"
 ASSISTANT_MODEL = "gpt-4o-mini"
 SYSTEM_PROMPT_FILE = os.path.join(
-    os.path.dirname(__file__), "..", "prompts", "system_prompt.txt"
+    os.path.dirname(__file__), "..", "config", "prompts", "system_prompt.txt"
 )
 FEW_SHOT_EXAMPLES_FILE = os.path.join(
-    os.path.dirname(__file__), "..", "prompts", "few_shot_examples.txt"
+    os.path.dirname(__file__), "..", "config", "prompts", "few_shot_examples.txt"
 )
 LOG_FILE = os.path.join(os.path.dirname(__file__), "..", "logs", "api_log.txt")
 

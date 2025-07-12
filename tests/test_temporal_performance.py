@@ -9,7 +9,7 @@ import time
 
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from scripts.assistants_api_runner import get_or_create_assistant, parse_task
+from parsers.openai_assistant import get_or_create_assistant, parse_task
 
 
 def test_performance():

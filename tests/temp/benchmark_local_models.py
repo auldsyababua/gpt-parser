@@ -13,7 +13,7 @@ from typing import List, Dict, Any
 # Add parent directory to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from unified_parser import load_prompts
+from parsers.unified import load_prompts
 
 # 30 unique test cases for apples-to-apples comparison
 TEST_CASES = [
