@@ -51,14 +51,24 @@ LIST_TASKS = "list_tasks"
 SUBMIT_TASK = "submit_task"
 CLARIFY_TASK = "clarify_task"
 CANCEL_TASK = "cancel_task"
+COMPLETE_TASK_PREFIX = "complete_task_"
+REFRESH_TASKS = "refresh_tasks"
+UNDO_LAST = "undo_last"
+MAIN_MENU = "main_menu"
 
 
-def get_main_menu_keyboard():
+def get_main_menu_keyboard(task_count=None):
     """Create the main menu inline keyboard."""
+    # Format the List Tasks button with count if provided
+    if task_count is not None and task_count > 0:
+        list_button_text = f"📋 List Tasks ({task_count})"
+    else:
+        list_button_text = "📋 List Tasks"
+
     keyboard = [
         [
             InlineKeyboardButton("➕ New Task", callback_data=NEW_TASK),
-            InlineKeyboardButton("📋 List Tasks", callback_data=LIST_TASKS),
+            InlineKeyboardButton(list_button_text, callback_data=LIST_TASKS),
         ]
     ]
     return InlineKeyboardMarkup(keyboard)
@@ -76,14 +86,121 @@ def get_task_confirmation_keyboard():
     return InlineKeyboardMarkup(keyboard)
 
 
+def get_task_list_keyboard(tasks):
+    """Create inline keyboard for task list with complete buttons."""
+    keyboard = []
+
+    # Add a complete button for each task
+    for i, task in enumerate(tasks, 1):
+        keyboard.append(
+            [
+                InlineKeyboardButton(
+                    f"✅ Complete Task {i}",
+                    callback_data=f"{COMPLETE_TASK_PREFIX}{task.get('id', i)}",
+                )
+            ]
+        )
+
+    # Add navigation buttons at the bottom
+    keyboard.append(
+        [
+            InlineKeyboardButton("➕ New Task", callback_data=NEW_TASK),
+            InlineKeyboardButton("🔄 Refresh", callback_data=REFRESH_TASKS),
+        ]
+    )
+    keyboard.append([InlineKeyboardButton("🏠 Main Menu", callback_data=MAIN_MENU)])
+
+    return InlineKeyboardMarkup(keyboard)
+
+
+def get_user_task_count(user_id, context=None):
+    """Get the number of active tasks for a user."""
+    # If we have tasks in context, count the active ones
+    if context and "user_tasks" in context.user_data:
+        tasks = context.user_data["user_tasks"]
+        return len([task for task in tasks if task.get("status") == "active"])
+
+    # TODO: Query actual database/sheets for real count
+    # For now, return example count
+    return 3  # This would be a real query in production
+
+
+async def show_task_list(query, context=None):
+    """Display the user's task list with complete buttons."""
+    # TODO: Fetch real tasks from database/sheets where assignee = current user
+    # For now, using example tasks
+
+    user_name = query.from_user.first_name
+    user_id = query.from_user.id
+
+    # Get tasks from context if available (for undo functionality)
+    if context and "user_tasks" in context.user_data:
+        tasks = context.user_data["user_tasks"]
+    else:
+        # Example tasks - in production, these would come from the database
+        tasks = [
+            {
+                "id": "task_001",
+                "description": "Check oil at Site B",
+                "due": "Tomorrow 4:00 PM",
+                "assigner": "Colin",
+                "status": "active",
+            },
+            {
+                "id": "task_002",
+                "description": "Inspect generator coolant",
+                "due": "Today 5:00 PM",
+                "assigner": "yourself",
+                "status": "active",
+            },
+            {
+                "id": "task_003",
+                "description": "Review maintenance logs",
+                "due": "Friday 6:00 PM",
+                "assigner": "Bryan",
+                "status": "active",
+            },
+        ]
+        # Store tasks in context for undo functionality
+        if context:
+            context.user_data["user_tasks"] = tasks
+
+    # Filter only active tasks
+    active_tasks = [task for task in tasks if task.get("status") == "active"]
+
+    if not active_tasks:
+        task_text = (
+            f"🎉 Great job {user_name}! No active tasks.\n\nWhat would you like to do?"
+        )
+        keyboard = get_main_menu_keyboard(0)
+    else:
+        task_text = f"📋 Your Active Tasks ({len(active_tasks)}):\n\n"
+
+        for i, task in enumerate(active_tasks, 1):
+            task_text += f"{i}. {task['description']}\n"
+            task_text += f"   🕐 {task['due']} | Assigned by: {task['assigner']}\n\n"
+
+        task_text += f"\nShowing tasks for: {user_name}"
+        keyboard = get_task_list_keyboard(active_tasks)
+
+    await query.edit_message_text(
+        task_text,
+        reply_markup=keyboard,
+    )
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handle the /start command."""
-    logger.info(f"User {update.effective_user.id} started the bot")
+    user_id = update.effective_user.id
+    logger.info(f"User {user_id} started the bot")
+
+    # Get user's task count for the main menu
+    task_count = get_user_task_count(user_id, context)
 
     await update.message.reply_text(
         "Welcome to TaskBot! I help you manage tasks for your team.\n\n"
         "What would you like to do?",
-        reply_markup=get_main_menu_keyboard(),
+        reply_markup=get_main_menu_keyboard(task_count),
     )
 
 
@@ -100,24 +217,86 @@ async def handle_button_click(
         await query.edit_message_text("Please describe the task:")
         return AWAITING_TASK_DESCRIPTION
 
-    elif query.data == LIST_TASKS:
-        # TODO: Implement task listing from database/sheets
-        task_list = """📋 Your Active Tasks (3):
+    elif query.data == LIST_TASKS or query.data == REFRESH_TASKS:
+        await show_task_list(query, context)
+        return ConversationHandler.END
 
-1. Check oil at Site B - Joel
-   🕐 Tomorrow 4:00 PM
+    elif query.data.startswith(COMPLETE_TASK_PREFIX):
+        # Extract task ID from callback data
+        task_id = query.data.replace(COMPLETE_TASK_PREFIX, "")
 
-2. Meet contractor - Bryan
-   🕐 Today 5:00 PM
+        # Get current tasks and mark the specified one as complete
+        if "user_tasks" in context.user_data:
+            tasks = context.user_data["user_tasks"]
+            for task in tasks:
+                if task["id"] == task_id:
+                    task["status"] = "completed"
+                    # Store the completed task for undo
+                    context.user_data["last_completed_task"] = {
+                        "task": task,
+                        "timestamp": update.callback_query.message.date,
+                    }
+                    break
 
-3. Submit weekly report - Colin
-   🕐 Friday 6:00 PM
+        # TODO: Update task status in database/sheets
 
-What would you like to do?"""
+        # Show completion confirmation with undo option
+        completed_task_name = next(
+            (
+                task["description"]
+                for task in context.user_data.get("user_tasks", [])
+                if task["id"] == task_id
+            ),
+            "Task",
+        )
+
+        confirmation_text = f"✅ '{completed_task_name}' marked as complete!"
+
+        # Create undo keyboard
+        undo_keyboard = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "↩️ Undo", callback_data=f"{UNDO_LAST}_{task_id}"
+                    ),
+                    InlineKeyboardButton("📋 Back to Tasks", callback_data=LIST_TASKS),
+                ]
+            ]
+        )
 
         await query.edit_message_text(
-            task_list,
-            reply_markup=get_main_menu_keyboard(),
+            confirmation_text,
+            reply_markup=undo_keyboard,
+        )
+        return ConversationHandler.END
+
+    elif query.data.startswith(UNDO_LAST):
+        # Extract task ID from undo callback
+        task_id = query.data.split("_")[-1]
+
+        # Restore the task from completed back to active
+        if "user_tasks" in context.user_data:
+            tasks = context.user_data["user_tasks"]
+            for task in tasks:
+                if task["id"] == task_id:
+                    task["status"] = "active"
+                    break
+
+        # TODO: Update task status in database/sheets
+
+        await query.answer("↩️ Task restored!")
+
+        # Show the updated task list
+        await show_task_list(query, context)
+        return ConversationHandler.END
+
+    elif query.data == "main_menu" or query.data == MAIN_MENU:
+        user_id = query.from_user.id
+        task_count = get_user_task_count(user_id, context)
+
+        await query.edit_message_text(
+            "What would you like to do?",
+            reply_markup=get_main_menu_keyboard(task_count),
         )
         return ConversationHandler.END
 

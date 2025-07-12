@@ -135,7 +135,7 @@ def parse_task(input_text, assigner="Colin"):
     else:
         # Low confidence - fall back to original approach
         prompt_with_date = f"(Today's date is {today_str} in {assigner}'s timezone: {tz_abbr}) {input_text}"
-        print(f"\nLow-confidence preprocessing, using original approach")
+        print("\nLow-confidence preprocessing, using original approach")
 
     print(f"Processing input: '{prompt_with_date}'")
 

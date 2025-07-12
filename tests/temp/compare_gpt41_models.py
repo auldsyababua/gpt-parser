@@ -226,7 +226,7 @@ def main():
     if nano_success:
         nano_times = [r["time"] for r in nano_success]
         nano_avg = sum(nano_times) / len(nano_times)
-        print(f"\ngpt-4.1-nano:")
+        print("\ngpt-4.1-nano:")
         print(
             f"  Success rate: {len(nano_success)}/{len(nano_results)} ({len(nano_success)/len(nano_results)*100:.1f}%)"
         )
@@ -236,7 +236,7 @@ def main():
     if mini_success:
         mini_times = [r["time"] for r in mini_success]
         mini_avg = sum(mini_times) / len(mini_times)
-        print(f"\ngpt-4.1-mini:")
+        print("\ngpt-4.1-mini:")
         print(
             f"  Success rate: {len(mini_success)}/{len(mini_results)} ({len(mini_success)/len(mini_results)*100:.1f}%)"
         )

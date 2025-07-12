@@ -9,7 +9,16 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 import pytz
 import logging
+import sys
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("logs/temporal_processor.log"),
+        logging.StreamHandler(sys.stdout),
+    ],
+)
 logger = logging.getLogger(__name__)
 
 
@@ -51,6 +60,105 @@ class TemporalProcessor:
             "miami": "EST",
         }
 
+    def _fix_bare_hours(self, text: str) -> str:
+        """
+        Fix bare hour numbers by adding 'pm' for afternoon hours.
+        E.g., "at 4" -> "at 4pm", "at 3:30" -> "at 3:30pm"
+        Also handles shorthand like "6a" -> "6am", "6p" -> "6pm"
+
+        Logic for bare numbers:
+        - 1-5: Assume PM (1pm-5pm) - common work hours
+        - 6-11: Assume AM (6am-11am) - morning hours
+        - 12: Keep as-is (noon)
+        """
+        logger.info(f"[DEBUG] _fix_bare_hours: INPUT = '{text}'")
+
+        # First, convert shorthand "6a" -> "6am", "6p" -> "6pm"
+        # This handles both "6a" and "6:30a" formats
+        def expand_shorthand(match):
+            hour = match.group(1)
+            minutes = match.group(2) or ""
+            meridiem = match.group(3).lower()
+
+            result = hour
+            if minutes:
+                result += f":{minutes}"
+            result += f"{meridiem}m"
+            logger.info(
+                f"[DEBUG] _fix_bare_hours: SHORTHAND CONVERSION - {match.group(0)} -> {result}"
+            )
+            return result
+
+        original_text = text
+        text = re.sub(
+            r"\b(\d{1,2})(?::(\d{2}))?([ap])\b",
+            expand_shorthand,
+            text,
+            flags=re.IGNORECASE,
+        )
+        if text != original_text:
+            logger.info(f"[DEBUG] _fix_bare_hours: AFTER SHORTHAND = '{text}'")
+
+        # Pattern to match "at NUMBER" where NUMBER is 1-12 without am/pm
+        pattern = r"\bat\s+(\d{1,2})(?::(\d{2}))?\b(?!\s*(?:am|pm|a\.m\.|p\.m\.|hours?|minutes?|seconds?))"
+
+        def replace_with_meridiem(match):
+            hour = int(match.group(1))
+            minutes = match.group(2) or ""
+
+            logger.info(
+                f"[DEBUG] _fix_bare_hours: MATCH FOUND - hour={hour}, minutes={minutes}"
+            )
+            logger.info(f"[DEBUG] _fix_bare_hours: MATCH GROUPS - {match.groups()}")
+
+            # Smart hour interpretation:
+            # 12:00-5:59 (12pm-5:59pm) - afternoon/early evening work hours
+            # 6:00-11:59 (6am-11:59am) - morning hours
+            if 1 <= hour <= 5 or hour == 12:
+                # Afternoon hours (1pm-5pm) or noon (12pm)
+                time_str = f"at {hour}"
+                if minutes:
+                    time_str += f":{minutes}"
+                result = f"{time_str}pm"
+                logger.info(
+                    f"[DEBUG] _fix_bare_hours: CONVERTING TO PM - {match.group(0)} -> {result}"
+                )
+                return result
+            elif 6 <= hour <= 11:
+                # Morning hours (6am-11am)
+                time_str = f"at {hour}"
+                if minutes:
+                    time_str += f":{minutes}"
+                result = f"{time_str}am"
+                logger.info(
+                    f"[DEBUG] _fix_bare_hours: CONVERTING TO AM - {match.group(0)} -> {result}"
+                )
+                return result
+            else:
+                # For any other numbers, return unchanged
+                logger.info(
+                    f"[DEBUG] _fix_bare_hours: NO CONVERSION - {match.group(0)}"
+                )
+                return match.group(0)
+
+        original_text = text
+        matches = list(re.finditer(pattern, text, re.IGNORECASE))
+        logger.info(f"[DEBUG] _fix_bare_hours: FOUND {len(matches)} POTENTIAL MATCHES")
+        for i, match in enumerate(matches):
+            logger.info(
+                f"[DEBUG] _fix_bare_hours: MATCH {i+1} - '{match.group(0)}' at position {match.start()}-{match.end()}"
+            )
+
+        text = re.sub(pattern, replace_with_meridiem, text, flags=re.IGNORECASE)
+        if text != original_text:
+            logger.info(
+                f"[DEBUG] _fix_bare_hours: AFTER BARE HOUR CONVERSION = '{text}'"
+            )
+        else:
+            logger.info("[DEBUG] _fix_bare_hours: NO BARE HOUR MATCHES FOUND")
+
+        return text
+
     def preprocess(
         self, text: str, reference_time: Optional[datetime] = None
     ) -> Dict[str, Any]:
@@ -70,6 +178,18 @@ class TemporalProcessor:
         """
         if reference_time is None:
             reference_time = datetime.now(self.tz)
+
+        logger.info(f"[DEBUG] preprocess: ORIGINAL INPUT = '{text}'")
+
+        # Fix bare hours like "at 4" -> "at 4pm"
+        original_for_debug = text
+        text = self._fix_bare_hours(text)
+        if text != original_for_debug:
+            logger.info(
+                f"[DEBUG] preprocess: _fix_bare_hours changed: '{original_for_debug}' -> '{text}'"
+            )
+        else:
+            logger.info("[DEBUG] preprocess: _fix_bare_hours made no changes")
 
         result = {
             "original_text": text,

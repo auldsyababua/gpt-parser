@@ -49,6 +49,14 @@ FEW_SHOT_EXAMPLES_FILE = os.path.join(
 )
 
 # Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("logs/telegram_bot.log"),
+        logging.StreamHandler(sys.stdout),
+    ],
+)
 logger = logging.getLogger(__name__)
 
 
@@ -205,8 +213,28 @@ def parse_task(input_text: str, assigner: str = "Colin") -> Optional[Dict[str, A
     # Pre-process temporal expressions
     processor = TemporalProcessor(default_timezone=str(assigner_tz))
     start_time = time.time()
+    logger.info(f"[DEBUG] parse_task: ORIGINAL INPUT = '{input_text}'")
+    logger.info(f"[DEBUG] parse_task: REFERENCE TIME = {today_in_tz}")
+    logger.info(f"[DEBUG] parse_task: ASSIGNER TZ = {assigner_tz}")
+
     preprocessed = processor.preprocess(input_text, reference_time=today_in_tz)
     preprocess_time = time.time() - start_time
+
+    logger.info("[DEBUG] parse_task: PREPROCESSING COMPLETE")
+    logger.info(
+        f"[DEBUG] parse_task: ORIGINAL TEXT = '{preprocessed.get('original_text', 'N/A')}'"
+    )
+    logger.info(
+        f"[DEBUG] parse_task: PROCESSED TEXT = '{preprocessed.get('processed_text', 'N/A')}'"
+    )
+    logger.info(f"[DEBUG] parse_task: CONFIDENCE = {preprocessed.get('confidence', 0)}")
+
+    if "temporal_data" in preprocessed:
+        logger.info(
+            f"[DEBUG] parse_task: TEMPORAL DATA = {preprocessed['temporal_data']}"
+        )
+    else:
+        logger.info("[DEBUG] parse_task: NO TEMPORAL DATA FOUND")
 
     logger.info(
         f"Preprocessing took {preprocess_time:.3f}s, confidence: {preprocessed['confidence']}"
@@ -273,8 +301,17 @@ def parse_task(input_text: str, assigner: str = "Colin") -> Optional[Dict[str, A
     # Post-process the parsed JSON
     parsed_json["created_at"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M")
 
+    # Log the raw LLM response before any processing
+    logger.info(f"[DEBUG] Raw LLM response: {json.dumps(parsed_json, indent=2)}")
+
     # Apply timezone conversions
+    logger.info(
+        f"[DEBUG] Before timezone conversion - assigner: '{assigner}', due_time: {parsed_json.get('due_time')}, due_date: {parsed_json.get('due_date')}"
+    )
     parsed_json = process_task_with_timezones(parsed_json, assigner)
+    logger.info(
+        f"[DEBUG] After timezone conversion - due_time: {parsed_json.get('due_time')}, due_date: {parsed_json.get('due_date')}"
+    )
 
     # Add original prompt and performance metrics
     parsed_json["original_prompt"] = input_text
@@ -342,32 +379,11 @@ def format_task_for_confirmation(parsed_json: Dict[str, Any]) -> str:
 def send_to_google_sheets(parsed_json: Dict[str, Any]) -> bool:
     """
     Sends parsed task to Google Sheets via Apps Script webhook.
+    Deprecated: Use integrations.google_sheets.send_task_to_sheets instead.
     """
-    webhook_url = os.getenv("GOOGLE_APPS_SCRIPT_WEB_APP_URL")
-    if not webhook_url:
-        logger.error("Google Apps Script webhook URL not configured")
-        return False
+    from integrations.google_sheets import send_task_to_sheets
 
-    try:
-        response = requests.post(
-            webhook_url,
-            json=parsed_json,
-            headers={"Content-Type": "application/json"},
-            timeout=10,
-        )
-
-        if response.status_code == 200:
-            logger.info("Successfully sent task to Google Sheets")
-            return True
-        else:
-            logger.error(
-                f"Failed to send to Google Sheets: {response.status_code} - {response.text}"
-            )
-            return False
-
-    except Exception as e:
-        logger.error(f"Error sending to Google Sheets: {e}")
-        return False
+    return send_task_to_sheets(parsed_json)
 
 
 if __name__ == "__main__":

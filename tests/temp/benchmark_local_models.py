@@ -162,7 +162,7 @@ def test_model(
                 )
 
         except requests.exceptions.Timeout:
-            print(f" ✗ Timeout after 60s")
+            print(" ✗ Timeout after 60s")
             results.append(
                 {
                     "prompt": test_prompt,
@@ -253,8 +253,8 @@ def print_comparison(results_dict: Dict[str, List[Dict[str, Any]]]):
 
 def main():
     print("Local Model Benchmark: 30 Unique Task Parsing Prompts")
-    print(f"Models: llama3:8b-instruct-q4_0, phi3:latest")
-    print(f"Sleep between requests: 1 second")
+    print("Models: llama3:8b-instruct-q4_0, phi3:latest")
+    print("Sleep between requests: 1 second")
 
     # Test both models
     results = {}

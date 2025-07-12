@@ -6,6 +6,8 @@ This directory contains the enhanced Telegram bot with inline keyboard buttons f
 
 ### 1. Added Inline Keyboards
 - Main menu with "New Task" and "List Tasks" buttons
+  - "List Tasks" shows only tasks assigned to the current user
+  - Each task has a "✅ Complete" button for quick completion
 - Task confirmation with "Submit", "Clarify", and "Cancel" buttons
 - Persistent navigation - always returns to main menu
 
@@ -33,6 +35,7 @@ LIST_TASKS = "list_tasks"
 SUBMIT_TASK = "submit_task"
 CLARIFY_TASK = "clarify_task"
 CANCEL_TASK = "cancel_task"
+COMPLETE_TASK = "complete_task_"  # Followed by task ID
 ```
 
 ## Migration Steps
@@ -43,8 +46,9 @@ CANCEL_TASK = "cancel_task"
 4. **Add callback handlers** for button interactions
 5. **Test thoroughly** - Buttons and text input should both work
 
-## Usage Example
+## Usage Examples
 
+### Creating a Task
 ```
 User: /start
 Bot: Welcome! What would you like to do?
@@ -64,6 +68,41 @@ User: *clicks Submit*
 Bot: ✅ Task created!
      What would you like to do?
      [New Task] [List Tasks]
+```
+
+### Viewing and Completing Tasks
+```
+User: *clicks List Tasks*
+Bot: 📋 Your Active Tasks (3):
+
+     1. Check generator oil at Site A
+        🕐 Tomorrow 4:00 PM | Assigned by: Colin
+        [✅ Complete]
+     
+     2. Inspect coolant levels
+        🕐 Today 5:00 PM | Assigned by: yourself
+        [✅ Complete]
+     
+     3. Review maintenance logs
+        🕐 Friday 6:00 PM | Assigned by: Bryan
+        [✅ Complete]
+     
+     [New Task] [Refresh] [Main Menu]
+
+User: *clicks Complete on task 1*
+Bot: ✅ Task "Check generator oil at Site A" marked as complete!
+     
+     📋 Your Active Tasks (2):
+     
+     1. Inspect coolant levels
+        🕐 Today 5:00 PM | Assigned by: yourself
+        [✅ Complete]
+     
+     2. Review maintenance logs
+        🕐 Friday 6:00 PM | Assigned by: Bryan
+        [✅ Complete]
+     
+     [New Task] [Refresh] [Main Menu]
 ```
 
 ## Benefits

@@ -4,7 +4,6 @@ Compare OpenAI Assistants API vs Chat Completions API performance.
 """
 
 import time
-import json
 import os
 import sys
 from dotenv import load_dotenv
@@ -56,7 +55,7 @@ def test_assistants_api():
                     }
                 )
             else:
-                print(f"✗ Failed")
+                print("✗ Failed")
                 results.append(
                     {
                         "test": test,
@@ -114,7 +113,7 @@ def test_completions_api():
                     }
                 )
             else:
-                print(f"✗ Failed")
+                print("✗ Failed")
                 results.append(
                     {
                         "test": test,
