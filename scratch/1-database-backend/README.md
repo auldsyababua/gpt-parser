@@ -1,9 +1,52 @@
-# Phase 3: Database Backend & Persistence
+# Database Backend & Persistence
 
 ## Overview
 Replace Google Sheets with a proper PostgreSQL database to enable advanced querying, better performance, and data integrity.
 
-## Status: NOT STARTED
+## Status: READY TO IMPLEMENT
+
+## 🎯 What We Found from 10NZ_FLRTS
+
+We can reuse substantial work from your 10NZ_FLRTS project:
+
+1. **Database Schema** - Complete PostgreSQL schema with proper indexes
+2. **SQLAlchemy Models** - Well-structured ORM models
+3. **Supabase Configuration** - You already have a Supabase instance!
+4. **Connection Patterns** - Database manager with session handling
+
+### Files Created:
+- `schema_from_FLRTS.sql` - Adapted schema for task parsing
+- `models.py` - SQLAlchemy models for all entities
+- `database.py` - Connection management and session handling
+- `setup_guide.md` - Complete setup instructions
+- `migrate_from_sheets.py` - Script to migrate existing Google Sheets data
+- `generate_test_data.py` - Generate realistic test data for development
+
+## 📦 Data Migration Options
+
+### Option 1: Migrate Existing Test Data
+```bash
+# Dry run first to see what will be migrated
+python migrate_from_sheets.py --dry-run
+
+# Run actual migration
+python migrate_from_sheets.py --init-db
+```
+
+### Option 2: Generate Fresh Test Data
+```bash
+# Generate 100 test tasks with history
+python generate_test_data.py --count 100 --init-db
+
+# Preview what will be created
+python generate_test_data.py --count 50 --dry-run
+```
+
+Both options create:
+- Tasks with various states (pending, completed, overdue)
+- Full task history/audit trail
+- Scheduled notifications for upcoming tasks
+- Realistic timing and assignee distribution
 
 ### Prerequisites
 - Phase 2 complete (multi-user support working)
@@ -13,7 +56,6 @@ Replace Google Sheets with a proper PostgreSQL database to enable advanced query
 ### 🎯 Target Features
 
 1. **PostgreSQL Database Schema**
-   - Reference: [Normalize Task & Reminder Model (SQL).md](./Normalize%20Task%20%26%20Reminder%20Model%20%28SQL%29.md)
    - Normalized schema with proper relationships
    - Support for task history and audit trails
    - Optimized for common queries
@@ -46,14 +88,6 @@ Replace Google Sheets with a proper PostgreSQL database to enable advanced query
    - Export to CSV/JSON
    - Disaster recovery procedures
    - Files: Create `database/backup.py`
-
-6. **BERT-Based Intent Parsing (ML Pipeline)**
-   - Local intent classification to reduce API dependency
-   - Named Entity Recognition for assignees/sites/equipment
-   - 85%+ accuracy on common patterns
-   - <100ms inference time
-   - Falls back to LLM for complex/ambiguous inputs
-   - Files: Create `utils/bert_parser.py`, `models/train_intent_classifier.py`
 
 ### 📊 Database Schema Design
 
@@ -122,20 +156,6 @@ CREATE TABLE task_comments (
     comment TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
-
--- Audit triggers
-CREATE OR REPLACE FUNCTION update_updated_at()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER update_tasks_updated_at
-    BEFORE UPDATE ON tasks
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at();
 ```
 
 ### 🔄 Migration Strategy
@@ -197,52 +217,15 @@ CREATE TRIGGER update_tasks_updated_at
            """Update task status with audit trail"""
    ```
 
-3. **BERT Intent Parser Implementation**
-   ```python
-   # utils/bert_parser.py
-   class BERTTaskParser:
-       def __init__(self):
-           self.intent_classifier = pipeline(
-               "text-classification", 
-               model="./models/task-intent-distilbert"
-           )
-           self.ner = pipeline(
-               "ner", 
-               model="./models/task-ner-bert"
-           )
-           
-       def parse(self, text: str, temporal_data: dict) -> dict:
-           # Classify intent (oil_check, restart, etc.)
-           intent = self.intent_classifier(text)[0]
-           
-           # Extract entities (Bryan, Site A, generator)
-           entities = self.ner(text)
-           
-           # Map to task schema
-           if intent['score'] > 0.85:
-               return self.build_task_json(intent, entities, temporal_data)
-           else:
-               return {"use_llm": True, "reason": "Low confidence"}
-   ```
-
 ### 🎯 Success Metrics
 - [ ] Zero data loss during migration
 - [ ] All queries complete in < 200ms
 - [ ] 99.9% uptime
 - [ ] Automated backups running daily
 - [ ] Support for 1M+ tasks
-- [ ] BERT parser handles 60%+ of inputs locally
-- [ ] 50%+ reduction in API costs
 
 ### 🚨 Risk Mitigation
 1. **Data Loss**: Triple backup strategy (DB, filesystem, cloud)
 2. **Performance**: Index optimization and query analysis
 3. **Migration Errors**: Extensive testing with production data copy
 4. **Downtime**: Blue-green deployment strategy
-
-## Next Phase Dependencies
-Phase 4 (Enhanced Telegram Interface) requires:
-- Stable database with query API
-- Task history tracking
-- Performance meeting requirements
-- Backup procedures tested
