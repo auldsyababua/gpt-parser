@@ -15,8 +15,7 @@ from telegram.ext import (
 from dotenv import load_dotenv
 
 # Import the assistant runner functions
-from assistants_api_runner import (
-    get_or_create_assistant,
+from unified_parser import (
     parse_task,
     format_task_for_confirmation,
     send_to_google_sheets,
@@ -42,8 +41,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # --- Bot State ---
-# We will store the assistant object globally since bot_data usage has changed
-assistant = None
+# No longer need assistant - using unified parser
 
 # Conversation states
 AWAITING_CONFIRMATION = 1
@@ -66,14 +64,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         f"Received message from {update.message.from_user.username}: {user_message}"
     )
 
-    global assistant
-    logger.info(f"Assistant object: {assistant}")  # Debug log
-    if not assistant:
-        logger.error("Assistant is None!")
-        await update.message.reply_text(
-            "Assistant is not initialized. Please wait a moment and try again."
-        )
-        return ConversationHandler.END
+    # No need for assistant check - unified parser handles everything
 
     await update.message.reply_text(f"Processing your request: '{user_message}'...")
 
@@ -83,11 +74,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         loop = asyncio.get_running_loop()
 
         # Add timeout to prevent hanging
-        logger.info(
-            f"Calling parse_task with assistant={assistant.get('id') if assistant else 'None'}, message='{user_message}'"
-        )
+        logger.info(f"Calling parse_task with message='{user_message}'")
         parsed_json = await asyncio.wait_for(
-            loop.run_in_executor(None, parse_task, assistant, user_message),
+            loop.run_in_executor(None, parse_task, user_message),
             timeout=30.0,  # 30 second timeout
         )
         logger.info(f"parse_task completed successfully: {parsed_json}")
@@ -178,7 +167,7 @@ async def handle_confirmation(
         try:
             loop = asyncio.get_running_loop()
             parsed_json = await loop.run_in_executor(
-                None, parse_task, assistant, combined_message
+                None, parse_task, combined_message
             )
 
             # Add to corrections history
@@ -221,7 +210,6 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 def main() -> None:
     """Start the bot."""
-    global assistant
 
     logger.info("Starting Telegram bot...")
     logger.info(
@@ -231,19 +219,8 @@ def main() -> None:
     # Create the Application and pass it your bot's token.
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
-    # Initialize the assistant
-    logger.info("Initializing OpenAI Assistant...")
-    try:
-        assistant = get_or_create_assistant()
-        if assistant:
-            logger.info(f"Assistant initialized successfully: {assistant.get('id')}")
-        else:
-            logger.error(
-                "Failed to initialize assistant. The bot may not function correctly."
-            )
-    except Exception as e:
-        logger.error(f"Exception initializing assistant: {e}", exc_info=True)
-        raise
+    # No need to initialize assistant anymore - using unified parser
+    logger.info("Using unified parser with OpenAI Chat Completions API")
 
     # on different commands - answer in Telegram
     application.add_handler(CommandHandler("start", start))
