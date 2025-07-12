@@ -19,7 +19,12 @@ from dotenv import load_dotenv
 from parsers.unified import (
     parse_task,
     format_task_for_confirmation,
-    send_to_google_sheets,
+)
+from integrations.google_sheets import (
+    send_task_to_sheets as send_to_google_sheets,
+    get_tasks_from_sheets,
+    complete_task_in_sheets,
+    restore_task_in_sheets,
 )
 
 # --- Configuration ---
@@ -60,17 +65,77 @@ UNDO_LAST = "undo_last"
 MAIN_MENU = "main_menu"
 
 
+# --- User Management ---
+def get_system_user_from_telegram(telegram_user):
+    """Map Telegram user to system user name."""
+    # Map based on Telegram username or user ID
+    # This is a simple mapping - in production you'd use a database
+    user_mapping = {
+        "colinaulds": "Colin",
+        "Colin_10NetZero": "Colin",  # Add the actual username
+        "bryanaulds": "Bryan",
+        "joelfulford": "Joel",
+        # Add first name mappings as fallbacks
+        "colin": "Colin",
+        "bryan": "Bryan",
+        "joel": "Joel",
+        # Add display name variations
+        "colin aulds": "Colin",
+        "bryan aulds": "Bryan",
+        "joel fulford": "Joel",
+        # Handle full display names with company info
+        "colin aulds | 10netzero.com": "Colin",
+    }
+
+    # Try username first
+    if telegram_user.username:
+        username_lower = telegram_user.username.lower()
+        if username_lower in user_mapping:
+            return user_mapping[username_lower]
+        # Check exact match (case-sensitive)
+        if telegram_user.username in user_mapping:
+            return user_mapping[telegram_user.username]
+
+    # Then try first name (might include company info)
+    if telegram_user.first_name:
+        first_name_lower = telegram_user.first_name.lower()
+        if first_name_lower in user_mapping:
+            return user_mapping[first_name_lower]
+
+        # Try just the first word of the first name
+        first_word = first_name_lower.split()[0] if first_name_lower else ""
+        if first_word in user_mapping:
+            return user_mapping[first_word]
+
+    # Fallback to first name if no mapping found, capitalize for consistency
+    first_name = telegram_user.first_name or "unknown"
+    # If first name has company info, extract just the name
+    first_name = first_name.split("|")[0].strip()
+    first_word = first_name.split()[0] if first_name else "unknown"
+    return first_word.capitalize()
+
+
 # --- Keyboard Helpers ---
 def get_user_task_count(user_id, context=None):
     """Get the number of active tasks for a user."""
     # If we have tasks in context, count the active ones
     if context and "user_tasks" in context.user_data:
         tasks = context.user_data["user_tasks"]
-        return len([task for task in tasks if task.get("status") == "active"])
+        return len(
+            [task for task in tasks if task.get("status") in ["pending", "active"]]
+        )
 
-    # TODO: Query actual database/sheets for real count
-    # For now, return example count based on user
-    return 0  # Start with 0, real tasks will be loaded from sheets
+    # Get real count from Google Sheets
+    try:
+        telegram_user = context.user_data.get("telegram_user") if context else None
+        if telegram_user:
+            system_user = get_system_user_from_telegram(telegram_user)
+            tasks = get_tasks_from_sheets(assignee=system_user)
+            return len(tasks)
+    except Exception as e:
+        logger.error(f"Error getting task count: {e}")
+
+    return 0
 
 
 def get_main_menu_keyboard(task_count=None):
@@ -131,24 +196,36 @@ def get_task_list_keyboard(tasks):
 
 async def show_task_list(query, context=None):
     """Display the user's task list with complete buttons."""
-    # TODO: Fetch real tasks from database/sheets where assignee = current user
-    # For now, using example tasks
+    # Extract just the first name for display (in case of "Colin Aulds | Company")
+    full_name = query.from_user.first_name or ""
+    user_name = full_name.split()[0] if full_name else "User"
 
-    user_name = query.from_user.first_name
+    # Debug logging
+    logger.info("[DEBUG] show_task_list - telegram user info:")
+    logger.info(f"  username: {query.from_user.username}")
+    logger.info(f"  first_name: {query.from_user.first_name}")
+    logger.info(f"  full_name: {full_name}")
 
-    # Get tasks from context if available (for undo functionality)
-    if context and "user_tasks" in context.user_data:
-        tasks = context.user_data["user_tasks"]
-    else:
-        # TODO: In production, this would query Google Sheets for active tasks
-        # where assignee matches the current Telegram user
-        tasks = []
-        # Store tasks in context for undo functionality
+    system_user = get_system_user_from_telegram(query.from_user)
+    logger.info(f"  mapped to system_user: {system_user}")
+
+    try:
+        # Fetch real tasks from Google Sheets for this user
+        tasks = get_tasks_from_sheets(assignee=system_user)
+
+        # Store tasks in context for button functionality
         if context:
             context.user_data["user_tasks"] = tasks
+            context.user_data["telegram_user"] = query.from_user
 
-    # Filter only active tasks
-    active_tasks = [task for task in tasks if task.get("status") == "active"]
+    except Exception as e:
+        logger.error(f"Error fetching tasks from sheets: {e}")
+        tasks = []
+
+    # Filter only active/pending tasks
+    active_tasks = [
+        task for task in tasks if task.get("status") in ["pending", "active"]
+    ]
 
     if not active_tasks:
         task_text = (
@@ -159,13 +236,28 @@ async def show_task_list(query, context=None):
         task_text = f"📋 Your Active Tasks ({len(active_tasks)}):\n\n"
 
         for i, task in enumerate(active_tasks, 1):
-            task_text += f"{i}. {task['description']}\n"
-            task_text += f"   🕐 {task['due']} | Assigned by: {task['assigner']}\n\n"
+            task_desc = task.get("task", "No description")
+            due_date = task.get("due_date", "No date")
+            due_time = task.get("due_time", "")
+            assigner = task.get("assigner", "Unknown")
+            site = task.get("site", "")
 
-        task_text += f"\nShowing tasks for: {user_name}"
+            # Format due time
+            due_str = due_date
+            if due_time:
+                due_str += f" at {due_time}"
+
+            task_text += f"{i}. {task_desc}\n"
+            task_text += f"   🕐 {due_str} | Assigned by: {assigner}"
+            if site:
+                task_text += f" | 📍 {site}"
+            task_text += "\n\n"
+
+        task_text += f"\nShowing tasks for: {system_user}"
         keyboard = get_task_list_keyboard(active_tasks)
 
-    await query.edit_message_text(
+    # Send new message instead of editing to preserve context
+    await query.message.reply_text(
         task_text,
         reply_markup=keyboard,
     )
@@ -177,6 +269,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     username = update.message.from_user.username or update.message.from_user.first_name
     logger.info(f"User {user_id} ({username}) started the bot")
+
+    # Store user info in context
+    context.user_data["telegram_user"] = update.message.from_user
 
     # Get user's task count for the main menu
     task_count = get_user_task_count(user_id, context)
@@ -204,9 +299,13 @@ async def handle_task_description(
         loop = asyncio.get_running_loop()
 
         # Add timeout to prevent hanging
-        logger.info(f"Calling parse_task with message='{user_message}'")
+        # Get the assigner from telegram user
+        assigner = get_system_user_from_telegram(update.message.from_user)
+        logger.info(
+            f"Calling parse_task with message='{user_message}', assigner='{assigner}'"
+        )
         parsed_json = await asyncio.wait_for(
-            loop.run_in_executor(None, parse_task, user_message),
+            loop.run_in_executor(None, parse_task, user_message, assigner),
             timeout=30.0,  # 30 second timeout
         )
         logger.info(f"parse_task completed successfully: {parsed_json}")
@@ -300,7 +399,10 @@ async def handle_confirmation(
 
         try:
             loop = asyncio.get_running_loop()
-            parsed_json = await loop.run_in_executor(None, parse_task, combined_message)
+            assigner = get_system_user_from_telegram(update.message.from_user)
+            parsed_json = await loop.run_in_executor(
+                None, parse_task, combined_message, assigner
+            )
 
             # Add to corrections history
             correction_entry = {
@@ -389,7 +491,16 @@ async def handle_button_click(
         return ConversationHandler.END
 
     elif query.data == CLARIFY_TASK:
-        await query.edit_message_text("Please describe what needs to be changed:")
+        # Create clarification keyboard with cancel option
+        clarification_keyboard = InlineKeyboardMarkup(
+            [[InlineKeyboardButton("❌ Cancel", callback_data=CANCEL_TASK)]]
+        )
+
+        # Send new message instead of editing to preserve confirmation
+        await query.message.reply_text(
+            "Please describe what needs to be changed:",
+            reply_markup=clarification_keyboard,
+        )
         return AWAITING_CLARIFICATION
 
     elif query.data == CANCEL_TASK:
@@ -406,11 +517,17 @@ async def handle_button_click(
         # Extract task ID from callback data
         task_id = query.data.replace(COMPLETE_TASK_PREFIX, "")
 
-        # Get current tasks and mark the specified one as complete
+        # Get the completing user
+        system_user = get_system_user_from_telegram(query.from_user)
+
+        # Find the task being completed
+        completed_task_name = "Task"
         if "user_tasks" in context.user_data:
             tasks = context.user_data["user_tasks"]
             for task in tasks:
                 if task["id"] == task_id:
+                    completed_task_name = task.get("task", "Task")
+                    # Update local status for immediate UI feedback
                     task["status"] = "completed"
                     # Store the completed task for undo
                     context.user_data["last_completed_task"] = {
@@ -419,17 +536,13 @@ async def handle_button_click(
                     }
                     break
 
-        # TODO: Update task status in database/sheets
-
-        # Show completion confirmation with undo option
-        completed_task_name = next(
-            (
-                task["description"]
-                for task in context.user_data.get("user_tasks", [])
-                if task["id"] == task_id
-            ),
-            "Task",
-        )
+        # Update task status in Google Sheets
+        try:
+            success = complete_task_in_sheets(task_id, system_user, "telegram_button")
+            if not success:
+                logger.error(f"Failed to complete task {task_id} in sheets")
+        except Exception as e:
+            logger.error(f"Error completing task in sheets: {e}")
 
         confirmation_text = f"✅ '{completed_task_name}' marked as complete!"
 
@@ -455,15 +568,24 @@ async def handle_button_click(
         # Extract task ID from undo callback
         task_id = query.data.split("_")[-1]
 
-        # Restore the task from completed back to active
+        # Get the restoring user
+        system_user = get_system_user_from_telegram(query.from_user)
+
+        # Restore the task locally for immediate UI feedback
         if "user_tasks" in context.user_data:
             tasks = context.user_data["user_tasks"]
             for task in tasks:
                 if task["id"] == task_id:
-                    task["status"] = "active"
+                    task["status"] = "pending"  # Restore to pending status
                     break
 
-        # TODO: Update task status in database/sheets
+        # Restore task status in Google Sheets
+        try:
+            success = restore_task_in_sheets(task_id, system_user)
+            if not success:
+                logger.error(f"Failed to restore task {task_id} in sheets")
+        except Exception as e:
+            logger.error(f"Error restoring task in sheets: {e}")
 
         await query.answer("↩️ Task restored!")
 
@@ -527,7 +649,8 @@ def main() -> None:
                 CallbackQueryHandler(handle_button_click),
             ],
             AWAITING_CLARIFICATION: [
-                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_confirmation)
+                MessageHandler(filters.TEXT & ~filters.COMMAND, handle_confirmation),
+                CallbackQueryHandler(handle_button_click),
             ],
         },
         fallbacks=[CommandHandler("cancel", cancel)],

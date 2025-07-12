@@ -4,7 +4,6 @@ Compare performance between OpenAI and Groq models for task parsing.
 """
 
 import time
-import json
 import sys
 import os
 
@@ -99,12 +98,12 @@ def test_model(name, parse_func, test_cases, assistant=None, show_progress=True)
                     {"input": test_input, "total_time": elapsed, "success": False}
                 )
                 if show_progress:
-                    print(f"  ✗ Failed")
+                    print("  ✗ Failed")
 
         except Exception as e:
             error_msg = str(e)
             if "rate_limit" in error_msg:
-                print(f"  ⚠️  Rate limited - waiting 15s...")
+                print("  ⚠️  Rate limited - waiting 15s...")
                 time.sleep(15)  # Wait for rate limit
             results.append(
                 {
@@ -171,7 +170,7 @@ def print_comparison(openai_results, groq_results, llama_results=None):
         sum(1 for r in llama_results if r["success"]) if llama_results else 0
     )
 
-    print(f"\n📊 Performance Summary:")
+    print("\n📊 Performance Summary:")
     print(
         f"\n{'Model':<20} {'Success Rate':<15} {'Avg Time':<12} {'Min Time':<12} {'Max Time':<12}"
     )
@@ -212,7 +211,7 @@ def print_comparison(openai_results, groq_results, llama_results=None):
             )
 
     # Preprocessing effectiveness
-    print(f"\n🔬 Preprocessing Effectiveness:")
+    print("\n🔬 Preprocessing Effectiveness:")
     for name, results in [
         ("GPT-4o-mini", openai_results),
         ("Groq", groq_results),
@@ -227,7 +226,7 @@ def print_comparison(openai_results, groq_results, llama_results=None):
                     f"  - {name}: {high_conf}/{len(results)} tasks preprocessed with high confidence"
                 )
 
-    print(f"\n✅ Success Rate:")
+    print("\n✅ Success Rate:")
     print(
         f"  - GPT-4o-mini: {sum(1 for r in openai_results if r['success'])}/{len(openai_results)}"
     )
@@ -247,7 +246,7 @@ def print_comparison(openai_results, groq_results, llama_results=None):
     if llama_results:
         analyze_failures(llama_results, "Local Llama")
 
-    print(f"\n📋 Top 10 Slowest Tasks (successful only):")
+    print("\n📋 Top 10 Slowest Tasks (successful only):")
     all_results = []
     for r in openai_results:
         if r["success"]:
@@ -267,7 +266,7 @@ def print_comparison(openai_results, groq_results, llama_results=None):
         print(f"{model:<10} {test:<62} {time:.2f}s")
 
     # Success rate by test complexity (first 10 = complex temporal, 11-20 = ambiguous, 21-30 = edge cases)
-    print(f"\n🎯 Success Rate by Test Category:")
+    print("\n🎯 Success Rate by Test Category:")
     categories = [
         ("Complex Temporal (1-10)", 0, 10),
         ("Ambiguous Context (11-20)", 10, 20),
@@ -308,7 +307,7 @@ def main():
     )
     args = parser.parse_args()
 
-    print(f"🔄 Initializing models...\n")
+    print("🔄 Initializing models...\n")
     print(f"Loaded {len(TEST_CASES)} test cases from comprehensive suite.")
 
     openai_results = []

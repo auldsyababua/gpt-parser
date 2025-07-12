@@ -71,3 +71,4 @@ dmypy.json
 .vscode/settings.json
 .idea/
 *.swo
+.aider*
