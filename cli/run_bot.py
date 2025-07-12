@@ -65,7 +65,8 @@ def run_bot():
             proc = subprocess.Popen(
                 [
                     python_executable,
-                    os.path.join(os.path.dirname(__file__), "telegram_bot.py"),
+                    "-m",
+                    "integrations.telegram.bot",
                 ],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,

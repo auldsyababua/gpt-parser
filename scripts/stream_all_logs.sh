@@ -35,7 +35,7 @@ else
         echo -e "\033[92mActivated virtual environment\033[0m"
     fi
     
-    python scripts/run_bot_with_monitoring.py &
+    python -m cli.run_bot &
     BOT_PID=$!
     echo -e "\033[92mBot monitor started (PID: $BOT_PID)\033[0m"
     sleep 2  # Give it time to start
