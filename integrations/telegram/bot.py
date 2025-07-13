@@ -63,6 +63,12 @@ COMPLETE_TASK_PREFIX = "complete_task_"
 REFRESH_TASKS = "refresh_tasks"
 UNDO_LAST = "undo_last"
 MAIN_MENU = "main_menu"
+FILTER_TODAY = "filter_today"
+FILTER_WEEK = "filter_week"
+FILTER_ALL = "filter_all"
+TOGGLE_TASK_PREFIX = "toggle_task_"
+COMPLETE_SELECTED = "complete_selected"
+CLEAR_SELECTION = "clear_selection"
 
 
 # --- User Management ---
@@ -115,6 +121,43 @@ def get_system_user_from_telegram(telegram_user):
     return first_word.capitalize()
 
 
+def filter_tasks_by_date(tasks, filter_type):
+    """Filter tasks by date range."""
+    from datetime import datetime, date, timedelta
+    
+    if filter_type == "all":
+        return tasks
+    
+    today = date.today()
+    filtered_tasks = []
+    
+    for task in tasks:
+        due_date_str = task.get("due_date")
+        if not due_date_str:
+            # Tasks without due date only appear in "all" filter
+            continue
+            
+        try:
+            # Parse date string (format: "MM/DD/YYYY")
+            due_date = datetime.strptime(due_date_str, "%m/%d/%Y").date()
+            
+            if filter_type == "today":
+                if due_date == today:
+                    filtered_tasks.append(task)
+            elif filter_type == "week":
+                # Include tasks from today through next 7 days
+                week_end = today + timedelta(days=7)
+                if today <= due_date <= week_end:
+                    filtered_tasks.append(task)
+                    
+        except (ValueError, TypeError):
+            # Skip tasks with invalid date format
+            logger.warning(f"Skipping task with invalid due_date: {due_date_str}")
+            continue
+    
+    return filtered_tasks
+
+
 # --- Keyboard Helpers ---
 def get_user_task_count(user_id, context=None):
     """Get the number of active tasks for a user."""
@@ -155,6 +198,24 @@ def get_main_menu_keyboard(task_count=None):
     return InlineKeyboardMarkup(keyboard)
 
 
+def get_filter_keyboard(current_filter="all"):
+    """Create inline keyboard for date range filtering."""
+    # Highlight active filter
+    today_text = "📅 Today" if current_filter != "today" else "✅ Today"
+    week_text = "📆 This Week" if current_filter != "week" else "✅ This Week"
+    all_text = "📋 All Tasks" if current_filter != "all" else "✅ All Tasks"
+    
+    keyboard = [
+        [
+            InlineKeyboardButton(today_text, callback_data=FILTER_TODAY),
+            InlineKeyboardButton(week_text, callback_data=FILTER_WEEK),
+            InlineKeyboardButton(all_text, callback_data=FILTER_ALL),
+        ],
+        [InlineKeyboardButton("↩️ Back to Tasks", callback_data=LIST_TASKS)]
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+
 def get_task_confirmation_keyboard():
     """Create the task confirmation inline keyboard."""
     keyboard = [
@@ -167,20 +228,43 @@ def get_task_confirmation_keyboard():
     return InlineKeyboardMarkup(keyboard)
 
 
-def get_task_list_keyboard(tasks):
-    """Create inline keyboard for task list with complete buttons."""
+def get_task_list_keyboard_with_checkboxes(tasks, selected_tasks=None):
+    """Create inline keyboard for task list with checkbox-style selection."""
+    if selected_tasks is None:
+        selected_tasks = set()
+    
     keyboard = []
 
-    # Add a complete button for each task
+    # Create simple checkbox buttons for each task
     for i, task in enumerate(tasks, 1):
-        keyboard.append(
-            [
-                InlineKeyboardButton(
-                    f"✅ Complete Task {i}",
-                    callback_data=f"{COMPLETE_TASK_PREFIX}{task.get('id', i)}",
-                )
-            ]
+        task_id = task.get('id', '')
+        is_selected = task_id in selected_tasks
+        
+        # Checkbox emoji based on selection state
+        checkbox = "✅" if is_selected else "⬜"
+        
+        # Simple button text with task number
+        button_text = f"{checkbox} Task {i}"
+        
+        keyboard.append([
+            InlineKeyboardButton(
+                button_text,
+                callback_data=f"{TOGGLE_TASK_PREFIX}{task_id}"
+            )
+        ])
+
+    # Always show action buttons (with count and disabled state handling)
+    selected_count = len(selected_tasks)
+    keyboard.append([
+        InlineKeyboardButton(
+            f"✅ Complete Selected ({selected_count})",
+            callback_data=COMPLETE_SELECTED if selected_count > 0 else "no_selection"
+        ),
+        InlineKeyboardButton(
+            "❌ Clear",
+            callback_data=CLEAR_SELECTION if selected_count > 0 else "no_selection"
         )
+    ])
 
     # Add navigation buttons at the bottom
     keyboard.append(
@@ -194,8 +278,8 @@ def get_task_list_keyboard(tasks):
     return InlineKeyboardMarkup(keyboard)
 
 
-async def show_task_list(query, context=None):
-    """Display the user's task list with complete buttons."""
+async def show_task_list(query, context=None, filter_type=None):
+    """Display the user's task list with complete buttons and date filtering."""
     # Extract just the first name for display (in case of "Colin Aulds | Company")
     full_name = query.from_user.first_name or ""
     user_name = full_name.split()[0] if full_name else "User"
@@ -222,20 +306,59 @@ async def show_task_list(query, context=None):
         logger.error(f"Error fetching tasks from sheets: {e}")
         tasks = []
 
+    # Store filter preference in context
+    if filter_type is None:
+        filter_type = context.user_data.get("task_filter", "all")
+    else:
+        context.user_data["task_filter"] = filter_type
+    
     # Filter only active/pending tasks
     active_tasks = [
         task for task in tasks if task.get("status") in ["pending", "active"]
     ]
-
-    if not active_tasks:
-        task_text = (
-            f"🎉 Great job {user_name}! No active tasks.\n\nWhat would you like to do?"
-        )
-        keyboard = get_main_menu_keyboard(0)
+    
+    # Apply date filtering
+    logger.info(f"Applying filter: {filter_type}")
+    logger.info(f"Active tasks before filtering: {len(active_tasks)}")
+    filtered_tasks = filter_tasks_by_date(active_tasks, filter_type)
+    logger.info(f"Filtered tasks after filtering: {len(filtered_tasks)}")
+    
+    # Build header based on filter
+    if filter_type == "today":
+        header = f"📅 Today's Tasks ({len(filtered_tasks)})"
+    elif filter_type == "week":
+        header = f"📆 This Week's Tasks ({len(filtered_tasks)})"
     else:
-        task_text = f"📋 Your Active Tasks ({len(active_tasks)}):\n\n"
+        header = f"📋 All Active Tasks ({len(filtered_tasks)})"
 
-        for i, task in enumerate(active_tasks, 1):
+    if not filtered_tasks:
+        # Generate appropriate message based on filter
+        if filter_type == "today":
+            no_tasks_msg = f"🎉 Great job {user_name}! No tasks due today."
+        elif filter_type == "week":
+            no_tasks_msg = f"🎉 Great job {user_name}! No tasks due this week."
+        else:
+            no_tasks_msg = f"🎉 Great job {user_name}! All tasks completed."
+        
+        task_text = f"{no_tasks_msg}\n\nWhat would you like to do?"
+        
+        # Send the message with main menu
+        await query.message.reply_text(
+            task_text,
+            reply_markup=get_main_menu_keyboard(0),
+        )
+        
+        # Then send filter options
+        filter_text = "📊 Or try a different filter:"
+        await query.message.reply_text(
+            filter_text,
+            reply_markup=get_filter_keyboard(filter_type),
+        )
+        return
+    else:
+        task_text = f"{header}:\n\n"
+
+        for i, task in enumerate(filtered_tasks, 1):
             task_desc = task.get("task", "No description")
             due_date = task.get("due_date", "No date")
             due_time = task.get("due_time", "")
@@ -254,13 +377,26 @@ async def show_task_list(query, context=None):
             task_text += "\n\n"
 
         task_text += f"\nShowing tasks for: {system_user}"
-        keyboard = get_task_list_keyboard(active_tasks)
-
-    # Send new message instead of editing to preserve context
-    await query.message.reply_text(
-        task_text,
-        reply_markup=keyboard,
-    )
+        
+        # Initialize selected tasks if not exists
+        if "selected_tasks" not in context.user_data:
+            context.user_data["selected_tasks"] = set()
+        
+        selected_tasks = context.user_data["selected_tasks"]
+        
+        # Send the task list with checkbox-style selection
+        await query.message.reply_text(
+            task_text,
+            reply_markup=get_task_list_keyboard_with_checkboxes(filtered_tasks, selected_tasks),
+        )
+        
+        # Then send the filter options
+        filter_text = "📊 Filter by:"
+        await query.message.reply_text(
+            filter_text,
+            reply_markup=get_filter_keyboard(filter_type),
+        )
+        return
 
 
 # --- Bot Handlers ---
@@ -453,6 +589,18 @@ async def handle_button_click(
         await show_task_list(query, context)
         return ConversationHandler.END
 
+    elif query.data == FILTER_TODAY:
+        await show_task_list(query, context, filter_type="today")
+        return ConversationHandler.END
+
+    elif query.data == FILTER_WEEK:
+        await show_task_list(query, context, filter_type="week")
+        return ConversationHandler.END
+
+    elif query.data == FILTER_ALL:
+        await show_task_list(query, context, filter_type="all")
+        return ConversationHandler.END
+
     elif query.data == SUBMIT_TASK:
         # User confirmed - send to Google Sheets
         parsed_json = context.user_data.get("parsed_json")
@@ -513,55 +661,105 @@ async def handle_button_click(
         )
         return ConversationHandler.END
 
-    elif query.data.startswith(COMPLETE_TASK_PREFIX):
-        # Extract task ID from callback data
-        task_id = query.data.replace(COMPLETE_TASK_PREFIX, "")
-
-        # Get the completing user
-        system_user = get_system_user_from_telegram(query.from_user)
-
-        # Find the task being completed
-        completed_task_name = "Task"
-        if "user_tasks" in context.user_data:
-            tasks = context.user_data["user_tasks"]
-            for task in tasks:
-                if task["id"] == task_id:
-                    completed_task_name = task.get("task", "Task")
-                    # Update local status for immediate UI feedback
-                    task["status"] = "completed"
-                    # Store the completed task for undo
-                    context.user_data["last_completed_task"] = {
-                        "task": task,
-                        "timestamp": update.callback_query.message.date,
-                    }
-                    break
-
-        # Update task status in Google Sheets
-        try:
-            success = complete_task_in_sheets(task_id, system_user, "telegram_button")
-            if not success:
-                logger.error(f"Failed to complete task {task_id} in sheets")
-        except Exception as e:
-            logger.error(f"Error completing task in sheets: {e}")
-
-        confirmation_text = f"✅ '{completed_task_name}' marked as complete!"
-
-        # Create undo keyboard
-        undo_keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "↩️ Undo", callback_data=f"{UNDO_LAST}_{task_id}"
-                    ),
-                    InlineKeyboardButton("📋 Back to Tasks", callback_data=LIST_TASKS),
-                ]
-            ]
+    elif query.data.startswith(TOGGLE_TASK_PREFIX):
+        # Toggle task selection state
+        task_id = query.data.replace(TOGGLE_TASK_PREFIX, "")
+        
+        # Get or initialize selected tasks
+        selected_tasks = context.user_data.get("selected_tasks", set())
+        
+        # Toggle selection
+        if task_id in selected_tasks:
+            selected_tasks.remove(task_id)
+        else:
+            selected_tasks.add(task_id)
+        
+        # Store updated selection
+        context.user_data["selected_tasks"] = selected_tasks
+        
+        # Get current task list from context
+        tasks = context.user_data.get("user_tasks", [])
+        
+        # Filter active tasks based on current filter
+        filter_type = context.user_data.get("task_filter", "all")
+        active_tasks = [t for t in tasks if t.get("status") in ["pending", "active"]]
+        filtered_tasks = filter_tasks_by_date(active_tasks, filter_type)
+        
+        # Edit the message with updated keyboard
+        await query.edit_message_reply_markup(
+            reply_markup=get_task_list_keyboard_with_checkboxes(filtered_tasks, selected_tasks)
         )
+        return ConversationHandler.END
 
+    elif query.data == COMPLETE_SELECTED:
+        # Complete all selected tasks
+        selected_tasks = context.user_data.get("selected_tasks", set())
+        if not selected_tasks:
+            await query.answer("No tasks selected")
+            return ConversationHandler.END
+        
+        system_user = get_system_user_from_telegram(query.from_user)
+        tasks = context.user_data.get("user_tasks", [])
+        
+        completed_count = 0
+        completed_names = []
+        
+        # Complete each selected task
+        for task in tasks:
+            task_id = task.get('id')
+            if task_id in selected_tasks:
+                try:
+                    success = complete_task_in_sheets(task_id, system_user, "telegram_button")
+                    if success:
+                        task["status"] = "completed"
+                        completed_count += 1
+                        completed_names.append(task.get("task", "Task"))
+                except Exception as e:
+                    logger.error(f"Error completing task {task_id}: {e}")
+        
+        # Clear selection
+        context.user_data["selected_tasks"] = set()
+        
+        # Show success message
+        if completed_count > 0:
+            task_list = "\n".join([f"✅ {name}" for name in completed_names[:3]])
+            if completed_count > 3:
+                task_list += f"\n... and {completed_count - 3} more"
+            
+            confirmation_text = f"Completed {completed_count} task(s):\n\n{task_list}"
+        else:
+            confirmation_text = "❌ Failed to complete selected tasks"
+        
+        # Create keyboard to return to task list
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("📋 Back to Tasks", callback_data=LIST_TASKS)],
+            [InlineKeyboardButton("🏠 Main Menu", callback_data=MAIN_MENU)]
+        ])
+        
         await query.edit_message_text(
             confirmation_text,
-            reply_markup=undo_keyboard,
+            reply_markup=keyboard
         )
+        return ConversationHandler.END
+
+    elif query.data == CLEAR_SELECTION:
+        # Clear all selections
+        context.user_data["selected_tasks"] = set()
+        
+        # Refresh task list with empty selection
+        tasks = context.user_data.get("user_tasks", [])
+        filter_type = context.user_data.get("task_filter", "all")
+        active_tasks = [t for t in tasks if t.get("status") in ["pending", "active"]]
+        filtered_tasks = filter_tasks_by_date(active_tasks, filter_type)
+        
+        await query.edit_message_reply_markup(
+            reply_markup=get_task_list_keyboard_with_checkboxes(filtered_tasks, set())
+        )
+        return ConversationHandler.END
+
+    elif query.data == "no_selection":
+        # Handle clicks on disabled buttons
+        await query.answer("No tasks selected")
         return ConversationHandler.END
 
     elif query.data.startswith(UNDO_LAST):
