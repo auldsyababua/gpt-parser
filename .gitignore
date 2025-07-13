@@ -72,3 +72,7 @@ dmypy.json
 .idea/
 *.swo
 .aider*
+
+# Claude Code files
+CLAUDE.md
+.mcp.json
