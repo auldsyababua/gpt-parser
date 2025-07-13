@@ -7,7 +7,7 @@ import re
 import dateparser
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
-import pytz
+from zoneinfo import ZoneInfo
 import logging
 import sys
 
@@ -33,7 +33,7 @@ class TemporalProcessor:
             default_timezone: Default timezone for parsing (Colin's PDT)
         """
         self.default_timezone = default_timezone
-        self.tz = pytz.timezone(default_timezone)
+        self.tz = ZoneInfo(default_timezone)
 
         # Common patterns that dateparser might miss
         self.custom_patterns = {

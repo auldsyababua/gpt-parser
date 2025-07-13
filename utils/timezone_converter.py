@@ -63,8 +63,8 @@ def convert_time_between_users(
         logger.info(f"[DEBUG] convert_time_between_users: dt_with_time={dt_with_time}")
 
         # The datetime is naive but represents time in from_user's timezone
-        # Use localize() instead of replace() to properly handle DST
-        dt_from = from_tz.localize(dt_with_time)
+        # With ZoneInfo, use replace() to attach timezone
+        dt_from = dt_with_time.replace(tzinfo=from_tz)
         logger.info(f"[DEBUG] convert_time_between_users: dt_from (with tz)={dt_from}")
 
         # Convert to to_user's timezone
