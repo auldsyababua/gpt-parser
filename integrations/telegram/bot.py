@@ -70,6 +70,13 @@ TOGGLE_TASK_PREFIX = "toggle_task_"
 COMPLETE_SELECTED = "complete_selected"
 CLEAR_SELECTION = "clear_selection"
 
+# Pagination constants
+ITEMS_PER_PAGE = 20
+PAGE_NEXT = "page_next"
+PAGE_PREV = "page_prev"
+PAGE_GOTO_PREFIX = "page_goto_"
+SHOW_ARCHIVE = "show_archive"
+
 
 # --- User Management ---
 def get_system_user_from_telegram(telegram_user):
@@ -158,6 +165,38 @@ def filter_tasks_by_date(tasks, filter_type):
     return filtered_tasks
 
 
+def paginate_tasks(tasks, page=0):
+    """Paginate task list to avoid message length limits."""
+    start = page * ITEMS_PER_PAGE
+    end = start + ITEMS_PER_PAGE
+    total_pages = (len(tasks) + ITEMS_PER_PAGE - 1) // ITEMS_PER_PAGE
+
+    return {
+        'tasks': tasks[start:end],
+        'page': page,
+        'total_pages': total_pages,
+        'has_prev': page > 0,
+        'has_next': end < len(tasks)
+    }
+
+
+def get_pagination_buttons(page_info):
+    """Create pagination buttons row."""
+    buttons = []
+
+    if page_info['has_prev']:
+        buttons.append(InlineKeyboardButton("⬅️ Previous", callback_data=PAGE_PREV))
+
+    # Current page indicator (non-clickable)
+    page_text = f"Page {page_info['page'] + 1}/{page_info['total_pages']}"
+    buttons.append(InlineKeyboardButton(page_text, callback_data="current_page"))
+
+    if page_info['has_next']:
+        buttons.append(InlineKeyboardButton("➡️ Next", callback_data=PAGE_NEXT))
+
+    return buttons
+
+
 # --- Keyboard Helpers ---
 def get_user_task_count(user_id, context=None):
     """Get the number of active tasks for a user."""
@@ -228,51 +267,42 @@ def get_task_confirmation_keyboard():
     return InlineKeyboardMarkup(keyboard)
 
 
-def get_task_list_keyboard_with_checkboxes(tasks, selected_tasks=None):
-    """Create inline keyboard for task list with checkbox-style selection."""
-    if selected_tasks is None:
-        selected_tasks = set()
-    
+def get_task_list_keyboard_with_checkboxes(tasks, page_info=None):
+    """Create inline keyboard for task list with checkbox-style completion."""
     keyboard = []
 
-    # Create simple checkbox buttons for each task
+    # Create checkbox buttons for each task with immediate completion
     for i, task in enumerate(tasks, 1):
         task_id = task.get('id', '')
-        is_selected = task_id in selected_tasks
+        task_desc = task.get("task", "No description")
         
-        # Checkbox emoji based on selection state
-        checkbox = "✅" if is_selected else "⬜"
+        # Truncate long task descriptions
+        if len(task_desc) > 30:
+            task_desc = task_desc[:27] + "..."
         
-        # Simple button text with task number
-        button_text = f"{checkbox} Task {i}"
+        # Create checkbox button for immediate completion
+        button_text = f"⬜ {i}. {task_desc}"
         
         keyboard.append([
             InlineKeyboardButton(
                 button_text,
-                callback_data=f"{TOGGLE_TASK_PREFIX}{task_id}"
+                callback_data=f"{COMPLETE_TASK_PREFIX}{task_id}"
             )
         ])
 
-    # Always show action buttons (with count and disabled state handling)
-    selected_count = len(selected_tasks)
+    # Action buttons row
     keyboard.append([
-        InlineKeyboardButton(
-            f"✅ Complete Selected ({selected_count})",
-            callback_data=COMPLETE_SELECTED if selected_count > 0 else "no_selection"
-        ),
-        InlineKeyboardButton(
-            "❌ Clear",
-            callback_data=CLEAR_SELECTION if selected_count > 0 else "no_selection"
-        )
+        InlineKeyboardButton("📚 Archive", callback_data=SHOW_ARCHIVE),
+        InlineKeyboardButton("➕ New Task", callback_data=NEW_TASK),
+        InlineKeyboardButton("🔄 Refresh", callback_data=REFRESH_TASKS),
     ])
 
-    # Add navigation buttons at the bottom
-    keyboard.append(
-        [
-            InlineKeyboardButton("➕ New Task", callback_data=NEW_TASK),
-            InlineKeyboardButton("🔄 Refresh", callback_data=REFRESH_TASKS),
-        ]
-    )
+    # Pagination row (if needed)
+    if page_info and page_info['total_pages'] > 1:
+        pagination_row = get_pagination_buttons(page_info)
+        keyboard.append(pagination_row)
+
+    # Main menu on its own row
     keyboard.append([InlineKeyboardButton("🏠 Main Menu", callback_data=MAIN_MENU)])
 
     return InlineKeyboardMarkup(keyboard)
@@ -323,6 +353,12 @@ async def show_task_list(query, context=None, filter_type=None):
     filtered_tasks = filter_tasks_by_date(active_tasks, filter_type)
     logger.info(f"Filtered tasks after filtering: {len(filtered_tasks)}")
     
+    # Get current page from context
+    current_page = context.user_data.get("current_page", 0)
+    
+    # Paginate the filtered tasks
+    page_info = paginate_tasks(filtered_tasks, current_page)
+    
     # Build header based on filter
     if filter_type == "today":
         header = f"📅 Today's Tasks ({len(filtered_tasks)})"
@@ -331,7 +367,7 @@ async def show_task_list(query, context=None, filter_type=None):
     else:
         header = f"📋 All Active Tasks ({len(filtered_tasks)})"
 
-    if not filtered_tasks:
+    if not page_info['tasks']:
         # Generate appropriate message based on filter
         if filter_type == "today":
             no_tasks_msg = f"🎉 Great job {user_name}! No tasks due today."
@@ -347,18 +383,11 @@ async def show_task_list(query, context=None, filter_type=None):
             task_text,
             reply_markup=get_main_menu_keyboard(0),
         )
-        
-        # Then send filter options
-        filter_text = "📊 Or try a different filter:"
-        await query.message.reply_text(
-            filter_text,
-            reply_markup=get_filter_keyboard(filter_type),
-        )
         return
     else:
         task_text = f"{header}:\n\n"
 
-        for i, task in enumerate(filtered_tasks, 1):
+        for i, task in enumerate(page_info['tasks'], 1):
             task_desc = task.get("task", "No description")
             due_date = task.get("due_date", "No date")
             due_time = task.get("due_time", "")
@@ -378,23 +407,10 @@ async def show_task_list(query, context=None, filter_type=None):
 
         task_text += f"\nShowing tasks for: {system_user}"
         
-        # Initialize selected tasks if not exists
-        if "selected_tasks" not in context.user_data:
-            context.user_data["selected_tasks"] = set()
-        
-        selected_tasks = context.user_data["selected_tasks"]
-        
         # Send the task list with checkbox-style selection
         await query.message.reply_text(
             task_text,
-            reply_markup=get_task_list_keyboard_with_checkboxes(filtered_tasks, selected_tasks),
-        )
-        
-        # Then send the filter options
-        filter_text = "📊 Filter by:"
-        await query.message.reply_text(
-            filter_text,
-            reply_markup=get_filter_keyboard(filter_type),
+            reply_markup=get_task_list_keyboard_with_checkboxes(page_info['tasks'], page_info),
         )
         return
 
@@ -754,6 +770,107 @@ async def handle_button_click(
         
         await query.edit_message_reply_markup(
             reply_markup=get_task_list_keyboard_with_checkboxes(filtered_tasks, set())
+        )
+        return ConversationHandler.END
+
+    elif query.data.startswith(COMPLETE_TASK_PREFIX):
+        # Single-click task completion
+        task_id = query.data.replace(COMPLETE_TASK_PREFIX, "")
+        
+        system_user = get_system_user_from_telegram(query.from_user)
+        
+        try:
+            # Complete the task in Google Sheets
+            success = complete_task_in_sheets(task_id, system_user, "checkbox")
+            
+            if success:
+                # Show success notification
+                await query.answer("✅ Task completed!", show_alert=False)
+                
+                # Store completed task in archive
+                tasks = context.user_data.get("user_tasks", [])
+                completed_task = None
+                
+                for task in tasks:
+                    if task.get('id') == task_id:
+                        completed_task = task.copy()
+                        task['status'] = 'completed'
+                        break
+                
+                if completed_task:
+                    completed_task.update({
+                        'completed_at': datetime.now().isoformat(),
+                        'completed_by': system_user,
+                        'completed_method': 'checkbox'
+                    })
+                    
+                    # Keep rolling archive of last 15 completed tasks
+                    if 'completed_tasks' not in context.user_data:
+                        context.user_data['completed_tasks'] = []
+                    
+                    context.user_data['completed_tasks'].insert(0, completed_task)
+                    context.user_data['completed_tasks'] = context.user_data['completed_tasks'][:15]
+                
+                # Refresh the task list
+                await show_task_list(query, context)
+            else:
+                await query.answer("❌ Failed to complete task", show_alert=True)
+                
+        except Exception as e:
+            logger.error(f"Error completing task: {e}")
+            await query.answer("❌ Error completing task", show_alert=True)
+        
+        return ConversationHandler.END
+
+    elif query.data == PAGE_NEXT:
+        # Go to next page
+        current_page = context.user_data.get("current_page", 0)
+        context.user_data["current_page"] = current_page + 1
+        await show_task_list(query, context)
+        return ConversationHandler.END
+
+    elif query.data == PAGE_PREV:
+        # Go to previous page
+        current_page = context.user_data.get("current_page", 0)
+        context.user_data["current_page"] = max(0, current_page - 1)
+        await show_task_list(query, context)
+        return ConversationHandler.END
+
+    elif query.data == SHOW_ARCHIVE:
+        # Show recently completed tasks
+        completed_tasks = context.user_data.get('completed_tasks', [])
+        
+        if not completed_tasks:
+            await query.answer("No completed tasks in archive", show_alert=True)
+            return ConversationHandler.END
+        
+        archive_text = "📚 Recently Completed Tasks:\n\n"
+        
+        for i, task in enumerate(completed_tasks[:10], 1):
+            task_desc = task.get("task", "No description")
+            completed_at = task.get("completed_at", "")
+            completed_by = task.get("completed_by", "Unknown")
+            
+            # Format completion time
+            if completed_at:
+                try:
+                    completed_dt = datetime.fromisoformat(completed_at)
+                    completed_str = completed_dt.strftime("%m/%d %I:%M %p")
+                except:
+                    completed_str = completed_at
+            
+            archive_text += f"{i}. {task_desc}\n"
+            archive_text += f"   ✅ Completed by {completed_by} at {completed_str}\n\n"
+        
+        # Create keyboard to return to tasks
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("📋 Back to Tasks", callback_data=LIST_TASKS)],
+            [InlineKeyboardButton("🏠 Main Menu", callback_data=MAIN_MENU)]
+        ])
+        
+        await query.edit_message_text(
+            archive_text,
+            reply_markup=keyboard
         )
         return ConversationHandler.END
 
